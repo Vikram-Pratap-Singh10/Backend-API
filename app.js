@@ -33,6 +33,9 @@ import TicketToolRouter from "./routes/ticketTool.route.js";
 import CreateOrderRouter from "./routes/createOrder.route.js";
 import ServiceRateRouter from "./routes/serviceRate.route.js";
 import AuditRouter from "./routes/auditHistory.route.js"
+// -----------------------------------------------------------
+import UserRouter from "./routes/user.route.js";
+import CustomerRouter from "./routes/customer.route.js";
 
 
 import mongoose from 'mongoose';
@@ -77,6 +80,9 @@ app.use("/ticket-tool", TicketToolRouter)
 app.use("/create-orders", CreateOrderRouter)
 app.use("/service-rate", ServiceRateRouter)
 app.use("/audit-history",AuditRouter)
+// ---------------------------------------
+app.use("/user",UserRouter);
+app.use("/customer",CustomerRouter)
 
 mongoose.connect(process.env.DATABASE_URL,{
   useUnifiedTopology:true,
