@@ -78,17 +78,14 @@ app.use("/create-orders", CreateOrderRouter)
 app.use("/service-rate", ServiceRateRouter)
 app.use("/audit-history",AuditRouter)
 
-
-mongoose
-  .connect(process.env.DATABASE_URL, {
-    useNewUrlParser: true,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
+mongoose.connect(process.env.DATABASE_URL,{
+  useUnifiedTopology:true,
+  useNewUrlParser: true
+})
+.then(() => {
     console.log("DB CONNECTED SUCCEFULLY");
   })
-  .catch((error) => {
+.catch((error) => {
     console.log(error);
   });
 app.listen(process.env.PORT, () => {
