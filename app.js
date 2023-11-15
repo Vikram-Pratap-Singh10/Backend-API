@@ -4,7 +4,6 @@ import express from "express";
 import path from "path"
 import { fileURLToPath } from "url"
 import CreateAccountRouter from "./routes/createAccount.route.js";
-// import CustomerRegistrationRouter from "./routes/customerRegistration.route.js";
 // import PartCatalogueRouter from "./routes/partCatalogue.route.js";
 // import SchedulerTimeRouter from "./routes/schedulerTime.route.js";
 // import OrderRouter from "./routes/order.route.js";
@@ -13,7 +12,6 @@ import CreateAccountRouter from "./routes/createAccount.route.js";
 // import WarrantyRouter from "./routes/warranty.route.js";
 // import SupportRouter from "./routes/support.route.js";
 // // import InspectionRouter from "./routes/inspection.route.js";
-// import CreateSupplierRouter from "./routes/AddSupplierConfig.route.js";
 // import WareHouseRouter from "./routes/warehouse.route.js";
 // import ServicingRouter from "./routes/servicing.route.js";
 // import CreateWikiRouter from "./routes/createWikiConfig.route.js";
@@ -51,7 +49,6 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 app.use("/create-account", CreateAccountRouter);
-// app.use("/customer", CustomerRegistrationRouter);
 // app.use("/part-catalogue", PartCatalogueRouter);
 // app.use("/orders", OrderRouter)
 // app.use("/spare-parts", SparePartRouter)
@@ -70,7 +67,6 @@ app.use("/create-account", CreateAccountRouter);
 // app.use("/invoice-billing", InvoiceBillingRouter);
 // app.use("/distributors", DistributorRouter);
 // app.use("/dealers", DealerRouter);
-// app.use("/suppliers", SupplierRouter);
 // app.use("/service-centers", ServiceCenterRouter);
 // app.use("/cart", CartRouter)
 // app.use("/policy", PolicyRouter)
