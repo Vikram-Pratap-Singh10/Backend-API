@@ -24,3 +24,40 @@ export const SaveUser = async (req,res,next)=>{
         return res.status(500).json({error:"Internal Server Error",status:false})
     }
 }
+export const ViewUser = async (req, res, next) => {
+    try {
+        let user = await User.find().sort({ sortorder: -1 })
+        return user ? res.status(200).json({ User: user, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error", status: false });
+    }
+}
+export const DeleteUser = async (req, res, next) => {
+    try {
+        const user = await User.findByIdAndDelete({ _id: req.params.id })
+        return (user) ? res.status(200).json({ message: "delete successful", status: true }) : res.status(404).json({ error: "Not Found", status: false });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal server error", status: false });
+    }
+}
+export const UpdateUser = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const existingUser = await User.findById(userId);
+        if (!existingUser) {
+            return res.status(404).json({ error: 'user not found', status: false });
+        }
+        else {
+            const updatedUser = req.body;
+            await User.findByIdAndUpdate(userId, updatedUser, { new: true });
+            return res.status(200).json({ message: 'User Updated Successfully', status: true });
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal Server Error', status: false });
+    }
+};
