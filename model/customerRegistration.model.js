@@ -112,4 +112,4 @@ async function createSchema() {
     return new mongoose.Schema(schemaDefinition);
 }
 export const CustomerSchema = await createSchema();
-export const CustomerRegistration = mongoose.model('Customer', CustomerSchema);
+export const CustomerRegistration = mongoose.model('CustomerRegistration', CustomerSchema);

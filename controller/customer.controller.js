@@ -14,14 +14,28 @@ export const CustomerXml = async (req, res) => {
     }
 };
 
-export const SaveCustomer = async (req,res,next)=>{
-    try{
-       const customer = await Customer.create(req.body)
-       return customer ? res.status(200).json({message:"Data Save Successfully",Customer:customer,status:true}):res.status(400).json({message:"Something Went Wrong",status:false})
+export const SaveCustomer = async (req, res, next) => {
+    try {
+        if (req.files) {
+            let image = [];
+            let images = [];
+            req.files.map(file => {
+                if (file.fieldname === "file") {
+                    image.push(file.filename)
+                }
+                else {
+                    images.push(file.filename)
+                }
+            })
+            req.body.shopphoto = image;
+            req.body.photo = images
+        }
+        const customer = await Customer.create(req.body)
+        return customer ? res.status(200).json({ message: "Data Save Successfully", Customer: customer, status: true }) : res.status(400).json({ message: "Something Went Wrong", status: false })
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        return res.status(500).json({error:"Internal Server Error",status:false})
+        return res.status(500).json({ error: "Internal Server Error", status: false })
     }
 }
 export const ViewCustomer = async (req, res, next) => {

@@ -10,7 +10,7 @@ async function createSchema() {
   if (Array.isArray(jsonData.CreateCustomer.input)) {
     jsonData.CreateCustomer.input.forEach((input, index) => {
       const name = input.name._text;
-      const type = input.type._text;
+      const type = input.type._attributes.type;
       if (type === 'text') {
         schemaDefinition[name] = String;
       } else if (type === 'date') {
@@ -24,7 +24,7 @@ async function createSchema() {
   } else {
     const input = jsonData.CreateCustomer.input;
     const name = input.name._text;
-    const type = input.type._text;
+    const type = input.type._attributes.type;
     if (type === 'text') {
       schemaDefinition[name] = String;
     } else if (type === 'date') {
@@ -50,7 +50,7 @@ async function createSchema() {
       if (Array.isArray(jsonData.CreateCustomer.CheckBox.input)) {
         jsonData.CreateCustomer.CheckBox.input.forEach((input, index) => {
           const check = input.name._text;
-          const type = input.type._text
+          const type = input.type._attributes.type
           if (type === 'Boolean') {
             schemaDefinition[check] = Boolean;
           }
@@ -61,7 +61,7 @@ async function createSchema() {
       } else {
         const input = jsonData.CreateCustomer.CheckBox.input;
         const check = input.name._text;
-        const type = input.type._text;
+        const type = input.type._attributes.type;
         if (type === 'Boolean') {
           schemaDefinition[check] = Boolean;
         }
