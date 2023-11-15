@@ -27,7 +27,7 @@ export const SaveCustomer = async (req, res, next) => {
                     images.push(file.filename)
                 }
             })
-            req.body.shopphoto = image;
+            req.body.Shopphoto = image;
             req.body.photo = images
         }
         const customer = await Customer.create(req.body)

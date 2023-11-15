@@ -17,6 +17,8 @@ async function createSchema() {
         schemaDefinition[name] = Date;
       } else if (type === 'number') {
         schemaDefinition[name] = Number;
+      } else if (type === 'file') {
+        schemaDefinition[name] = [];
       } else {
         schemaDefinition[name] = String;
       }
@@ -31,6 +33,8 @@ async function createSchema() {
       schemaDefinition[name] = Date;
     } else if (type === 'number') {
       schemaDefinition[name] = Number;
+    } else if (type === 'file') {
+      schemaDefinition[name] = [];
     } else {
       schemaDefinition[name] = String;
     }
