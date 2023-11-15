@@ -35,7 +35,7 @@ export const SaveCustomer = async (req, res, next) => {
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ error: "Internal Server Error", status: false })
+        return res.status(500).json({ error: err, status: false })
     }
 }
 export const ViewCustomer = async (req, res, next) => {
