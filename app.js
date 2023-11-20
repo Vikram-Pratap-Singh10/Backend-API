@@ -8,6 +8,7 @@ import CreateAccountRouter from "./routes/createAccount.route.js";
 import UserRouter from "./routes/user.route.js";
 import CustomerRouter from "./routes/customer.route.js";
 import RoleRouter from "./routes/role.route.js"
+import WarehouseRouter from "./routes/warehouse.route.js"
 
 
 import mongoose from 'mongoose';
@@ -27,12 +28,12 @@ app.use("/create-account", CreateAccountRouter);
 app.use("/user",UserRouter);
 app.use("/customer",CustomerRouter)
 app.use("/role",RoleRouter);
+app.use("/warehouse",WarehouseRouter);
 
 mongoose.connect(process.env.DATABASE_URL,{
   useUnifiedTopology:true,
   useNewUrlParser: true
-})
-.then(() => {
+}).then(() => {
     console.log("DB CONNECTED SUCCEFULLY");
   })
 .catch((error) => {
