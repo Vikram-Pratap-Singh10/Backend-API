@@ -1,15 +1,28 @@
 import mongoose from "mongoose";
 
 const categorySchema = new mongoose.Schema({
-    Categoryname: {
+    name: {
         type: String,
         required: true,
+        unique: true,
+    },
+    image:{
+        type:String
+    },
+    description:{
+        type:String
     },
     subcategories: [
         {
             name: {
                 type: String,
             },
+            image:{
+                type:String
+            },
+            description:{
+                type:String
+            }
         }
     ],
 });
