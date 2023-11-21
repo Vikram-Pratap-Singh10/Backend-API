@@ -46,31 +46,32 @@ async function createSchema() {
       const drop = input.name._text;
       schemaDefinition[drop] = String;
     }
-    if (jsonData.CreateUser.CheckBox) {
-      if (Array.isArray(jsonData.CreateUser.CheckBox.input)) {
-        jsonData.CreateUser.CheckBox.input.forEach((input, index) => {
-          const check = input.name._text;
-          const type = input.type._text
-          if (type === 'Boolean') {
-            schemaDefinition[check] = Boolean;
-          }
-          else {
-            schemaDefinition[check] = String
-          }
-        });
-      } else {
-        const input = jsonData.CreateUser.CheckBox.input;
+  }
+  if (jsonData.CreateUser.CheckBox) {
+    if (Array.isArray(jsonData.CreateUser.CheckBox.input)) {
+      jsonData.CreateUser.CheckBox.input.forEach((input, index) => {
         const check = input.name._text;
-        const type = input.type._text;
+        const type = input.type._text
         if (type === 'Boolean') {
           schemaDefinition[check] = Boolean;
         }
         else {
           schemaDefinition[check] = String
         }
+      });
+    } else {
+      const input = jsonData.CreateUser.CheckBox.input;
+      const check = input.name._text;
+      const type = input.type._text;
+      if (type === 'Boolean') {
+        schemaDefinition[check] = Boolean;
+      }
+      else {
+        schemaDefinition[check] = String
       }
     }
   }
+
   if (jsonData.CreateUser.Radiobutton) {
     if (Array.isArray(jsonData.CreateUser.Radiobutton.input)) {
       jsonData.CreateUser.Radiobutton.input.forEach((input, index) => {
