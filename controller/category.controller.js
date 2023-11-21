@@ -33,6 +33,23 @@ export const DeleteCategory = async (req, res, next) => {
         return res.status(500).json({ error: "Internal server error", status: false });
     }
 }
+export const UpdateCategory = async (req, res, next) => {
+    try {
+        const categoryId = req.params.id;
+        const existingCategory = await Category.findById(categoryId);
+        if (!existingCategory) {
+            return res.status(404).json({ error: 'category not found', status: false });
+        }
+        else {
+            const updatedCategory = req.body;
+            await Category.findByIdAndUpdate(categoryId, updatedCategory, { new: true });
+            return res.status(200).json({ message: 'Category Updated Successfully', status: true });
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal Server Error', status: false });
+    }
+};
 
 export const saveSubCategory = async (req, res) => {
     try {
@@ -54,8 +71,47 @@ export const saveSubCategory = async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: "Internal Server Error",status:false});
+        return res.status(500).json({ error: "Internal Server Error", status: false });
     }
 };
-
+export const updateSubCategory = async (req, res) => {
+    try {
+        if (req.file) {
+            req.body.image = req.file.filename;
+        }
+        const { categoryId, subcategoryId } = req.params;
+        const { name, image, description } = req.body;
+        const category = await Category.findById(categoryId);
+        if (!category) {
+            return res.status(404).json({ message: "Category not found", status: false });
+        }
+        const subcategory = category.subcategories.id(subcategoryId);
+        if (!subcategory) {
+            return res.status(404).json({ message: "Subcategory not found", status: false });
+        }
+        subcategory.name = name || subcategory.name;
+        subcategory.image = image || subcategory.image;
+        subcategory.description = description || subcategory.description;
+        const updatedCategory = await category.save();
+        return res.status(200).json({ message: "Subcategory updated successfully", status: true, category: updatedCategory, });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+export const deleteSubCategory = async (req, res) => {
+    try {
+        const { categoryId, subcategoryId } = req.params;
+        const category = await Category.findById(categoryId);
+        if (!category) {
+            return res.status(404).json({ message: "Category not found", status: false });
+        }
+        category.subcategories = category.subcategories.filter(sub => sub._id.toString() !== subcategoryId);
+        const updatedCategory = await category.save();
+        return res.status(200).json({ message: "Subcategory deleted successfully", status: true, category: updatedCategory });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 

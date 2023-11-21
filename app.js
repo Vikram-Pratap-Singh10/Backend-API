@@ -10,6 +10,8 @@ import CustomerRouter from "./routes/customer.route.js";
 import RoleRouter from "./routes/role.route.js";
 import WarehouseRouter from "./routes/warehouse.route.js";
 import CategoryRouter from "./routes/category.route.js";
+import OrderRouter from "./routes/order.route.js";
+import TransporterRouter from "./routes/transporter.route.js"
 
 
 import mongoose from 'mongoose';
@@ -26,21 +28,22 @@ app.get("/", (req, res) => {
 });
 app.use("/create-account", CreateAccountRouter);
 // ---------------------------------------
-app.use("/user",UserRouter);
-app.use("/customer",CustomerRouter)
-app.use("/role",RoleRouter);
-app.use("/warehouse",WarehouseRouter);
-app.use("/categories",CategoryRouter);
+app.use("/user", UserRouter);
+app.use("/customer", CustomerRouter)
+app.use("/role", RoleRouter);
+app.use("/warehouse", WarehouseRouter);
+app.use("/categories", CategoryRouter);
+app.use("/order",OrderRouter);
+app.use("/transporter",TransporterRouter);
 
-mongoose.connect(process.env.DATABASE_URL,{
-  useUnifiedTopology:true,
+mongoose.connect(process.env.DATABASE_URL, {
+  useUnifiedTopology: true,
   useNewUrlParser: true
 }).then(() => {
-    console.log("DB CONNECTED SUCCEFULLY");
-  })
-.catch((error) => {
-    console.log(error);
-  });
+  console.log("DB CONNECTED SUCCEFULLY");
+}).catch((error) => {
+  console.log(error);
+});
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port 8000`);
 });
