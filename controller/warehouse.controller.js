@@ -48,7 +48,7 @@ export const UpdateWarehouse = async (req, res, next) => {
         const warehouseId = req.params.id;
         const existingWarehouse = await Warehouse.findById(warehouseId);
         if (!existingWarehouse) {
-            return res.status(404).json({ error: 'user not found', status: false });
+            return res.status(404).json({ error: 'warehouse not found', status: false });
         }
         else {
             const updatedWarehouse = req.body;

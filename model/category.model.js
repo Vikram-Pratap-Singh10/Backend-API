@@ -12,6 +12,9 @@ const categorySchema = new mongoose.Schema({
     description:{
         type:String
     },
+    status:{
+        type:String
+    },
     subcategories: [
         {
             name: {
@@ -22,9 +25,12 @@ const categorySchema = new mongoose.Schema({
             },
             description:{
                 type:String
+            },
+            status:{
+                type:String
             }
         }
     ],
-});
+},{timestamps:true});
 
 export const Category = mongoose.model("category",categorySchema);

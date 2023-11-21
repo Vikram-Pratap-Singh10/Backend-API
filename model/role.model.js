@@ -8,6 +8,6 @@ const roleSchema = mongoose.Schema({
         type:String
     },
     rolePermission:[]
-})
+},{timestamps:true})
 
 export const Role = mongoose.model("role",roleSchema);
