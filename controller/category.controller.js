@@ -56,12 +56,13 @@ export const saveSubCategory = async (req, res) => {
         if (req.file) {
             req.body.image = req.file.filename;
         }
-        const category = await Category.findOne({ name: req.body.category });
+        const category = await Category.findOne({ _id: req.body.category });
         if (category) {
             const newSubCategory = {
                 name: req.body.name,
                 image: req.body.image,
                 description: req.body.description,
+                status:req.body.status
             };
             category.subcategories.push(newSubCategory);
             const savedCategory = await category.save();
