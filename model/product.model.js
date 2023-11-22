@@ -40,9 +40,9 @@ async function createSchema() {
             schemaDefinition[name] = String;
         }
     }
-    if (jsonData.createProduct.MyDropdown) {
-        if (Array.isArray(jsonData.createProduct.MyDropdown)) {
-            jsonData.createProduct.MyDropdown.forEach((dropdown) => {
+    if (jsonData.createProduct.MyDropDown) {
+        if (Array.isArray(jsonData.createProduct.MyDropDown)) {
+            jsonData.createProduct.MyDropDown.forEach((dropdown) => {
                 if (Array.isArray(dropdown.dropdown)) {
                     dropdown.dropdown.forEach((item) => {
                         const name = item.name._text;
@@ -55,13 +55,13 @@ async function createSchema() {
                 }
             });
         } else {
-            if (Array.isArray(jsonData.createProduct.MyDropdown.dropdown)) {
-                jsonData.createProduct.MyDropdown.dropdown.forEach((item) => {
+            if (Array.isArray(jsonData.createProduct.MyDropDown.dropdown)) {
+                jsonData.createProduct.MyDropDown.dropdown.forEach((item) => {
                     const name = item.name._text;
                     schemaDefinition[name] = String;
                 });
             } else {
-                const item = jsonData.createProduct.MyDropdown.dropdown;
+                const item = jsonData.createProduct.MyDropDown.dropdown;
                 const name = item.name._text;
                 schemaDefinition[name] = String;
             }
