@@ -13,7 +13,8 @@ import CategoryRouter from "./routes/category.route.js";
 import OrderRouter from "./routes/order.route.js";
 import TransporterRouter from "./routes/transporter.route.js";
 import ProductsRouter from "./routes/product.route.js";
-import UnitRouter from "./routes/unit.route.js"
+import UnitRouter from "./routes/unit.route.js";
+import PartyRouter from "./routes/partyCreation.route.js"
 
 
 import mongoose from 'mongoose';
@@ -39,6 +40,7 @@ app.use("/order",OrderRouter);
 app.use("/transporter",TransporterRouter);
 app.use("/product",ProductsRouter)
 app.use("/unit",UnitRouter);
+app.use("/party",PartyRouter);
 
 mongoose.connect(process.env.DATABASE_URL, {
   useUnifiedTopology: true,
