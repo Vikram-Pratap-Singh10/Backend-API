@@ -23,7 +23,6 @@ export const SaveParty = async (req, res, next) => {
         return res.status(500).json({ error: "Internal Server Error", status: false })
     }
 }
-
 export const ViewParty = async (req, res, next) => {
     try {
         let party = await Party.find().sort({ sortorder: -1 })
