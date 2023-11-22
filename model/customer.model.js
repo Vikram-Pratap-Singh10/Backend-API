@@ -40,41 +40,57 @@ async function createSchema() {
     }
   }
   if (jsonData.CreateCustomer.MyDropdown) {
-    if (Array.isArray(jsonData.CreateCustomer.MyDropdown.dropdown)) {
-      jsonData.CreateCustomer.MyDropdown.dropdown.forEach((input, index) => {
-        const drop = input.name._text;
-        schemaDefinition[drop] = String;
+    if (Array.isArray(jsonData.CreateCustomer.MyDropdown)) {
+      jsonData.CreateCustomer.MyDropdown.forEach((dropdown) => {
+        if (Array.isArray(dropdown.dropdown)) {
+          dropdown.dropdown.forEach((item) => {
+            const name = item.name._text;
+            schemaDefinition[name] = String;
+          });
+        } else {
+          const item = dropdown.dropdown;
+          const name = item.name._text;
+          schemaDefinition[name] = String;
+        }
       });
     } else {
-      const input = jsonData.CreateCustomer.MyDropdown.dropdown;
-      const drop = input.name._text;
-      schemaDefinition[drop] = String;
-    }
-    if (jsonData.CreateCustomer.CheckBox) {
-      if (Array.isArray(jsonData.CreateCustomer.CheckBox.input)) {
-        jsonData.CreateCustomer.CheckBox.input.forEach((input, index) => {
-          const check = input.name._text;
-          const type = input.type._attributes.type
-          if (type === 'Boolean') {
-            schemaDefinition[check] = Boolean;
-          }
-          else {
-            schemaDefinition[check] = String
-          }
+      if (Array.isArray(jsonData.CreateCustomer.MyDropdown.dropdown)) {
+        jsonData.CreateCustomer.MyDropdown.dropdown.forEach((item) => {
+          const name = item.name._text;
+          schemaDefinition[name] = String;
         });
       } else {
-        const input = jsonData.CreateCustomer.CheckBox.input;
+        const item = jsonData.CreateCustomer.MyDropdown.dropdown;
+        const name = item.name._text;
+        schemaDefinition[name] = String;
+      }
+    }
+  }
+  if (jsonData.CreateCustomer.CheckBox) {
+    if (Array.isArray(jsonData.CreateCustomer.CheckBox.input)) {
+      jsonData.CreateCustomer.CheckBox.input.forEach((input, index) => {
         const check = input.name._text;
-        const type = input.type._attributes.type;
+        const type = input.type._attributes.type
         if (type === 'Boolean') {
           schemaDefinition[check] = Boolean;
         }
         else {
           schemaDefinition[check] = String
         }
+      });
+    } else {
+      const input = jsonData.CreateCustomer.CheckBox.input;
+      const check = input.name._text;
+      const type = input.type._attributes.type;
+      if (type === 'Boolean') {
+        schemaDefinition[check] = Boolean;
+      }
+      else {
+        schemaDefinition[check] = String
       }
     }
   }
+
   if (jsonData.CreateCustomer.Radiobutton) {
     if (Array.isArray(jsonData.CreateCustomer.Radiobutton.input)) {
       jsonData.CreateCustomer.Radiobutton.input.forEach((input, index) => {

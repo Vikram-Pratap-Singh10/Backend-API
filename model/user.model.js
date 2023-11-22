@@ -10,7 +10,8 @@ async function createSchema() {
   if (Array.isArray(jsonData.CreateUser.input)) {
     jsonData.CreateUser.input.forEach((input, index) => {
       const name = input.name._text;
-      const type = input.type._text;
+      // const type = input.type._text;
+      const type = input.type._attributes.type;
       if (type === 'text') {
         schemaDefinition[name] = String;
       } else if (type === 'date') {
@@ -24,7 +25,8 @@ async function createSchema() {
   } else {
     const input = jsonData.CreateUser.input;
     const name = input.name._text;
-    const type = input.type._text;
+    // const type = input.type._text;
+    const type = input.type._attributes.type;
     if (type === 'text') {
       schemaDefinition[name] = String;
     } else if (type === 'date') {
@@ -36,22 +38,38 @@ async function createSchema() {
     }
   }
   if (jsonData.CreateUser.MyDropdown) {
-    if (Array.isArray(jsonData.CreateUser.MyDropdown.dropdown)) {
-      jsonData.CreateUser.MyDropdown.dropdown.forEach((input, index) => {
-        const drop = input.name._text;
-        schemaDefinition[drop] = String;
+    if (Array.isArray(jsonData.CreateUser.MyDropdown)) {
+      jsonData.CreateUser.MyDropdown.forEach((dropdown) => {
+        if (Array.isArray(dropdown.dropdown)) {
+          dropdown.dropdown.forEach((item) => {
+            const name = item.name._text;
+            schemaDefinition[name] = String;
+          });
+        } else {
+          const item = dropdown.dropdown;
+          const name = item.name._text;
+          schemaDefinition[name] = String;
+        }
       });
     } else {
-      const input = jsonData.CreateUser.MyDropdown.dropdown;
-      const drop = input.name._text;
-      schemaDefinition[drop] = String;
+      if (Array.isArray(jsonData.CreateUser.MyDropdown.dropdown)) {
+        jsonData.CreateUser.MyDropdown.dropdown.forEach((item) => {
+          const name = item.name._text;
+          schemaDefinition[name] = String;
+        });
+      } else {
+        const item = jsonData.CreateUser.MyDropdown.dropdown;
+        const name = item.name._text;
+        schemaDefinition[name] = String;
+      }
     }
   }
   if (jsonData.CreateUser.CheckBox) {
     if (Array.isArray(jsonData.CreateUser.CheckBox.input)) {
       jsonData.CreateUser.CheckBox.input.forEach((input, index) => {
         const check = input.name._text;
-        const type = input.type._text
+        // const type = input.type._text
+        const type = input.type._attributes.type;
         if (type === 'Boolean') {
           schemaDefinition[check] = Boolean;
         }
@@ -62,7 +80,8 @@ async function createSchema() {
     } else {
       const input = jsonData.CreateUser.CheckBox.input;
       const check = input.name._text;
-      const type = input.type._text;
+      // const type = input.type._text;
+      const type = input.type._attributes.type;
       if (type === 'Boolean') {
         schemaDefinition[check] = Boolean;
       }
