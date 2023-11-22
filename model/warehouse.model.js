@@ -10,7 +10,8 @@ async function createSchema() {
   if (Array.isArray(jsonData.AddWareHouse.input)) {
     jsonData.AddWareHouse.input.forEach((input, index) => {
       const name = input.name._text;
-      const type = input.type._text;
+      // const type = input.type._text;
+      const type = input.type._attributes.type;
       if (type === 'text') {
         schemaDefinition[name] = String;
       } else if (type === 'date') {
@@ -24,7 +25,8 @@ async function createSchema() {
   } else {
     const input = jsonData.AddWareHouse.input;
     const name = input.name._text;
-    const type = input.type._text;
+    // const type = input.type._text;
+    const type = input.type._attributes.type;
     if (type === 'text') {
       schemaDefinition[name] = String;
     } else if (type === 'date') {
@@ -36,38 +38,55 @@ async function createSchema() {
     }
   }
   if (jsonData.AddWareHouse.MyDropdown) {
-    if (Array.isArray(jsonData.AddWareHouse.MyDropdown.dropdown)) {
-      jsonData.AddWareHouse.MyDropdown.dropdown.forEach((input, index) => {
-        const drop = input.name._text;
-        schemaDefinition[drop] = String;
+    if (Array.isArray(jsonData.AddWareHouse.MyDropdown)) {
+      jsonData.AddWareHouse.MyDropdown.forEach((dropdown) => {
+        if (Array.isArray(dropdown.dropdown)) {
+          dropdown.dropdown.forEach((item) => {
+            const name = item.name._text;
+            schemaDefinition[name] = String;
+          });
+        } else {
+          const item = dropdown.dropdown;
+          const name = item.name._text;
+          schemaDefinition[name] = String;
+        }
       });
     } else {
-      const input = jsonData.AddWareHouse.MyDropdown.dropdown;
-      const drop = input.name._text;
-      schemaDefinition[drop] = String;
-    }
-    if (jsonData.AddWareHouse.CheckBox) {
-      if (Array.isArray(jsonData.AddWareHouse.CheckBox.input)) {
-        jsonData.AddWareHouse.CheckBox.input.forEach((input, index) => {
-          const check = input.name._text;
-          const type = input.type._text
-          if (type === 'Boolean') {
-            schemaDefinition[check] = Boolean;
-          }
-          else {
-            schemaDefinition[check] = String
-          }
+      if (Array.isArray(jsonData.AddWareHouse.MyDropdown.dropdown)) {
+        jsonData.AddWareHouse.MyDropdown.dropdown.forEach((item) => {
+          const name = item.name._text;
+          schemaDefinition[name] = String;
         });
       } else {
-        const input = jsonData.AddWareHouse.CheckBox.input;
+        const item = jsonData.AddWareHouse.MyDropdown.dropdown;
+        const name = item.name._text;
+        schemaDefinition[name] = String;
+      }
+    }
+  }
+  if (jsonData.AddWareHouse.CheckBox) {
+    if (Array.isArray(jsonData.AddWareHouse.CheckBox.input)) {
+      jsonData.AddWareHouse.CheckBox.input.forEach((input, index) => {
         const check = input.name._text;
-        const type = input.type._text;
+        // const type = input.type._text
+        const type = input.type._attributes.type;
         if (type === 'Boolean') {
           schemaDefinition[check] = Boolean;
         }
         else {
           schemaDefinition[check] = String
         }
+      });
+    } else {
+      const input = jsonData.AddWareHouse.CheckBox.input;
+      const check = input.name._text;
+      // const type = input.type._text;
+      const type = input.type._attributes.type;
+      if (type === 'Boolean') {
+        schemaDefinition[check] = Boolean;
+      }
+      else {
+        schemaDefinition[check] = String
       }
     }
   }

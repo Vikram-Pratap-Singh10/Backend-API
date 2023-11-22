@@ -60,6 +60,20 @@ export const DeleteCustomer = async (req, res, next) => {
 }
 export const UpdateCustomer = async (req, res, next) => {
     try {
+        if (req.files) {
+            let image = [];
+            let images = [];
+            req.files.map(file => {
+                if (file.fieldname === "file") {
+                    image.push(file.filename)
+                }
+                else {
+                    images.push(file.filename)
+                }
+            })
+            req.body.Shopphoto = image;
+            req.body.photo = images
+        }
         const customerId = req.params.id;
         const existingCustomer = await Customer.findById(customerId);
         if (!existingCustomer) {

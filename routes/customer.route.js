@@ -9,6 +9,6 @@ router.get("/get-xml",CustomerXml);
 router.post("/save-customer",upload.any("files"),SaveCustomer);
 router.get("/view-customer",ViewCustomer);
 router.get("/delete-customer/:id",DeleteCustomer);
-router.post("/update-customer/:id",UpdateCustomer);
+router.post("/update-customer/:id",upload.any("files"),UpdateCustomer);
 
 export default router;

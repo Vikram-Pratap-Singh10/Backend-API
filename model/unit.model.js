@@ -5,13 +5,13 @@ import axios from 'axios';
 var status = 'status'
 
 async function createSchema() {
-    const ff = await axios.get('https://awsxmlfiles.s3.ap-south-1.amazonaws.com/CreateProduct.xml');
+    const ff = await axios.get('https://awsxmlfiles.s3.ap-south-1.amazonaws.com/CreateUnit.xml');
     const xmlFile = ff.data;
     const jsonData = JSON.parse(convert.xml2json(xmlFile, { compact: true, spaces: 2 }));
     const schemaDefinition = {};
     schemaDefinition[status] = String
-    if (Array.isArray(jsonData.createProduct.input)) {
-        jsonData.createProduct.input.forEach((input, index) => {
+    if (Array.isArray(jsonData.CreateUnit.input)) {
+        jsonData.CreateUnit.input.forEach((input, index) => {
             const name = input.name._text;
             // const type = input.type._text;
             const type = input.type._attributes.type;
@@ -26,7 +26,7 @@ async function createSchema() {
             }
         });
     } else {
-        const input = jsonData.createProduct.input;
+        const input = jsonData.CreateUnit.input;
         const name = input.name._text;
         // const type = input.type._text;
         const type = input.type._attributes.type;
@@ -40,9 +40,9 @@ async function createSchema() {
             schemaDefinition[name] = String;
         }
     }
-    if (jsonData.createProduct.MyDropdown) {
-        if (Array.isArray(jsonData.createProduct.MyDropdown)) {
-            jsonData.createProduct.MyDropdown.forEach((dropdown) => {
+    if (jsonData.CreateUnit.MyDropdown) {
+        if (Array.isArray(jsonData.CreateUnit.MyDropdown)) {
+            jsonData.CreateUnit.MyDropdown.forEach((dropdown) => {
                 if (Array.isArray(dropdown.dropdown)) {
                     dropdown.dropdown.forEach((item) => {
                         const name = item.name._text;
@@ -55,21 +55,21 @@ async function createSchema() {
                 }
             });
         } else {
-            if (Array.isArray(jsonData.createProduct.MyDropdown.dropdown)) {
-                jsonData.createProduct.MyDropdown.dropdown.forEach((item) => {
+            if (Array.isArray(jsonData.CreateUnit.MyDropdown.dropdown)) {
+                jsonData.CreateUnit.MyDropdown.dropdown.forEach((item) => {
                     const name = item.name._text;
                     schemaDefinition[name] = String;
                 });
             } else {
-                const item = jsonData.createProduct.MyDropdown.dropdown;
+                const item = jsonData.CreateUnit.MyDropdown.dropdown;
                 const name = item.name._text;
                 schemaDefinition[name] = String;
             }
         }
     }
-    if (jsonData.createProduct.CheckBox) {
-        if (Array.isArray(jsonData.createProduct.CheckBox.input)) {
-            jsonData.createProduct.CheckBox.input.forEach((input, index) => {
+    if (jsonData.CreateUnit.CheckBox) {
+        if (Array.isArray(jsonData.CreateUnit.CheckBox.input)) {
+            jsonData.CreateUnit.CheckBox.input.forEach((input, index) => {
                 const check = input.name._text;
                 // const type = input.type._text
                 const type = input.type._attributes.type;
@@ -81,7 +81,7 @@ async function createSchema() {
                 }
             });
         } else {
-            const input = jsonData.createProduct.CheckBox.input;
+            const input = jsonData.CreateUnit.CheckBox.input;
             const check = input.name._text;
             // const type = input.type._text;
             const type = input.type._attributes.type;
@@ -94,22 +94,21 @@ async function createSchema() {
         }
     }
 
-    if (jsonData.createProduct.Radiobutton) {
-        if (Array.isArray(jsonData.createProduct.Radiobutton.input)) {
-            jsonData.createProduct.Radiobutton.input.forEach((input, index) => {
+    if (jsonData.CreateUnit.Radiobutton) {
+        if (Array.isArray(jsonData.CreateUnit.Radiobutton.input)) {
+            jsonData.CreateUnit.Radiobutton.input.forEach((input, index) => {
                 const check = input.name._text;
                 const type = input.type._text
                 schemaDefinition[check] = String
             });
         } else {
-            const input = jsonData.createProduct.Radiobutton.input;
+            const input = jsonData.CreateUnit.Radiobutton.input;
             const check = input.name._text;
             schemaDefinition[check] = String
         }
     }
-
     return new mongoose.Schema(schemaDefinition, { timestamps: true });
 }
 
-export const ProductSchema = await createSchema();
-export const Product = mongoose.model('product', ProductSchema);
+export const UnitSchema = await createSchema();
+export const Unit = mongoose.model('unit', UnitSchema);

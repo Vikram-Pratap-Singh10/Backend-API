@@ -10,7 +10,8 @@ async function createSchema() {
   if (Array.isArray(jsonData.CreateTransporter.input)) {
     jsonData.CreateTransporter.input.forEach((input, index) => {
       const name = input.name._text;
-      const type = input.type._text;
+      // const type = input.type._text;
+      const type = input.type._attributes.type;
       if (type === 'text') {
         schemaDefinition[name] = String;
       } else if (type === 'date') {
@@ -24,7 +25,8 @@ async function createSchema() {
   } else {
     const input = jsonData.CreateTransporter.input;
     const name = input.name._text;
-    const type = input.type._text;
+    // const type = input.type._text;
+    const type = input.type._attributes.type;
     if (type === 'text') {
       schemaDefinition[name] = String;
     } else if (type === 'date') {
@@ -36,41 +38,59 @@ async function createSchema() {
     }
   }
   if (jsonData.CreateTransporter.MyDropdown) {
-    if (Array.isArray(jsonData.CreateTransporter.MyDropdown.dropdown)) {
-      jsonData.CreateTransporter.MyDropdown.dropdown.forEach((input, index) => {
-        const drop = input.name._text;
-        schemaDefinition[drop] = String;
+    if (Array.isArray(jsonData.CreateTransporter.MyDropdown)) {
+      jsonData.CreateTransporter.MyDropdown.forEach((dropdown) => {
+        if (Array.isArray(dropdown.dropdown)) {
+          dropdown.dropdown.forEach((item) => {
+            const name = item.name._text;
+            schemaDefinition[name] = String;
+          });
+        } else {
+          const item = dropdown.dropdown;
+          const name = item.name._text;
+          schemaDefinition[name] = String;
+        }
       });
     } else {
-      const input = jsonData.CreateTransporter.MyDropdown.dropdown;
-      const drop = input.name._text;
-      schemaDefinition[drop] = String;
-    }
-    if (jsonData.CreateTransporter.CheckBox) {
-      if (Array.isArray(jsonData.CreateTransporter.CheckBox.input)) {
-        jsonData.CreateTransporter.CheckBox.input.forEach((input, index) => {
-          const check = input.name._text;
-          const type = input.type._text
-          if (type === 'Boolean') {
-            schemaDefinition[check] = Boolean;
-          }
-          else {
-            schemaDefinition[check] = String
-          }
+      if (Array.isArray(jsonData.CreateTransporter.MyDropdown.dropdown)) {
+        jsonData.CreateTransporter.MyDropdown.dropdown.forEach((item) => {
+          const name = item.name._text;
+          schemaDefinition[name] = String;
         });
       } else {
-        const input = jsonData.CreateTransporter.CheckBox.input;
+        const item = jsonData.CreateTransporter.MyDropdown.dropdown;
+        const name = item.name._text;
+        schemaDefinition[name] = String;
+      }
+    }
+  }
+  if (jsonData.CreateTransporter.CheckBox) {
+    if (Array.isArray(jsonData.CreateTransporter.CheckBox.input)) {
+      jsonData.CreateTransporter.CheckBox.input.forEach((input, index) => {
         const check = input.name._text;
-        const type = input.type._text;
+        // const type = input.type._text
+        const type = input.type._attributes.type;
         if (type === 'Boolean') {
           schemaDefinition[check] = Boolean;
         }
         else {
           schemaDefinition[check] = String
         }
+      });
+    } else {
+      const input = jsonData.CreateTransporter.CheckBox.input;
+      const check = input.name._text;
+      // const type = input.type._text;
+      const type = input.type._attributes.type;
+      if (type === 'Boolean') {
+        schemaDefinition[check] = Boolean;
+      }
+      else {
+        schemaDefinition[check] = String
       }
     }
   }
+
   if (jsonData.CreateTransporter.Radiobutton) {
     if (Array.isArray(jsonData.CreateTransporter.Radiobutton.input)) {
       jsonData.CreateTransporter.Radiobutton.input.forEach((input, index) => {
