@@ -3,7 +3,7 @@ import axios from 'axios';
 import { User } from '../model/user.model.js';
 
 export const UserXml = async (req, res) => {
-    const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/Createuserconfig.xml";
+    const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/Createuser.xml";
     try {
         const response = await axios.get(fileUrl);
         const data = response.data;

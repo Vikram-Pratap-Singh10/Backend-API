@@ -5,7 +5,7 @@ import axios from 'axios';
 var status = 'status'
 
 async function createSchema() {
-  const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/Createuserconfig.xml');
+  const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/Createuser.xml');
   const xmlFile = ff.data;
   const jsonData = JSON.parse(convert.xml2json(xmlFile, { compact: true, spaces: 2 }));
   const schemaDefinition = {};
