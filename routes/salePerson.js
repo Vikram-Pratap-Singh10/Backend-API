@@ -1,8 +1,9 @@
 import express from "express";
-import { deleteSalesPerson, saveSalesPerson, updateSalesPerson, viewSalesPerson } from "../controller/salesPerson.controller.js";
+import { SalesPersonXml, deleteSalesPerson, saveSalesPerson, updateSalesPerson, viewSalesPerson } from "../controller/salesPerson.controller.js";
 
 const router = express.Router();
 
+router.get("/get-xml",SalesPersonXml)
 router.post("/save-sales-person",saveSalesPerson)
 router.get("/view-sales-person",viewSalesPerson);
 router.delete("/delete-sales-person/:id",deleteSalesPerson);
