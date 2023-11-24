@@ -3,7 +3,7 @@ import convert from 'xml-js';
 import axios from 'axios';
 
 async function createSchema() {
-  const ff = await axios.get('https://awsxmlfiles.s3.ap-south-1.amazonaws.com/AddWarehouseConfig.xml');
+  const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/AddWarehouseConfig.xml');
   const xmlFile = ff.data;
   const jsonData = JSON.parse(convert.xml2json(xmlFile, { compact: true, spaces: 2 }));
   const schemaDefinition = {};

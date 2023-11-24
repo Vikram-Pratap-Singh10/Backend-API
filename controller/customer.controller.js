@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Customer } from '../model/customer.model.js';
 
 export const CustomerXml = async (req, res) => {
-    const fileUrl = "https://awsxmlfiles.s3.ap-south-1.amazonaws.com/CreateCustomerConfig.xml";
+    const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateCustomerConfig.xml";
     try {
         const response = await axios.get(fileUrl);
         const data = response.data;

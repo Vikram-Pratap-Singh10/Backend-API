@@ -5,13 +5,13 @@ import axios from 'axios';
 var status = 'status'
 
 async function createSchema() {
-    const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateProduct.xml');
+    const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateSalesmanConfig%5D.xml');
     const xmlFile = ff.data;
     const jsonData = JSON.parse(convert.xml2json(xmlFile, { compact: true, spaces: 2 }));
     const schemaDefinition = {};
     schemaDefinition[status] = String
-    if (Array.isArray(jsonData.createProduct.input)) {
-        jsonData.createProduct.input.forEach((input, index) => {
+    if (Array.isArray(jsonData.Createsalesman.input)) {
+        jsonData.Createsalesman.input.forEach((input, index) => {
             const name = input.name._text;
             // const type = input.type._text;
             const type = input.type._attributes.type;
@@ -26,7 +26,7 @@ async function createSchema() {
             }
         });
     } else {
-        const input = jsonData.createProduct.input;
+        const input = jsonData.Createsalesman.input;
         const name = input.name._text;
         // const type = input.type._text;
         const type = input.type._attributes.type;
@@ -40,9 +40,9 @@ async function createSchema() {
             schemaDefinition[name] = String;
         }
     }
-    if (jsonData.createProduct.MyDropDown) {
-        if (Array.isArray(jsonData.createProduct.MyDropDown)) {
-            jsonData.createProduct.MyDropDown.forEach((dropdown) => {
+    if (jsonData.Createsalesman.MyDropDown) {
+        if (Array.isArray(jsonData.Createsalesman.MyDropDown)) {
+            jsonData.Createsalesman.MyDropDown.forEach((dropdown) => {
                 if (Array.isArray(dropdown.dropdown)) {
                     dropdown.dropdown.forEach((item) => {
                         const name = item.name._text;
@@ -55,21 +55,21 @@ async function createSchema() {
                 }
             });
         } else {
-            if (Array.isArray(jsonData.createProduct.MyDropDown.dropdown)) {
-                jsonData.createProduct.MyDropDown.dropdown.forEach((item) => {
+            if (Array.isArray(jsonData.Createsalesman.MyDropDown.dropdown)) {
+                jsonData.Createsalesman.MyDropDown.dropdown.forEach((item) => {
                     const name = item.name._text;
                     schemaDefinition[name] = String;
                 });
             } else {
-                const item = jsonData.createProduct.MyDropDown.dropdown;
+                const item = jsonData.Createsalesman.MyDropDown.dropdown;
                 const name = item.name._text;
                 schemaDefinition[name] = String;
             }
         }
     }
-    if (jsonData.createProduct.CheckBox) {
-        if (Array.isArray(jsonData.createProduct.CheckBox.input)) {
-            jsonData.createProduct.CheckBox.input.forEach((input, index) => {
+    if (jsonData.Createsalesman.CheckBox) {
+        if (Array.isArray(jsonData.Createsalesman.CheckBox.input)) {
+            jsonData.Createsalesman.CheckBox.input.forEach((input, index) => {
                 const check = input.name._text;
                 // const type = input.type._text
                 const type = input.type._attributes.type;
@@ -81,7 +81,7 @@ async function createSchema() {
                 }
             });
         } else {
-            const input = jsonData.createProduct.CheckBox.input;
+            const input = jsonData.Createsalesman.CheckBox.input;
             const check = input.name._text;
             // const type = input.type._text;
             const type = input.type._attributes.type;
@@ -94,15 +94,15 @@ async function createSchema() {
         }
     }
 
-    if (jsonData.createProduct.Radiobutton) {
-        if (Array.isArray(jsonData.createProduct.Radiobutton.input)) {
-            jsonData.createProduct.Radiobutton.input.forEach((input, index) => {
+    if (jsonData.Createsalesman.Radiobutton) {
+        if (Array.isArray(jsonData.Createsalesman.Radiobutton.input)) {
+            jsonData.Createsalesman.Radiobutton.input.forEach((input, index) => {
                 const check = input.name._text;
                 const type = input.type._text
                 schemaDefinition[check] = String
             });
         } else {
-            const input = jsonData.createProduct.Radiobutton.input;
+            const input = jsonData.Createsalesman.Radiobutton.input;
             const check = input.name._text;
             schemaDefinition[check] = String
         }
@@ -111,5 +111,5 @@ async function createSchema() {
     return new mongoose.Schema(schemaDefinition, { timestamps: true });
 }
 
-export const ProductSchema = await createSchema();
-export const Product = mongoose.model('product', ProductSchema);
+export const SalesPersonSchema = await createSchema();
+export const SalesPerson = mongoose.model('salesPerson', SalesPersonSchema);
