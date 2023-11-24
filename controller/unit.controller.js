@@ -2,7 +2,7 @@ import axios from "axios";
 import { Unit } from "../model/unit.model.js";
 
 export const UnitXml = async (req, res) => {
-    const fileUrl = "https://awsxmlfiles.s3.ap-south-1.amazonaws.com/CreateUnit.xml";
+    const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateUnit.xml";
     try {
         const response = await axios.get(fileUrl);
         const data = response.data;

@@ -5,7 +5,7 @@ import axios from 'axios';
 var status = 'status'
 
 async function createSchema() {
-    const ff = await axios.get('https://xmlfileaws.s3.ap-south-1.amazonaws.com/CreateSalesManagerConfig.xml');
+    const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateSalesManagerConfig.xml');
     const xmlFile = ff.data;
     const jsonData = JSON.parse(convert.xml2json(xmlFile, { compact: true, spaces: 2 }));
     const schemaDefinition = {};

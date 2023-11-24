@@ -2,7 +2,7 @@ import axios from "axios";
 import { Warehouse } from "../model/warehouse.model.js";
 
 export const WarehouseXml = async (req, res) => {
-    const fileUrl = "https://xmlfileaws.s3.ap-south-1.amazonaws.com/AddWarehouseConfig.xml";
+    const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/AddWarehouseConfig.xml";
     try {
         const response = await axios.get(fileUrl);
         const data = response.data;
