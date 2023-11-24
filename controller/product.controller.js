@@ -2,7 +2,7 @@ import axios from "axios";
 import { Product } from "../model/product.model.js";
 
 export const ProductXml = async (req, res) => {
-    const fileUrl = "https://awsxmlfiles.s3.ap-south-1.amazonaws.com/CreateProduct.xml";
+    const fileUrl = "https://xmlfileaws.s3.ap-south-1.amazonaws.com/CreateProduct.xml";
     try {
         const response = await axios.get(fileUrl);
         const data = response.data;

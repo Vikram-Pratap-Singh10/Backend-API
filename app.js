@@ -2,19 +2,23 @@ import dotenv from "dotenv"
 import bodyParser from "body-parser";
 import express from "express";
 import path from "path"
+import fs from "fs"
 import { fileURLToPath } from "url"
-import CreateAccountRouter from "./routes/createAccount.route.js";
+// import CreateAccountRouter from "./routes/createAccount.route.js";
 // -----------------------------------------------------------
-import UserRouter from "./routes/user.route.js";
-import CustomerRouter from "./routes/customer.route.js";
-import RoleRouter from "./routes/role.route.js";
-import WarehouseRouter from "./routes/warehouse.route.js";
-import CategoryRouter from "./routes/category.route.js";
-import OrderRouter from "./routes/order.route.js";
-import TransporterRouter from "./routes/transporter.route.js";
-import ProductsRouter from "./routes/product.route.js";
-import UnitRouter from "./routes/unit.route.js";
-import PartyRouter from "./routes/partyCreation.route.js"
+// import UserRouter from "./routes/user.route.js";
+// import CustomerRouter from "./routes/customer.route.js";
+// import RoleRouter from "./routes/role.route.js";
+// import WarehouseRouter from "./routes/warehouse.route.js";
+// import CategoryRouter from "./routes/category.route.js";
+// import OrderRouter from "./routes/order.route.js";
+// import TransporterRouter from "./routes/transporter.route.js";
+// import ProductsRouter from "./routes/product.route.js";
+// import UnitRouter from "./routes/unit.route.js";
+// import PartyRouter from "./routes/partyCreation.route.js";
+// import SalesManagerRouter from "./routes/saleManager.route.js";
+// import SalesPersonRouter from "./routes/salePerson.js";
+import SalesReturnRouter from "./routes/SalesReturn.route.js";
 
 
 import mongoose from 'mongoose';
@@ -29,18 +33,22 @@ app.use(express.static(publicPath))
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
-app.use("/create-account", CreateAccountRouter);
+
+// app.use("/create-account", CreateAccountRouter);
 // ---------------------------------------
-app.use("/user", UserRouter);
-app.use("/customer", CustomerRouter)
-app.use("/role", RoleRouter);
-app.use("/warehouse", WarehouseRouter);
-app.use("/categories", CategoryRouter);
-app.use("/order",OrderRouter);
-app.use("/transporter",TransporterRouter);
-app.use("/product",ProductsRouter)
-app.use("/unit",UnitRouter);
-app.use("/party",PartyRouter);
+// app.use("/user", UserRouter);
+// app.use("/customer", CustomerRouter)
+// app.use("/role", RoleRouter);
+// app.use("/warehouse", WarehouseRouter);
+// app.use("/categories", CategoryRouter);
+// app.use("/order",OrderRouter);
+// app.use("/transporter",TransporterRouter);
+// app.use("/product",ProductsRouter)
+// app.use("/unit",UnitRouter);
+// app.use("/party",PartyRouter);
+// app.use("/sales-manager",SalesManagerRouter);
+// app.use("/sales-person",SalesPersonRouter);
+app.use("/sales-return",SalesReturnRouter);
 
 mongoose.connect(process.env.DATABASE_URL, {
   useUnifiedTopology: true,
