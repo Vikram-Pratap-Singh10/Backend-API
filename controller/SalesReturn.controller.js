@@ -15,7 +15,6 @@ export const SalesReturnXml = async (req, res) => {
 
 export const saveSalesReturnOrder = async (req, res, next) => {
     try {
-        
         const salesReturn = await SalesReturn.create(req.body);
         return salesReturn ? res.status(200).json({ message: "Data Save Successfully", status: true }) : res.status(400).json({ message: "Something Went Wrong", status: false })
     }
