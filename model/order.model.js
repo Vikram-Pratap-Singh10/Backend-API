@@ -10,6 +10,10 @@ const orderItemsSchema = new mongoose.Schema({
     },
     price: {
         type: Number
+    },
+    status:{
+        type:String,
+        default:"ordered"
     }
 })
 const OrderSchema = new mongoose.Schema({

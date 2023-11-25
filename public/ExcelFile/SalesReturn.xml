@@ -3,7 +3,7 @@
 <MyDropDown>
 	<dropdown>
 		<label>Order Id</label>
-		<name>category</name>
+		<name>orderId</name>
 		<option value="001">001</option>
 		<option value="002">002</option>
 		<option value="003">003</option>
@@ -14,7 +14,7 @@
         <label>ProductName</label>
         <Readonly>yes</Readonly>
         <type type="text"></type>
-        <name>ProductName</name>
+        <name>Product_Title</name>
         <placeholder>Product Name</placeholder>
     </input>
 
