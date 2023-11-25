@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Order } from "../model/order.model.js";
 import { User } from "../model/user.model.js";
+import { Product } from "../model/product.model.js";
 
 export const OrderXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateCustomerConfig.xml";
@@ -17,15 +18,26 @@ export const OrderXml = async (req, res) => {
 export const placeOrder = async (req, res, next) => {
     try {
         const orderItems = req.body.orderItems;
-        const account = await User.findOne({ _id: req.body.userId });
-        if (!account) {
+        const user = await User.findOne({ _id: req.body.userId });
+
+        if (!user) {
             return res.status(401).json({ message: "No user found", status: false });
         } else {
             const billAmount = orderItems.reduce((total, orderItem) => {
                 return total + (orderItem.price * orderItem.quantity);
             }, 0);
+            for (const orderItem of orderItems) {
+                const product = await Product.findOne({ _id: orderItem.productId });
+
+                if (product) {
+                    product.Size -= orderItem.qty;
+                    await product.save();
+                } else {
+                    console.error(`Product with ID ${orderItem.productId} not found`);
+                }
+            }
             const order = new Order({
-                userId: account._id,
+                userId: user._id,
                 fullName: req.body.fullName,
                 address: req.body.address,
                 MobileNo: req.body.MobileNo,
@@ -35,20 +47,22 @@ export const placeOrder = async (req, res, next) => {
                 landMark: req.body.landMark,
                 pincode: req.body.pincode,
                 grandTotal: req.body.grandTotal,
-                discount:req.body.discount,
+                discount: req.body.discount,
                 shippingCost: req.body.shippingCost,
                 taxAmount: req.body.taxAmount,
-                orderItem: orderItems,
+                status: req.body.status,
+                orderItem: orderItems
             });
+
             const savedOrder = await order.save();
             return res.status(200).json({ orderDetail: savedOrder, status: true });
         }
     } catch (err) {
-        console.log(err)
+        console.log(err);
         return res.status(500).json({ error: err });
     }
 };
-export const orderHistoryByUserId = async (req, res, next) => {
+export const placeOrderHistoryByUserId = async (req, res, next) => {
     try {
         const userId = req.params.id;
         const orders = await Order.find({ userId: userId }).populate({
@@ -62,8 +76,8 @@ export const orderHistoryByUserId = async (req, res, next) => {
         const formattedOrders = orders.map(order => {
             const formattedOrderItems = order.orderItem.map(item => ({
                 product: item.productId,
-                quantity: item.quantity,
-                price:item.price
+                qty: item.qty,
+                price: item.price
             }));
             return {
                 _id: order._id,
@@ -71,18 +85,17 @@ export const orderHistoryByUserId = async (req, res, next) => {
                 fullName: order.fullName,
                 address: order.address,
                 MobileNo: order.MobileNo,
-                alternateMobileNo: order.alternateMobileNo,
                 country: order.country,
                 state: order.state,
                 city: order.city,
                 landMark: order.landMark,
                 pincode: order.pincode,
                 grandTotal: order.grandTotal,
-                shippingAmount: order.shippingAmount,
+                discount: order.discount,
+                shippingCost: order.shippingCost,
                 taxAmount: order.taxAmount,
-                currency: order.currency,
-                paymentId: order.paymentId,
                 orderItems: formattedOrderItems,
+                status: order.status,
                 createdAt: order.createdAt,
                 updatedAt: order.updatedAt
             };
@@ -93,7 +106,7 @@ export const orderHistoryByUserId = async (req, res, next) => {
         return res.status(500).json({ error: err });
     }
 };
-export const orderHistory = async (req, res, next) => {
+export const placeOrderHistory = async (req, res, next) => {
     try {
         const orders = await Order.find({}).populate({
             path: 'orderItem.productId',
