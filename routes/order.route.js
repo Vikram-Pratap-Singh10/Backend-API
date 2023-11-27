@@ -10,7 +10,7 @@ router.get("/view-place-order", placeOrderHistory);
 router.get("/view-place-order-by-id/:id", placeOrderHistoryByUserId)
 
 router.post("/save-create-order", createOrder);
-router.get("/view-create-order", createOrderHistory);
-router.get("/view-create-order-by-id/:id", createOrderHistoryByUserId)
+router.get("/view-create-order-history", createOrderHistory);
+router.get("/view-create-order-history-by-id/:id", createOrderHistoryByUserId)
 
 export default router;

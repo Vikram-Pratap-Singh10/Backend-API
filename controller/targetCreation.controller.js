@@ -25,7 +25,7 @@ export const SaveTargetCreation = async (req, res) => {
 export const ViewTargetCreation = async (req, res, next) => {
     try {
         let target = await TargetCreation.find().sort({ sortorder: -1 })
-        return target ? res.status(200).json({ Target: target, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+        return target ? res.status(200).json({ TargetCreation: target, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
         console.log(err);
