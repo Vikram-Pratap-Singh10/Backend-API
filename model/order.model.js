@@ -11,9 +11,9 @@ const orderItemsSchema = new mongoose.Schema({
     price: {
         type: Number
     },
-    status:{
-        type:String,
-        default:"ordered"
+    status: {
+        type: String,
+        default: "ordered"
     }
 })
 const OrderSchema = new mongoose.Schema({
@@ -24,6 +24,9 @@ const OrderSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now,
+    },
+    DateofDelivery: {
+        type: String
     },
     fullName: {
         type: String
@@ -50,7 +53,7 @@ const OrderSchema = new mongoose.Schema({
         type: Number
     },
     grandTotal: {
-        type: Number,   
+        type: Number,
         default: 0
     },
     discount: {
