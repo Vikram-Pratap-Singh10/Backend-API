@@ -2,6 +2,7 @@ import axios from "axios";
 import { Order } from "../model/order.model.js";
 import { User } from "../model/user.model.js";
 import { Product } from "../model/product.model.js";
+import { CreateOrder } from "../model/createOrder.model.js";
 
 export const OrderXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateCustomerConfig.xml";
@@ -28,7 +29,6 @@ export const placeOrder = async (req, res, next) => {
             }, 0);
             for (const orderItem of orderItems) {
                 const product = await Product.findOne({ _id: orderItem.productId });
-
                 if (product) {
                     product.Size -= orderItem.qty;
                     await product.save();
@@ -77,7 +77,8 @@ export const placeOrderHistoryByUserId = async (req, res, next) => {
             const formattedOrderItems = order.orderItem.map(item => ({
                 product: item.productId,
                 qty: item.qty,
-                price: item.price
+                price: item.price,
+                status: item.status
             }));
             return {
                 _id: order._id,
@@ -120,7 +121,8 @@ export const placeOrderHistory = async (req, res, next) => {
             const formattedOrderItems = order.orderItem.map(item => ({
                 product: item.productId,
                 qty: item.qty,
-                price: item.price
+                price: item.price,
+                status: item.status
             }));
             return {
                 _id: order._id,
@@ -169,7 +171,7 @@ export const createOrder = async (req, res, next) => {
                     console.error(`Product with ID ${orderItem.productId} not found`);
                 }
             }
-            const order = new Order({
+            const order = new CreateOrder({
                 userId: user._id,
                 fullName: req.body.fullName,
                 address: req.body.address,
@@ -197,7 +199,7 @@ export const createOrder = async (req, res, next) => {
 export const createOrderHistoryByUserId = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const orders = await Order.find({ userId: userId }).populate({
+        const orders = await CreateOrder.find({ userId: userId }).populate({
             path: 'orderItem.productId',
             model: 'product'
         }).exec();
@@ -208,7 +210,8 @@ export const createOrderHistoryByUserId = async (req, res, next) => {
             const formattedOrderItems = order.orderItem.map(item => ({
                 product: item.productId,
                 qty: item.qty,
-                price: item.price
+                price: item.price,
+                status: item.status
             }));
             return {
                 _id: order._id,
@@ -239,7 +242,7 @@ export const createOrderHistoryByUserId = async (req, res, next) => {
 };
 export const createOrderHistory = async (req, res, next) => {
     try {
-        const orders = await Order.find({}).populate({
+        const orders = await CreateOrder.find({}).populate({
             path: 'orderItem.productId',
             model: 'product'
         }).exec();
@@ -250,7 +253,8 @@ export const createOrderHistory = async (req, res, next) => {
             const formattedOrderItems = order.orderItem.map(item => ({
                 product: item.productId,
                 qty: item.qty,
-                price: item.price
+                price: item.price,
+                status: item.status
             }));
             return {
                 _id: order._id,

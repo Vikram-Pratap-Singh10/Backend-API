@@ -71,27 +71,27 @@ export const updateSalesReturn = async (req, res, next) => {
         return res.status(500).json({ error: "Internal Server Error", status: false })
     }
 }
-// export const saveSalesReturnOrder = async (req, res) => {
-//     const returnItems = req.body.returnItems;
-//     const { orderId } = req.body;
-//     try {
-//         const promises = returnItems.map(async ({ productId }) => {
-//             const order = await Order.findOne({ _id: orderId });
-//             if (!order) {
-//                 throw new Error(`Order ${orderId} not found`);
-//             }
-//             const orderItem = order.orderItem.find(item => item.productId.toString() === productId);
-//             if (!orderItem) {
-//                 throw new Error(`Product ${productId} not found in order ${orderId}`);
-//             }
-//             orderItem.status = 'return';
-//             const updatedOrder = await order.save();
-//         });
-//         await Promise.all(promises);
-//         const orderReturns = await SalesReturn.create(req.body);
-//         return res.status(200).json({ message: 'Order returns processed successfully', orderReturns });
-//     } catch (error) {
-//         console.error(error);
-//         return res.status(500).json({ error: 'Internal Server Error' });
-//     }
-// };
+export const saveSalesReturnOrder1 = async (req, res) => {
+    const returnItems = req.body.returnItems;
+    const { orderId } = req.body;
+    try {
+        const promises = returnItems.map(async ({ productId}) => {
+            const order = await Order.findOne({ _id: orderId });
+            if (!order) {
+                throw new Error(`Order ${orderId} not found`);
+            }
+            const orderItem = order.orderItem.find(item => item.productId.toString() === productId);
+            if (!orderItem) {
+                throw new Error(`Product ${productId} not found in order ${orderId}`);
+            }
+            orderItem.status = 'return';
+            const updatedOrder = await order.save();
+        });
+        await Promise.all(promises);
+        const orderReturns = await SalesReturn.create(req.body);
+        return res.status(200).json({ message: 'Order returns processed successfully', orderReturns });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
