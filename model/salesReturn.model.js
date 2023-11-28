@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import convert from 'xml-js';
 import axios from 'axios';
 
-var status = 'status'
+var status = 'status';
 
 async function createSchema() {
     const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/SalesReturn.xml');

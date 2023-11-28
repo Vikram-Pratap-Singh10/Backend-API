@@ -1,6 +1,7 @@
 import axios from "axios";
 import { SalesReturn } from "../model/salesReturn.model.js";
 import { Order } from "../model/order.model.js";
+import { CreditNote } from "../model/creditNote.model.js";
 
 export const SalesReturnXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/SalesReturn.xml";
@@ -14,7 +15,7 @@ export const SalesReturnXml = async (req, res) => {
     }
 };
 
-export const saveSalesReturnOrder = async (req, res, next) => {
+export const saveSalesReturnOrder1 = async (req, res, next) => {
     const { orderId, productId } = req.body;
     try {
         const order = await Order.findOne({ _id: orderId });
@@ -71,11 +72,11 @@ export const updateSalesReturn = async (req, res, next) => {
         return res.status(500).json({ error: "Internal Server Error", status: false })
     }
 }
-export const saveSalesReturnOrder1 = async (req, res) => {
+export const saveSalesReturnOrder = async (req, res) => {
     const returnItems = req.body.returnItems;
     const { orderId } = req.body;
     try {
-        const promises = returnItems.map(async ({ productId}) => {
+        const promises = returnItems.map(async ({ productId, qty, price }) => {
             const order = await Order.findOne({ _id: orderId });
             if (!order) {
                 throw new Error(`Order ${orderId} not found`);
@@ -85,9 +86,15 @@ export const saveSalesReturnOrder1 = async (req, res) => {
                 throw new Error(`Product ${productId} not found in order ${orderId}`);
             }
             orderItem.status = 'return';
-            const updatedOrder = await order.save();
+            await order.save();
         });
         await Promise.all(promises);
+        const totalAmount = returnItems.reduce((total, item) => {
+            return total + item.qty * item.price;
+        }, 0);
+        req.body.totalAmount = totalAmount;
+        req.body.productItems = returnItems
+        await CreditNote.create(req.body)
         const orderReturns = await SalesReturn.create(req.body);
         return res.status(200).json({ message: 'Order returns processed successfully', orderReturns });
     } catch (error) {
