@@ -21,6 +21,10 @@ const OrderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "user"
     },
+    partyId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "party"
+    },
     date: {
         type: Date,
         default: Date.now,
