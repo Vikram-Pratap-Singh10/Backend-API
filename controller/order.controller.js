@@ -39,6 +39,7 @@ export const placeOrder = async (req, res, next) => {
             const order = new Order({
                 userId: user._id,
                 fullName: req.body.fullName,
+                partyId: req.body.partyId,
                 address: req.body.address,
                 MobileNo: req.body.MobileNo,
                 country: req.body.country,
@@ -68,7 +69,7 @@ export const placeOrderHistoryByUserId = async (req, res, next) => {
         const orders = await Order.find({ userId: userId }).populate({
             path: 'orderItem.productId',
             model: 'product'
-        }).exec();
+        }).populate({ path: "partyId", model: "party" }).exec();
 
         if (!orders || orders.length === 0) {
             return res.status(404).json({ message: "No orders found for the user", status: false });
@@ -83,6 +84,7 @@ export const placeOrderHistoryByUserId = async (req, res, next) => {
             return {
                 _id: order._id,
                 userId: order.userId,
+                partyId: order.partyId,
                 fullName: order.fullName,
                 address: order.address,
                 MobileNo: order.MobileNo,
@@ -112,8 +114,7 @@ export const placeOrderHistory = async (req, res, next) => {
         const orders = await Order.find({}).populate({
             path: 'orderItem.productId',
             model: 'product'
-        }).exec();
-
+        }).populate({ path: "partyId", model: "party" }).exec();
         if (!orders || orders.length === 0) {
             return res.status(404).json({ message: "No orders found", status: false });
         }
@@ -127,6 +128,7 @@ export const placeOrderHistory = async (req, res, next) => {
             return {
                 _id: order._id,
                 userId: order.userId,
+                partyId: order.partyId,
                 fullName: order.fullName,
                 address: order.address,
                 MobileNo: order.MobileNo,
@@ -174,6 +176,7 @@ export const createOrder = async (req, res, next) => {
             const order = new CreateOrder({
                 userId: user._id,
                 fullName: req.body.fullName,
+                partyId: req.body.partyId,
                 address: req.body.address,
                 MobileNo: req.body.MobileNo,
                 country: req.body.country,
@@ -202,7 +205,7 @@ export const createOrderHistoryByUserId = async (req, res, next) => {
         const orders = await CreateOrder.find({ userId: userId }).populate({
             path: 'orderItem.productId',
             model: 'product'
-        }).exec();
+        }).populate({ path: "partyId", model: "party" }).exec();
         if (!orders || orders.length === 0) {
             return res.status(404).json({ message: "No orders found for the user", status: false });
         }
@@ -245,7 +248,7 @@ export const createOrderHistory = async (req, res, next) => {
         const orders = await CreateOrder.find({}).populate({
             path: 'orderItem.productId',
             model: 'product'
-        }).exec();
+        }).populate({ path: "partyId", model: "party" }).exec();
         if (!orders || orders.length === 0) {
             return res.status(404).json({ message: "No orders found", status: false });
         }
