@@ -53,7 +53,19 @@ export const ViewTargetCreation = async (req, res, next) => {
     try {
         let target = await TargetCreation.find().sort({ sortorder: -1 })
             .populate({ path: 'salesPersonId', model: 'salesPerson' })
-            .populate({ path: "products.productId", model: "product" }); 
+            .populate({ path: "products.productId", model: "product" });
+        return target ? res.status(200).json({ TargetCreation: target, status: true }) : res.status(404).json({ error: "Not Found", status: false });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error", status: false });
+    }
+}
+export const ViewTargetCreationById = async (req, res, next) => {
+    try {
+        let target = await TargetCreation.findOne({ _id: req.params.id })
+            .populate({ path: 'salesPersonId', model: 'salesPerson' })
+            .populate({ path: "products.productId", model: "product" });
         return target ? res.status(200).json({ TargetCreation: target, status: true }) : res.status(404).json({ error: "Not Found", status: false });
     }
     catch (err) {

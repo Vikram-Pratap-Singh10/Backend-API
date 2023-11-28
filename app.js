@@ -20,7 +20,7 @@ import SalesManagerRouter from "./routes/saleManager.route.js";
 import SalesPersonRouter from "./routes/salePerson.js";
 import SalesReturnRouter from "./routes/SalesReturn.route.js";
 import TargetCreationRouter from "./routes/targerCreation.route.js";
-import PurchageOrderRouter from "./routes/purchaseOrder.route.js"
+import PurchaseOrderRouter from "./routes/purchaseOrder.route.js"
 
 
 import mongoose from 'mongoose';
@@ -44,7 +44,7 @@ app.use("/role", RoleRouter);
 app.use("/warehouse", WarehouseRouter);
 app.use("/categories", CategoryRouter);
 app.use("/order", OrderRouter);
-// app.use("/transporter",TransporterRouter);
+// app.use("/transporter", TransporterRouter);
 app.use("/product", ProductsRouter)
 app.use("/unit", UnitRouter);
 app.use("/party", PartyRouter);
@@ -52,7 +52,7 @@ app.use("/sales-manager", SalesManagerRouter);
 app.use("/sales-person", SalesPersonRouter);
 app.use("/sales-return", SalesReturnRouter);
 app.use("/target-creation", TargetCreationRouter);
-app.use("/purchase-order", PurchageOrderRouter);
+app.use("/purchase-order", PurchaseOrderRouter);
 
 mongoose.connect(process.env.DATABASE_URL, {
   useUnifiedTopology: true,

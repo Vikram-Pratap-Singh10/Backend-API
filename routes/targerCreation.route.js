@@ -1,5 +1,5 @@
 import express from "express";
-import { DeleteTargetCreation, SaveTargetCreation, UpdateTargetCreation, ViewTargetCreation, deleteProductFromTargetCreation, targetCreationXml } from "../controller/targetCreation.controller.js";
+import { DeleteTargetCreation, SaveTargetCreation, UpdateTargetCreation, ViewTargetCreation, ViewTargetCreationById, deleteProductFromTargetCreation, targetCreationXml } from "../controller/targetCreation.controller.js";
 
 const router = express.Router();
 
@@ -8,7 +8,7 @@ router.post("/save-target-creation", SaveTargetCreation);
 router.get("/view-target-creation", ViewTargetCreation);
 router.delete("/delete-target-creation/:id", DeleteTargetCreation);
 router.put("/update-target-creation/:id", UpdateTargetCreation);
-
+router.get("/view-target-creation-by-id/:id", ViewTargetCreationById)
 router.delete('/:targetId/product/:productId', deleteProductFromTargetCreation);
 
 export default router;

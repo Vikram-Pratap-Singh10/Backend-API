@@ -18,7 +18,7 @@ export const purchaseOrder = async (req, res, next) => {
                     product.Size -= orderItem.qty;
                     await product.save();
                 } else {
-                    console.error(`Product with ID ${orderItem.productId} not found`);
+                    return res.status(404).json(`Product with ID ${orderItem.productId} not found`);
                 }
             }
             req.body.userId = user._id;
