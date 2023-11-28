@@ -22,16 +22,6 @@ export const SaveTargetCreation = async (req, res) => {
         return res.status(500).json({ error: "Internal Server Error" });
     }
 }
-export const ViewTargetCreation = async (req, res, next) => {
-    try {
-        let target = await TargetCreation.find().sort({ sortorder: -1 })
-        return target ? res.status(200).json({ TargetCreation: target, status: true }) : res.status(404).json({ error: "Not Found", status: false })
-    }
-    catch (err) {
-        console.log(err);
-        return res.status(500).json({ error: "Internal Server Error", status: false });
-    }
-}
 export const DeleteTargetCreation = async (req, res, next) => {
     try {
         const target = await TargetCreation.findByIdAndDelete({ _id: req.params.id })
@@ -57,5 +47,36 @@ export const UpdateTargetCreation = async (req, res, next) => {
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'Internal Server Error', status: false });
+    }
+};
+export const ViewTargetCreation = async (req, res, next) => {
+    try {
+        let target = await TargetCreation.find().sort({ sortorder: -1 })
+            .populate({ path: 'salesPersonId', model: 'salesPerson' })
+            .populate({ path: "products.productId", model: "product" }); 
+        return target ? res.status(200).json({ TargetCreation: target, status: true }) : res.status(404).json({ error: "Not Found", status: false });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error", status: false });
+    }
+}
+export const deleteProductFromTargetCreation = async (req, res, next) => {
+    const targetId = req.params.targetId;
+    const productIdToDelete = req.params.productId;
+    try {
+        const updatedTarget = await TargetCreation.findByIdAndUpdate(
+            targetId,
+            { $pull: { products: { productId: productIdToDelete } } },
+            { new: true }
+        );
+        if (updatedTarget) {
+            return res.status(200).json({ TargetCreation: updatedTarget, status: true });
+        } else {
+            return res.status(404).json({ error: "Not Found", status: false });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error", status: false });
     }
 };
