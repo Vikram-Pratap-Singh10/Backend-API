@@ -4,7 +4,7 @@ import express from "express";
 import path from "path"
 import fs from "fs"
 import { fileURLToPath } from "url"
-import CreateAccountRouter from "./routes/createAccount.route.js";
+// import CreateAccountRouter from "./routes/createAccount.route.js";
 // -----------------------------------------------------------
 import UserRouter from "./routes/user.route.js";
 import CustomerRouter from "./routes/customer.route.js";
@@ -20,7 +20,8 @@ import SalesManagerRouter from "./routes/saleManager.route.js";
 import SalesPersonRouter from "./routes/salePerson.js";
 import SalesReturnRouter from "./routes/SalesReturn.route.js";
 import TargetCreationRouter from "./routes/targerCreation.route.js";
-import PurchaseOrderRouter from "./routes/purchaseOrder.route.js"
+import PurchaseOrderRouter from "./routes/purchaseOrder.route.js";
+import CreditNoteRouter from "./routes/creditNote.route.js"
 
 
 import mongoose from 'mongoose';
@@ -36,7 +37,7 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.use("/create-account", CreateAccountRouter);
+// app.use("/create-account", CreateAccountRouter);
 // ---------------------------------------
 app.use("/user", UserRouter);
 app.use("/customer", CustomerRouter)
@@ -53,6 +54,7 @@ app.use("/sales-person", SalesPersonRouter);
 app.use("/sales-return", SalesReturnRouter);
 app.use("/target-creation", TargetCreationRouter);
 app.use("/purchase-order", PurchaseOrderRouter);
+app.use("/credit-note", CreditNoteRouter)
 
 mongoose.connect(process.env.DATABASE_URL, {
   useUnifiedTopology: true,
