@@ -17,7 +17,7 @@ export const PurchaseReturnXml = async (req, res) => {
 
 export const viewPurchaseReturn = async (req, res, next) => {
     try {
-        const purchaseReturn = await SalesReturn.find().sort({ sortorder: -1 })
+        const purchaseReturn = await SalesReturn.find().sort({ sortorder: -1 }).populate({ path: "returnItems.productId", model: "product" });
         return purchaseReturn ? res.status(200).json({ PurchaseReturn: purchaseReturn, status: true }) : res.status(404).json({ message: "Not Found", status: false })
     }
     catch (err) {
