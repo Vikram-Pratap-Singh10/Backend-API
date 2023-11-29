@@ -77,18 +77,31 @@ export const deleteProductFromTargetCreation = async (req, res, next) => {
     const targetId = req.params.targetId;
     const productIdToDelete = req.params.productId;
     try {
+        const target = await TargetCreation.findById(targetId);
+        const productPrice = target.products.reduce((total, item) => {
+            if (item.productId.toString().toLowerCase() === productIdToDelete.toLowerCase()) {
+                return total + item.price * item.qtyAssign;
+            }
+            return total;
+        }, 0);
         const updatedTarget = await TargetCreation.findByIdAndUpdate(
             targetId,
             { $pull: { products: { productId: productIdToDelete } } },
             { new: true }
         );
         if (updatedTarget) {
-            return res.status(200).json({ TargetCreation: updatedTarget, status: true });
+            const grandTotal = updatedTarget.grandTotal - productPrice;
+            const updatedTargetWithGrandTotal = await TargetCreation.findByIdAndUpdate(
+                targetId,
+                { grandTotal: grandTotal },
+                { new: true }
+            );
+            return res.status(200).json({ TargetCreation: updatedTargetWithGrandTotal, status: true });
         } else {
             return res.status(404).json({ error: "Not Found", status: false });
         }
     } catch (err) {
         console.log(err);
-        return res.status(500).json({ error: "Internal Server Error", status: false });
+        return res.status(500).json({ error: err, status: false });
     }
 };
