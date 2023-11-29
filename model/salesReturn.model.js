@@ -3,6 +3,7 @@ import convert from 'xml-js';
 import axios from 'axios';
 
 var status = 'status';
+let returnItems = "returnItems";
 
 async function createSchema() {
     const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/SalesReturn.xml');
@@ -40,6 +41,7 @@ async function createSchema() {
             schemaDefinition[name] = String;
         }
     }
+    schemaDefinition[returnItems] = []
     if (jsonData.SalesReturn.MyDropDown) {
         if (Array.isArray(jsonData.SalesReturn.MyDropDown)) {
             jsonData.SalesReturn.MyDropDown.forEach((dropdown) => {

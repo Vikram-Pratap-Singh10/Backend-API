@@ -15,30 +15,9 @@ export const SalesReturnXml = async (req, res) => {
     }
 };
 
-export const saveSalesReturnOrder1 = async (req, res, next) => {
-    const { orderId, productId } = req.body;
-    try {
-        const order = await Order.findOne({ _id: orderId });
-        if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
-        }
-        const orderItem = order.orderItem.find(item => item.productId.toString() === productId);
-        if (!orderItem) {
-            return res.status(404).json({ message: 'Product not found in the order' });
-        }
-        orderItem.status = 'return';
-        const updatedOrder = await order.save();
-        const orderReturn = new SalesReturn(req.body);
-        await orderReturn.save();
-        return res.status(200).json({ message: 'Order return processed successfully', updatedOrder });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
-}
 export const viewSalesReturn = async (req, res, next) => {
     try {
-        const salesReturn = await SalesReturn.find().sort({ sortorder: -1 })
+        const salesReturn = await SalesReturn.find().sort({ sortorder: -1 }).populate({ path: "returnItems.productId", model: "product" });
         return salesReturn ? res.status(200).json({ SalesReturn: salesReturn, status: true }) : res.status(404).json({ message: "Not Found", status: false })
     }
     catch (err) {
@@ -95,10 +74,10 @@ export const saveSalesReturnOrder = async (req, res) => {
         req.body.totalAmount = totalAmount;
         req.body.productItems = returnItems
         await CreditNote.create(req.body)
-        const orderReturns = await SalesReturn.create(req.body);
-        return res.status(200).json({ message: 'Order returns processed successfully', orderReturns });
+        const salesReturns = await SalesReturn.create(req.body);
+        return res.status(200).json({ message: 'Order returns processed successfully', SalesReturn: salesReturns });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(500).json({ error: error, status: false });
     }
 };
