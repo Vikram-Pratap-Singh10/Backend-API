@@ -1,13 +1,22 @@
 import mongoose from "mongoose";
 
 const roleSchema = mongoose.Schema({
-    roleName:{
-        type:String
+    createdBy: {
+        type: String
     },
-    desc:{
-        type:String
+    roleName: {
+        type: String
     },
-    rolePermission:[]
-},{timestamps:true})
+    position: {
+        type: Number
+    },
+    desc: {
+        type: String
+    },
+    rank: {
+        type: Number
+    },
+    rolePermission: []
+}, { timestamps: true })
 
-export const Role = mongoose.model("role",roleSchema);
+export const Role = mongoose.model("role", roleSchema);

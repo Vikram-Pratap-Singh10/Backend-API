@@ -27,7 +27,7 @@ export const viewSalesReturn = async (req, res, next) => {
 }
 export const viewSalesReturnById = async (req, res, next) => {
     try {
-        const salesReturn = await SalesReturn.find({orderId:req.params.id}).sort({ sortorder: -1 }).populate({ path: "returnItems.productId", model: "product" });
+        const salesReturn = await SalesReturn.find({ orderId: req.params.id }).sort({ sortorder: -1 }).populate({ path: "returnItems.productId", model: "product" });
         return salesReturn ? res.status(200).json({ SalesReturn: salesReturn, status: true }) : res.status(404).json({ message: "Not Found", status: false })
     }
     catch (err) {
@@ -82,7 +82,7 @@ export const saveSalesReturnOrder = async (req, res) => {
             return total + item.qty * item.price;
         }, 0);
         req.body.totalAmount = totalAmount;
-        req.body.productItems = returnItems
+        req.body.productItems = returnItems;
         await CreditNote.create(req.body)
         const salesReturns = await SalesReturn.create(req.body);
         return res.status(200).json({ message: 'Order returns processed successfully', SalesReturn: salesReturns });

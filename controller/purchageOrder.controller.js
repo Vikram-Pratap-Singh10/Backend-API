@@ -82,7 +82,6 @@ export const purchaseOrderHistory = async (req, res, next) => {
             path: 'orderItems.productId',
             model: 'product'
         }).exec();
-        console.log(orders)
         if (!orders || orders.length === 0) {
             return res.status(404).json({ message: "No orders found", status: false });
         }
