@@ -12,8 +12,33 @@ export const CreatRole = async (req, res, next) => {
 export const getRole = async (req, res, next) => {
     try {
         const getRole = await Role.find()
-        return res.status(200).json({ Role:getRole, status: true });
+        return res.status(200).json({ Role: getRole, status: true });
     } catch (err) {
         return res.status(500).json({ error: "Internal server error", status: false });
     }
 }
+
+export const updatedRole = async (req, res, next) => {
+    try {
+        const roleId = req.params.id;
+        const existingAccount = await Role.findById(roleId);
+        if (!existingAccount) {
+            return res.status(404).json({ error: 'role not found', status: false });
+        }
+        if(req.body.position){
+            return res.status(400).json({message:"this is not valid request",status:false})
+        }
+        const role = await Role.findOne({ _id: roleId });
+        if (role) {
+            role.createdBy = req.body.createdBy || role.createdBy
+            role.roleName = req.body.roleName || role.roleName;
+            role.desc = req.body.desc || role.desc;
+            role.rolePermission = req.body.rolePermission || role.rolePermission;
+            await role.save();
+        }
+        return res.status(200).json({ message: 'Account updated successfully', status: true });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal Server Error', status: false });
+    }
+};
