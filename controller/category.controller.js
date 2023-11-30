@@ -10,7 +10,7 @@ export const saveCategory = async (req, res) => {
         return category ? res.status(200).json({ message: "category save successfully", status: true }) : res.status(400).json({ message: "something went wrong", status: false })
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        return res.status(500).json({ error: error, status: false });
     }
 }
 export const ViewCategory = async (req, res, next) => {
@@ -20,17 +20,17 @@ export const ViewCategory = async (req, res, next) => {
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ error: "Internal Server Error", status: false });
+        return res.status(500).json({ error: err, status: false });
     }
 }
 export const ViewCategoryById = async (req, res, next) => {
     try {
-        let categories = await Category.findById({_id:req.params.id}).sort({ sortorder: -1 })
+        let categories = await Category.findById({ _id: req.params.id }).sort({ sortorder: -1 })
         return categories ? res.status(200).json({ Category: categories, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ error: "Internal Server Error", status: false });
+        return res.status(500).json({ error: err, status: false });
     }
 }
 export const DeleteCategory = async (req, res, next) => {
@@ -40,7 +40,7 @@ export const DeleteCategory = async (req, res, next) => {
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ error: "Internal server error", status: false });
+        return res.status(500).json({ error: err, status: false });
     }
 }
 export const UpdateCategory = async (req, res, next) => {
@@ -57,7 +57,7 @@ export const UpdateCategory = async (req, res, next) => {
         }
     } catch (err) {
         console.error(err);
-        return res.status(500).json({ error: 'Internal Server Error', status: false });
+        return res.status(500).json({ error: err, status: false });
     }
 };
 
@@ -72,7 +72,7 @@ export const saveSubCategory = async (req, res) => {
                 name: req.body.name,
                 image: req.body.image,
                 description: req.body.description,
-                status:req.body.status
+                status: req.body.status
             };
             category.subcategories.push(newSubCategory);
             const savedCategory = await category.save();
@@ -82,7 +82,7 @@ export const saveSubCategory = async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: "Internal Server Error", status: false });
+        return res.status(500).json({ error: error, status: false });
     }
 };
 export const updateSubCategory = async (req, res) => {
@@ -107,7 +107,7 @@ export const updateSubCategory = async (req, res) => {
         return res.status(200).json({ message: "Subcategory updated successfully", status: true, category: updatedCategory, });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        return res.status(500).json({ error: error, status: false });
     }
 }
 export const deleteSubCategory = async (req, res) => {
@@ -122,7 +122,7 @@ export const deleteSubCategory = async (req, res) => {
         return res.status(200).json({ message: "Subcategory deleted successfully", status: true, category: updatedCategory });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        return res.status(500).json({ error: error, status: false });
     }
 }
 

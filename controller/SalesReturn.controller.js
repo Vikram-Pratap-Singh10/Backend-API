@@ -79,7 +79,7 @@ export const saveSalesReturnOrder = async (req, res) => {
         });
         await Promise.all(promises);
         const totalAmount = returnItems.reduce((total, item) => {
-            return total + item.qty * item.price;
+            return total + item.Qty_Return * item.Product_Price;
         }, 0);
         req.body.totalAmount = totalAmount;
         req.body.productItems = returnItems;
