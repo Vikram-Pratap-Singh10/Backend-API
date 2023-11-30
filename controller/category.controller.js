@@ -23,6 +23,16 @@ export const ViewCategory = async (req, res, next) => {
         return res.status(500).json({ error: "Internal Server Error", status: false });
     }
 }
+export const ViewCategoryById = async (req, res, next) => {
+    try {
+        let categories = await Category.findById({_id:req.params.id}).sort({ sortorder: -1 })
+        return categories ? res.status(200).json({ Category: categories, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error", status: false });
+    }
+}
 export const DeleteCategory = async (req, res, next) => {
     try {
         const category = await Category.findByIdAndDelete({ _id: req.params.id })
