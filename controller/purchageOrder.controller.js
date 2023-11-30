@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Product } from "../model/product.model.js";
 import { PurchaseOrder } from "../model/purchaseOrder.model.js";
 import { User } from "../model/user.model.js";
@@ -119,3 +120,19 @@ export const purchaseOrderHistory = async (req, res, next) => {
         return res.status(500).json({ error: err, status: false });
     }
 };
+export const updatePurchaseOrderStatus = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        const { status } = req.body;
+        const order = await PurchaseOrder.findById({ _id: orderId });
+        if (!order) {
+            return res.status(404).json({ message: 'Purchase order not found' });
+        }
+        order.status = status;
+        await order.save();
+        return res.status(200).json({ Order: order, status: true });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error, status: false });
+    }
+}

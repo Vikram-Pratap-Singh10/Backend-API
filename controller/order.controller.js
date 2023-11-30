@@ -153,6 +153,22 @@ export const placeOrderHistory = async (req, res, next) => {
         return res.status(500).json({ error: err });
     }
 };
+export const updatePlaceOrderStatus = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        const { status } = req.body;
+        const order = await Order.findById({ _id: orderId });
+        if (!order) {
+            return res.status(404).json({ message: 'Place order not found' });
+        }
+        order.status = status;
+        await order.save();
+        return res.status(200).json({ Order: order, status: true });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error, status: false });
+    }
+}
 
 export const createOrder = async (req, res, next) => {
     try {
@@ -286,3 +302,19 @@ export const createOrderHistory = async (req, res, next) => {
         return res.status(500).json({ error: err });
     }
 };
+export const updateCreateOrderStatus = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        const { status } = req.body;
+        const order = await CreateOrder.findById({ _id: orderId });
+        if (!order) {
+            return res.status(404).json({ message: 'sales order not found' });
+        }
+        order.status = status;
+        await order.save();
+        return res.status(200).json({ Order: order, status: true });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error, status: false });
+    }
+}
