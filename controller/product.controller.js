@@ -47,6 +47,16 @@ export const ViewProduct = async (req, res, next) => {
         return res.status(500).json({ error: "Internal Server Error", status: false });
     }
 }
+export const ViewProductById = async (req, res, next) => {
+    try {
+        let product = await Product.findById({_id:req.params.id}).sort({ sortorder: -1 })
+        return product ? res.status(200).json({Product: product, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error", status: false });
+    }
+}
 export const DeleteProduct = async (req, res, next) => {
     try {
         const product = await Product.findByIdAndDelete({ _id: req.params.id })

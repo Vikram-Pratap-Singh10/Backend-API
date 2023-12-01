@@ -13,19 +13,29 @@ export const WarehouseXml = async (req, res) => {
     }
 };
 
-export const SaveWarehouse = async (req,res,next)=>{
-    try{
-       const warehouse = await Warehouse.create(req.body)
-       return warehouse ? res.status(200).json({message:"Data Save Successfully",Warehouse:warehouse,status:true}):res.status(400).json({message:"Something Went Wrong",status:false})
+export const SaveWarehouse = async (req, res, next) => {
+    try {
+        const warehouse = await Warehouse.create(req.body)
+        return warehouse ? res.status(200).json({ message: "Data Save Successfully", Warehouse: warehouse, status: true }) : res.status(400).json({ message: "Something Went Wrong", status: false })
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        return res.status(500).json({error:"Internal Server Error",status:false})
+        return res.status(500).json({ error: "Internal Server Error", status: false })
     }
 }
 export const ViewWarehouse = async (req, res, next) => {
     try {
         let warehouse = await Warehouse.find().sort({ sortorder: -1 })
+        return warehouse ? res.status(200).json({ Warehouse: warehouse, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error", status: false });
+    }
+}
+export const ViewWarehouseById = async (req, res, next) => {
+    try {
+        let warehouse = await Warehouse.findById({ _id: req.params.id }).sort({ sortorder: -1 })
         return warehouse ? res.status(200).json({ Warehouse: warehouse, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
