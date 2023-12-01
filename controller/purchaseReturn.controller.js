@@ -1,7 +1,7 @@
 import axios from "axios";
 import { PurchaseOrder } from "../model/purchaseOrder.model.js";
-import { DebitNote } from "../model/debitNote. model.js";
 import { PurchaseReturn } from "../model/purchaseReturn.model.js";
+import { DebitNote } from "../model/debitNote.model.js";
 
 export const PurchaseReturnXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/SalesReturn.xml";
