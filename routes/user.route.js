@@ -1,5 +1,5 @@
 import express from "express";
-import { DeleteUser, EditProfile, SaveUser, SignIn, UpdateUser, UserXml, ViewUser, forgetPassword, otpVerify, updatePassword, verifyOTP } from "../controller/user.controller.js";
+import { DeleteUser, EditProfile, SaveUser, SignIn, UpdateUser, UserXml, ViewUser, ViewUserById, forgetPassword, otpVerify, updatePassword, verifyOTP } from "../controller/user.controller.js";
 import multer from "multer";
 
 const router = express.Router();
@@ -8,6 +8,7 @@ const upload = multer({dest:"public/Images"})
 router.get("/get-xml",UserXml)
 router.post("/save-user",SaveUser)
 router.get("/view-user",ViewUser);
+router.get("/view-user-by-id/:id",ViewUserById)
 router.get("/delete-user/:id",DeleteUser);
 router.post("/update-user/:id",UpdateUser);
 
