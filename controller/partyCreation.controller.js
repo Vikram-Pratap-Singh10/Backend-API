@@ -33,6 +33,16 @@ export const ViewParty = async (req, res, next) => {
         return res.status(500).json({ error: "Internal Server Error", status: false });
     }
 }
+export const ViewPartyById = async (req, res, next) => {
+    try {
+        let party = await Party.findById({ _id: req.params.id }).sort({ sortorder: -1 })
+        return party ? res.status(200).json({ Party: party, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error", status: false });
+    }
+}
 export const DeleteParty = async (req, res, next) => {
     try {
         const party = await Party.findByIdAndDelete({ _id: req.params.id })
