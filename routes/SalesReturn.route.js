@@ -1,13 +1,19 @@
 import express from "express";
-import { SalesReturnXml, deleteSalesReturn, saveSalesReturnOrder, updateSalesReturn, viewSalesReturn, viewSalesReturnById } from "../controller/SalesReturn.controller.js";
+import { SalesReturnXml, deleteSalesReturn, deleteSalesReturnCreateOrder, saveSalesReturnCreateOrder, saveSalesReturnOrder, updateSalesReturn, updateSalesReturnCreateOrder, viewSalesReturn, viewSalesReturnById, viewSalesReturnCreateOrder, viewSalesReturnCreateOrderById } from "../controller/SalesReturn.controller.js";
 
 const router = express.Router();
 
 router.get("/get-xml", SalesReturnXml);
 router.post("/save-sales-return", saveSalesReturnOrder)
 router.get("/view-sales-return", viewSalesReturn);
-router.get("/view-sales-return-by-id/:id",viewSalesReturnById)
+router.get("/view-sales-return-by-id/:id", viewSalesReturnById)
 router.delete("/delete-sales-return/:id", deleteSalesReturn);
 router.put("/update-sales-return/:id", updateSalesReturn);
+
+router.post("/save-sales-return-createorder", saveSalesReturnCreateOrder)
+router.get("/view-sales-return-createorder", viewSalesReturnCreateOrder);
+router.get("/view-sales-return-createorder-by-id/:id", viewSalesReturnCreateOrderById)
+router.delete("/delete-sales-return-createorder/:id", deleteSalesReturnCreateOrder);
+router.put("/update-sales-return-createorder/:id", updateSalesReturnCreateOrder);
 
 export default router;
