@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const roleSchema = mongoose.Schema({
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: ""
+        ref: "role"
     },
     roleName: {
         type: String
