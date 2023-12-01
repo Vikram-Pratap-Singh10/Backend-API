@@ -75,6 +75,23 @@ const PromotionSchema = new mongoose.Schema({
             }
         }]
     }],
+    promoCodeWise:[{
+        promoCode:{
+            type:String
+        },
+        promoAmount:{
+            type:String
+        },
+        startDate: {
+            type: String
+        },
+        endDate: {
+            type: String
+        },
+        status:{
+            type:String
+        }
+    }],
     status: {
         type: String
     }

@@ -11,10 +11,13 @@ const CreditNoteSchema = new mongoose.Schema({
         productId: {
             type: String
         },
-        qty: {
+        Qty_Sales: {
             type: Number
         },
-        price: {
+        Qty_Return: {
+            type: Number
+        },
+        Product_Price: {
             type: Number
         }
     }],
