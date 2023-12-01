@@ -27,7 +27,17 @@ export const SaveUser = async (req, res, next) => {
 }
 export const ViewUser = async (req, res, next) => {
     try {
-        let user = await User.find().sort({ sortorder: -1 })
+        let user = await User.find().sort({ sortorder: -1 }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" })
+        return user ? res.status(200).json({ User: user, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error", status: false });
+    }
+}
+export const ViewUserById = async (req, res, next) => {
+    try {
+        let user = await User.findById({_id:req.params.id}).sort({ sortorder: -1 }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" })
         return user ? res.status(200).json({ User: user, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
