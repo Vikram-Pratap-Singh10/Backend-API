@@ -79,7 +79,7 @@ export const SignIn = async (req, res, next) => {
         const { email, password } = req.body
         const otp = Math.floor(100000 + Math.random() * 900000);
         otpStore[email] = otp;
-        const createAccount = await User.findOne({ email: email });
+        const createAccount = await User.findOne({ email: email }).populate({ path: "rolename", model: "role" });;
         // let status = await bcryptjs.compare(password,createAccount.password)
         if (!createAccount) {
             return res.status(400).json({ message: 'Incorrect email' });
