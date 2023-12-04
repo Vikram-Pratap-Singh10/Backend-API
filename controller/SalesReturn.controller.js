@@ -147,7 +147,7 @@ export const saveSalesReturnCreateOrder = async (req, res) => {
     const returnItems = req.body.returnItems;
     const { orderId } = req.body;
     try {
-        const promises = returnItems.map(async ({ productId, qty, price }) => {
+        const promises = returnItems.map(async ({ productId, Qty_Return, price }) => {
             const product = await Product.findOne({ _id: productId })
             const order = await CreateOrder.findOne({ _id: orderId });
             if (!order) {
