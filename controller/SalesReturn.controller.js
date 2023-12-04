@@ -68,7 +68,7 @@ export const saveSalesReturnOrder = async (req, res) => {
     const { orderId } = req.body;
     try {
         const promises = returnItems.map(async ({ productId, Qty_Return, price }) => {
-            const product = await Product.findOne({_id:productId})
+            const product = await Product.findOne({ _id: productId })
             const order = await Order.findOne({ _id: orderId });
             if (!order) {
                 throw new Error(`Order ${orderId} not found`);
@@ -77,7 +77,8 @@ export const saveSalesReturnOrder = async (req, res) => {
             if (!orderItem) {
                 throw new Error(`Product ${productId} not found in order ${orderId}`);
             }
-            product.Size +=Qty_Return;
+            product.Size += Qty_Return;
+            orderItem.qty -= Qty_Return;
             orderItem.status = 'return';
             await order.save();
         });
@@ -147,6 +148,7 @@ export const saveSalesReturnCreateOrder = async (req, res) => {
     const { orderId } = req.body;
     try {
         const promises = returnItems.map(async ({ productId, qty, price }) => {
+            const product = await Product.findOne({ _id: productId })
             const order = await CreateOrder.findOne({ _id: orderId });
             if (!order) {
                 throw new Error(`Order ${orderId} not found`);
@@ -155,6 +157,7 @@ export const saveSalesReturnCreateOrder = async (req, res) => {
             if (!orderItem) {
                 throw new Error(`Product ${productId} not found in order ${orderId}`);
             }
+            product.Size += Qty_Return;
             orderItem.status = 'return';
             await order.save();
         });
