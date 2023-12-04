@@ -5,7 +5,7 @@ import { DebitNote } from "../model/debitNote.model.js";
 import { Product } from "../model/product.model.js";
 
 export const PurchaseReturnXml = async (req, res) => {
-    const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/SalesReturn.xml";
+    const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/PurchaseReturn.xml";
     try {
         const response = await axios.get(fileUrl);
         const data = response.data;
@@ -46,20 +46,40 @@ export const deletePurchaseReturn = async (req, res, next) => {
         return res.status(500).json({ error: err, status: false })
     }
 };
-export const updatePurchaseReturn = async (req, res, next) => {
+export const updatePurchaseReturn = async (req, res) => {
+    const { purchaseReturnId } = req.params.id;
+    const updateData = req.body;
     try {
-        const purchaseReturnId = req.params.id;
-        const existingPurchaseReturn = await PurchaseReturn.findById(purchaseReturnId);
+        const existingPurchaseReturn = await PurchaseReturn.findOne({ _id: purchaseReturnId });
         if (!existingPurchaseReturn) {
-            return res.status(404).json({ message: "PurchaseReturn Not Found", status: false });
+            return res.status(404).json({ message: `Sales return with ID ${purchaseReturnId} not found`, status: false });
         }
-        const updatedPurchaseReturn = req.body;
-        const updatePurchaseReturn = await PurchaseReturn.findByIdAndUpdate(purchaseReturnId, updatedPurchaseReturn, { new: true })
-        return updatePurchaseReturn ? res.status(200).json({ message: "PurchaseReturn Updated Successfully", status: true }) : res.status(400).json({ message: "Something Went Wrong", status: false })
-    }
-    catch (err) {
-        console.log(err);
-        return res.status(500).json({ error: err, status: false })
+        const originalReturnItems = existingPurchaseReturn.productItems;
+        const orderId = existingPurchaseReturn.orderId;
+        await PurchaseReturn.updateOne({ _id: purchaseReturnId }, { $set: updateData });
+        const promises = updateData.productItems.map(async ({ productId, Qty_Return }) => {
+            const order = await PurchaseOrder.findOne({ _id: orderId });
+            if (!order) {
+                throw new Error(`Order ${orderId} not found`);
+            }
+            const orderItem = order.orderItems.find(item => item.productId.toString() === productId);
+
+            if (orderItem) {
+                orderItem.qty -= Qty_Return;
+                const product = await Product.findOne({ _id: productId });
+                if (product) {
+                    product.Size += Qty_Return;
+                    await product.save();
+                }
+                await order.save();
+            }
+        });
+        await Promise.all(promises);
+        const updatedSalesReturn = await PurchaseReturn.findOne({ _id: purchaseReturnId });
+        return res.status(200).json({ message: 'Sales return updated successfully', updatedSalesReturn });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error, status: false });
     }
 };
 export const savePurchaseReturnOrder = async (req, res) => {
