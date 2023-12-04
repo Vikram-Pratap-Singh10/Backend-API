@@ -37,7 +37,7 @@ export const ViewUser = async (req, res, next) => {
 }
 export const ViewUserById = async (req, res, next) => {
     try {
-        let user = await User.findById({_id:req.params.id}).sort({ sortorder: -1 }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" })
+        let user = await User.findById({ _id: req.params.id }).sort({ sortorder: -1 }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" })
         return user ? res.status(200).json({ User: user, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
@@ -76,7 +76,7 @@ export const UpdateUser = async (req, res, next) => {
 const otpStore = {};
 export const SignIn = async (req, res, next) => {
     try {
-        const { email, password } = req.body
+        const { email, password, latitude, longitude } = req.body
         const otp = Math.floor(100000 + Math.random() * 900000);
         otpStore[email] = otp;
         const createAccount = await User.findOne({ email: email }).populate({ path: "rolename", model: "role" });;
@@ -97,6 +97,7 @@ export const SignIn = async (req, res, next) => {
                 subject: 'Verification for login',
                 html: '<div style={{fontFamily: "Helvetica,Arial,sans-serif",minWidth: 1000,overflow: "auto",lineHeight: 2}}<div style={{ margin: "50px auto", width: "70%", padding: "20px 0" }}><div style={{ borderBottom: "1px solid #eee" }}><a href=""style={{ fontSize: "1.4em",color: "#00466a" textDecoration: "none",fontWeight: 600}}></a></div><p style={{ fontSize: "1.1em" }}>Hi,</p><p>Thank you for choosing Our Company. Use the following OTP to complete your Sign In procedures.</p><h2 value="otp" style={{ background: "#00466a", margin: "0 auto",width: "max-content" padding: "0 10px",color: "#fff",borderRadius: 4}}>' + otp + '</h2><p style={{ fontSize: "0.9em" }}Regards,<br />SoftNumen Software Solutions</p><hr style={{ border: "none", borderTop: "1px solid #eee" }} /></div</div>',
             };
+            await User.updateOne({ email }, { $set: { latitude, longitude } });
             await transporter.sendMail(mailOptions, (error, info) => {
                 (!error) ? res.status(201).json({ user: { ...createAccount.toObject(), password: undefined }, message: "send otp on email", status: true }) : console.log(error) || res.json({ error: "something went wrong" });
             });
@@ -104,6 +105,7 @@ export const SignIn = async (req, res, next) => {
         }
         else {
             let token = await Jwt.sign({ subject: createAccount.email }, "dfdfjdkfdjfkdjf")
+            await User.updateOne({ email }, { $set: { latitude, longitude } });
             return res.json({ message: 'Login successful', user: { ...createAccount.toObject(), password: undefined, token }, status: true });
         }
     }

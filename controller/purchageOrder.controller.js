@@ -136,3 +136,42 @@ export const updatePurchaseOrderStatus = async (req, res) => {
         return res.status(500).json({ error: error, status: false });
     }
 }
+export const updatePurchaseOrder = async (req, res, next) => {
+    try {
+        const orderId = req.params.id;
+        req.body.orderItem = req.body.orderItems
+        const updatedFields = req.body;
+        if (!orderId || !updatedFields) {
+            return res.status(400).json({ message: "Invalid input data", status: false });
+        }
+        const order = await PurchaseOrder.findById({ _id: orderId });
+        if (!order) {
+            return res.status(404).json({ message: "Order not found", status: false });
+        }
+        else if (order.status === 'completed')
+            return res.status(400).json({ message: "this order not updated", status: false })
+        const oldOrderItems = order.orderItems || [];
+        const newOrderItems = updatedFields.orderItems || [];
+        for (const newOrderItem of newOrderItems) {
+            const oldOrderItem = oldOrderItems.find(item => item.productId.toString() === newOrderItem.productId.toString());
+            if (oldOrderItem) {
+                const quantityChange = newOrderItem.qty - oldOrderItem.qty;
+                if (quantityChange !== 0) {
+                    const product = await Product.findById({ _id: newOrderItem.productId });
+                    if (product) {
+                        product.Size -= quantityChange;
+                        await product.save();
+                    } else {
+                        console.error(`Product with ID ${newOrderItem.productId} not found`);
+                    }
+                }
+            }
+        }
+        Object.assign(order, updatedFields);
+        const updatedOrder = await order.save();
+        return res.status(200).json({ orderDetail: updatedOrder, status: true });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+};

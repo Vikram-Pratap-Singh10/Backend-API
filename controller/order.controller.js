@@ -25,7 +25,7 @@ export const placeOrder = async (req, res, next) => {
             return res.status(401).json({ message: "No user found", status: false });
         } else {
             const billAmount = orderItems.reduce((total, orderItem) => {
-                return total + (orderItem.price * orderItem.quantity);
+                return total + (orderItem.price * orderItem.qty);
             }, 0);
             for (const orderItem of orderItems) {
                 const product = await Product.findOne({ _id: orderItem.productId });
@@ -153,6 +153,45 @@ export const placeOrderHistory = async (req, res, next) => {
         return res.status(500).json({ error: err });
     }
 };
+export const updatePlaceOrder = async (req, res, next) => {
+    try {
+        const orderId = req.params.id;
+        req.body.orderItem = req.body.orderItems
+        const updatedFields = req.body;
+        if (!orderId || !updatedFields) {
+            return res.status(400).json({ message: "Invalid input data", status: false });
+        }
+        const order = await Order.findById({ _id: orderId });
+        if (!order) {
+            return res.status(404).json({ message: "Order not found", status: false });
+        }
+        else if (order.status === 'completed')
+            return res.status(400).json({ message: "this order not updated", status: false })
+        const oldOrderItems = order.orderItem || [];
+        const newOrderItems = updatedFields.orderItem || [];
+        for (const newOrderItem of newOrderItems) {
+            const oldOrderItem = oldOrderItems.find(item => item.productId.toString() === newOrderItem.productId.toString());
+            if (oldOrderItem) {
+                const quantityChange = newOrderItem.qty - oldOrderItem.qty;
+                if (quantityChange !== 0) {
+                    const product = await Product.findById({ _id: newOrderItem.productId });
+                    if (product) {
+                        product.Size -= quantityChange;
+                        await product.save();
+                    } else {
+                        console.error(`Product with ID ${newOrderItem.productId} not found`);
+                    }
+                }
+            }
+        }
+        Object.assign(order, updatedFields);
+        const updatedOrder = await order.save();
+        return res.status(200).json({ orderDetail: updatedOrder, status: true });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+};
 export const updatePlaceOrderStatus = async (req, res) => {
     try {
         const orderId = req.params.id;
@@ -178,7 +217,7 @@ export const createOrder = async (req, res, next) => {
             return res.status(401).json({ message: "No user found", status: false });
         } else {
             const billAmount = orderItems.reduce((total, orderItem) => {
-                return total + (orderItem.price * orderItem.quantity);
+                return total + (orderItem.price * orderItem.qty);
             }, 0);
             for (const orderItem of orderItems) {
                 const product = await Product.findOne({ _id: orderItem.productId });
@@ -319,4 +358,43 @@ export const updateCreateOrderStatus = async (req, res) => {
         console.error(error);
         return res.status(500).json({ error: error, status: false });
     }
-}
+};
+export const updateCreateOrder = async (req, res, next) => {
+    try {
+        const orderId = req.params.id;
+        req.body.orderItem = req.body.orderItems
+        const updatedFields = req.body;
+        if (!orderId || !updatedFields) {
+            return res.status(400).json({ message: "Invalid input data", status: false });
+        }
+        const order = await CreateOrder.findById({ _id: orderId });
+        if (!order) {
+            return res.status(404).json({ message: "Order not found", status: false });
+        }
+        else if (order.status === 'completed')
+            return res.status(400).json({ message: "this order not updated", status: false })
+        const oldOrderItems = order.orderItem || [];
+        const newOrderItems = updatedFields.orderItem || [];
+        for (const newOrderItem of newOrderItems) {
+            const oldOrderItem = oldOrderItems.find(item => item.productId.toString() === newOrderItem.productId.toString());
+            if (oldOrderItem) {
+                const quantityChange = newOrderItem.qty - oldOrderItem.qty;
+                if (quantityChange !== 0) {
+                    const product = await Product.findById({ _id: newOrderItem.productId });
+                    if (product) {
+                        product.Size -= quantityChange;
+                        await product.save();
+                    } else {
+                        console.error(`Product with ID ${newOrderItem.productId} not found`);
+                    }
+                }
+            }
+        }
+        Object.assign(order, updatedFields);
+        const updatedOrder = await order.save();
+        return res.status(200).json({ orderDetail: updatedOrder, status: true });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+};
