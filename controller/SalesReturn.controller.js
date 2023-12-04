@@ -158,6 +158,7 @@ export const saveSalesReturnCreateOrder = async (req, res) => {
                 throw new Error(`Product ${productId} not found in order ${orderId}`);
             }
             product.Size += Qty_Return;
+            orderItem.qty -= Qty_Return;
             orderItem.status = 'return';
             await order.save();
         });
