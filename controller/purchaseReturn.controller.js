@@ -2,6 +2,7 @@ import axios from "axios";
 import { PurchaseOrder } from "../model/purchaseOrder.model.js";
 import { PurchaseReturn } from "../model/purchaseReturn.model.js";
 import { DebitNote } from "../model/debitNote.model.js";
+import { Product } from "../model/product.model.js";
 
 export const PurchaseReturnXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/SalesReturn.xml";
@@ -65,7 +66,8 @@ export const savePurchaseReturnOrder = async (req, res) => {
     const returnItems = req.body.returnItems;
     const { orderId } = req.body;
     try {
-        const promises = returnItems.map(async ({ productId, qty, price }) => {
+        const promises = returnItems.map(async ({ productId, Qty_Return, price }) => {
+            const product = await Product.findOne({ _id: productId })
             const order = await PurchaseOrder.findOne({ _id: orderId });
             if (!order) {
                 throw new Error(`Order ${orderId} not found`);
@@ -74,6 +76,8 @@ export const savePurchaseReturnOrder = async (req, res) => {
             if (!orderItem) {
                 throw new Error(`Product ${productId} not found in order ${orderId}`);
             }
+            product.Size += Qty_Return;
+            orderItem.qty -= Qty_Return;
             orderItem.status = 'return';
             await order.save();
         });
