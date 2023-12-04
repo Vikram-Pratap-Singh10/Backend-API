@@ -3,6 +3,7 @@ import { SalesReturn } from "../model/salesReturn.model.js";
 import { Order } from "../model/order.model.js";
 import { CreditNote } from "../model/creditNote.model.js";
 import { CreateOrder } from "../model/createOrder.model.js";
+import { Product } from "../model/product.model.js";
 
 export const SalesReturnXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/SalesReturn.xml";
@@ -66,7 +67,8 @@ export const saveSalesReturnOrder = async (req, res) => {
     const returnItems = req.body.returnItems;
     const { orderId } = req.body;
     try {
-        const promises = returnItems.map(async ({ productId, qty, price }) => {
+        const promises = returnItems.map(async ({ productId, Qty_Return, price }) => {
+            const product = await Product.findOne({_id:productId})
             const order = await Order.findOne({ _id: orderId });
             if (!order) {
                 throw new Error(`Order ${orderId} not found`);
@@ -75,6 +77,7 @@ export const saveSalesReturnOrder = async (req, res) => {
             if (!orderItem) {
                 throw new Error(`Product ${productId} not found in order ${orderId}`);
             }
+            product.Size +=Qty_Return;
             orderItem.status = 'return';
             await order.save();
         });

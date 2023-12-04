@@ -76,6 +76,12 @@ const OrderSchema = new mongoose.Schema({
         type: String,
         default: "pending"
     },
+    latitude:{
+        type:String
+    },
+    longitude:{
+        type:String
+    },
     paymentId: {
         type: String
     },
