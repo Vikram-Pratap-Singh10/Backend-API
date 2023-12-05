@@ -82,6 +82,9 @@ const createOrderSchema = new mongoose.Schema({
     longitude: {
         type: String
     },
+    currentAddress: {
+        type: String
+    },
     paymentId: {
         type: String
     },

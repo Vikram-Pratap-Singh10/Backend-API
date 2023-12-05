@@ -78,6 +78,9 @@ const PurchaseOrderSchema = new mongoose.Schema({
     longitude: {
         type: String
     },
+    currentAddress: {
+        type: String
+    },
     paymentId: {
         type: String
     },

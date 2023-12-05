@@ -63,7 +63,6 @@ export const updatePurchaseReturn = async (req, res) => {
                 throw new Error(`Order ${orderId} not found`);
             }
             const orderItem = order.orderItems.find(item => item.productId.toString() === productId);
-
             if (orderItem) {
                 orderItem.qty -= Qty_Return;
                 const product = await Product.findOne({ _id: productId });
@@ -96,10 +95,17 @@ export const savePurchaseReturnOrder = async (req, res) => {
             if (!orderItem) {
                 throw new Error(`Product ${productId} not found in order ${orderId}`);
             }
-            product.Size += Qty_Return;
-            orderItem.qty -= Qty_Return;
-            orderItem.status = 'return';
-            await order.save();
+            if (Qty_Purchased === 1) {
+                product.Size += Qty_Return;
+                orderItem.qty -= Qty_Return;
+                order.status = "return";
+                orderItem.status = 'return';
+                await order.save();
+            } else {
+                product.Size += Qty_Return;
+                orderItem.qty -= Qty_Return;
+                await order.save();
+            }
         });
         await Promise.all(promises);
         const totalAmount = returnItems.reduce((total, item) => {

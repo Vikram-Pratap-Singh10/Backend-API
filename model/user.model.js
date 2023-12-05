@@ -7,6 +7,7 @@ let rolename = 'rolename';
 let created_by = 'created_by';
 let latitude = "latitude";
 let longitude = "longitude";
+let currentAddress = "currentAddress";
 
 async function createSchema() {
   const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/Createuser.xml');
@@ -48,6 +49,7 @@ async function createSchema() {
   }
   schemaDefinition[latitude] = Number;
   schemaDefinition[longitude] = Number;
+  schemaDefinition[currentAddress] = String;
   if (jsonData.CreateUser.MyDropdown) {
     if (Array.isArray(jsonData.CreateUser.MyDropdown)) {
       jsonData.CreateUser.MyDropdown.forEach((dropdown) => {

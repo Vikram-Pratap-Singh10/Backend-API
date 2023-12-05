@@ -101,11 +101,11 @@ export const saveSalesReturnOrder = async (req, res) => {
                 product.Size += Qty_Return;
                 orderItem.qty -= Qty_Return;
                 order.status = "return";
+                orderItem.status = 'return';
                 await order.save();
             } else {
                 product.Size += Qty_Return;
                 orderItem.qty -= Qty_Return;
-                orderItem.status = 'return';
                 await order.save();
             }
         });
@@ -208,11 +208,11 @@ export const saveSalesReturnCreateOrder = async (req, res) => {
                 product.Size += Qty_Return;
                 orderItem.qty -= Qty_Return;
                 order.status = "return";
+                orderItem.status = 'return';
                 await order.save();
             } else {
                 product.Size += Qty_Return;
                 orderItem.qty -= Qty_Return;
-                orderItem.status = 'return';
                 await order.save();
             }
         });
