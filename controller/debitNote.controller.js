@@ -26,23 +26,5 @@ export const viewDebitNoteById = async (req, res) => {
         return res.status(500).json({ error: 'Internal Server Error', status: false });
     }
 };
-import axios from "axios";
-export const pincode = async (req, res) => {
-    const pincodeAPIUrl = 'https://vikram-pratap-singh10.github.io/pincodeAPI/output.json';
-    const pincodeValue = req.params.pincode;
-    try {
-        const response = await axios.get(pincodeAPIUrl);
-        const data = response.data;
-        const result = data.find(entry => entry.Pincode === pincodeValue);
-        console.log(result)
-        if (result) {
-            res.json({ state: result.StateName, city: result.District });
-        } else {
-            res.status(404).json({ message: 'Pincode not found' });
-        }
-    } catch (error) {
-        console.error('Error fetching data:', error.message);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};
+
 
