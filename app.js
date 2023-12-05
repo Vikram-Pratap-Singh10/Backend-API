@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import express from "express";
 import path from "path"
 import fs from "fs"
-import { fileURLToPath } from "url"
+import { fileURLToPath } from "url";
 // import CreateAccountRouter from "./routes/createAccount.route.js";
 // -----------------------------------------------------------
 import UserRouter from "./routes/user.route.js";
@@ -23,7 +23,8 @@ import TargetCreationRouter from "./routes/targerCreation.route.js";
 import PurchaseOrderRouter from "./routes/purchaseOrder.route.js";
 import CreditNoteRouter from "./routes/creditNote.route.js";
 import PurchaseReturnRouter from "./routes/purchaseReturn.route.js";
-import PromotionRouter from "./routes/promotion.route.js"
+import DebitNoteRouter from "./routes/debitNote.route.js";
+import PromotionRouter from "./routes/promotion.route.js";
 
 
 import mongoose from 'mongoose';
@@ -58,7 +59,8 @@ app.use("/target-creation", TargetCreationRouter);
 app.use("/purchase-order", PurchaseOrderRouter);
 app.use("/credit-note", CreditNoteRouter);
 app.use("/purchase-return", PurchaseReturnRouter);
-app.use("/promotion", PromotionRouter)
+app.use("/debit-note", DebitNoteRouter);
+app.use("/promotion", PromotionRouter);
 
 mongoose.connect(process.env.DATABASE_URL, {
   useUnifiedTopology: true,

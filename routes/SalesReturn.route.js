@@ -1,5 +1,5 @@
 import express from "express";
-import { SalesReturnXml, deleteSalesReturn, deleteSalesReturnCreateOrder, saveSalesReturnCreateOrder, saveSalesReturnOrder, updateSalesReturn, updateSalesReturnCreateOrder, viewSalesReturn, viewSalesReturnById, viewSalesReturnCreateOrder, viewSalesReturnCreateOrderById } from "../controller/SalesReturn.controller.js";
+import { SalesReturnXml, deleteSalesReturn, deleteSalesReturnCreateOrder, saveSalesReturnCreateOrder, saveSalesReturnOrder, updateSalesReturnCreateOrder, updateSalesReturnOrder, viewSalesReturn, viewSalesReturnById, viewSalesReturnCreateOrder, viewSalesReturnCreateOrderById } from "../controller/SalesReturn.controller.js";
 
 const router = express.Router();
 
@@ -8,7 +8,7 @@ router.post("/save-sales-return", saveSalesReturnOrder)
 router.get("/view-sales-return", viewSalesReturn);
 router.get("/view-sales-return-by-id/:id", viewSalesReturnById)
 router.delete("/delete-sales-return/:id", deleteSalesReturn);
-router.put("/update-sales-return/:id", updateSalesReturn);
+router.put("/update-sales-return/:id", updateSalesReturnOrder);
 
 router.post("/save-sales-return-createorder", saveSalesReturnCreateOrder)
 router.get("/view-sales-return-createorder", viewSalesReturnCreateOrder);

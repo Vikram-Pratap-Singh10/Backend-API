@@ -47,22 +47,42 @@ export const deleteSalesReturn = async (req, res, next) => {
         return res.status(500).json({ error: "Internal Server Error", status: false })
     }
 }
-export const updateSalesReturn = async (req, res, next) => {
+export const updateSalesReturnOrder = async (req, res) => {
+    const { salesReturnId } = req.params.id;
+    const updateData = req.body;
     try {
-        const salesReturnId = req.params.id;
-        const existingSalesReturn = await SalesReturn.findById(salesReturnId);
+        const existingSalesReturn = await SalesReturn.findOne({ _id: salesReturnId });
         if (!existingSalesReturn) {
-            return res.status(404).json({ message: "SalesReturn Not Found", status: false });
+            return res.status(404).json({ message: `Sales return with ID ${salesReturnId} not found`, status: false });
         }
-        const updatedSalesReturn = req.body;
-        const updateSalesReturn = await SalesReturn.findByIdAndUpdate(salesReturnId, updatedSalesReturn, { new: true })
-        return updateSalesReturn ? res.status(200).json({ message: "SalesReturn Updated Successfully", status: true }) : res.status(400).json({ message: "Something Went Wrong", status: false })
+        const originalReturnItems = existingSalesReturn.productItems;
+        const orderId = existingSalesReturn.orderId;
+        await SalesReturn.updateOne({ _id: salesReturnId }, { $set: updateData });
+        const promises = updateData.productItems.map(async ({ productId, Qty_Return }) => {
+            const order = await Order.findOne({ _id: orderId });
+            if (!order) {
+                throw new Error(`Order ${orderId} not found`);
+            }
+            const orderItem = order.orderItem.find(item => item.productId.toString() === productId);
+
+            if (orderItem) {
+                orderItem.qty -= Qty_Return;
+                const product = await Product.findOne({ _id: productId });
+                if (product) {
+                    product.Size += Qty_Return;
+                    await product.save();
+                }
+                await order.save();
+            }
+        });
+        await Promise.all(promises);
+        const updatedSalesReturn = await SalesReturn.findOne({ _id: salesReturnId });
+        return res.status(200).json({ message: 'Sales return updated successfully', updatedSalesReturn });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error, status: false });
     }
-    catch (err) {
-        console.log(err);
-        return res.status(500).json({ error: "Internal Server Error", status: false })
-    }
-}
+};
 export const saveSalesReturnOrder = async (req, res) => {
     const returnItems = req.body.returnItems;
     const { orderId } = req.body;
@@ -77,10 +97,17 @@ export const saveSalesReturnOrder = async (req, res) => {
             if (!orderItem) {
                 throw new Error(`Product ${productId} not found in order ${orderId}`);
             }
-            product.Size += Qty_Return;
-            orderItem.qty -= Qty_Return;
-            orderItem.status = 'return';
-            await order.save();
+            if (orderItem.Qty_Sales === 1) {
+                product.Size += Qty_Return;
+                orderItem.qty -= Qty_Return;
+                order.status = "return";
+                orderItem.status = 'return';
+                await order.save();
+            } else {
+                product.Size += Qty_Return;
+                orderItem.qty -= Qty_Return;
+                await order.save();
+            }
         });
         await Promise.all(promises);
         const totalAmount = returnItems.reduce((total, item) => {
@@ -128,26 +155,46 @@ export const deleteSalesReturnCreateOrder = async (req, res, next) => {
     }
 }
 export const updateSalesReturnCreateOrder = async (req, res, next) => {
+    const { salesReturnId } = req.params.id;
+    const updateData = req.body;
     try {
-        const salesReturnId = req.params.id;
-        const existingSalesReturn = await SalesReturn.findById(salesReturnId);
+        const existingSalesReturn = await SalesReturn.findOne({ _id: salesReturnId });
         if (!existingSalesReturn) {
-            return res.status(404).json({ message: "SalesReturn Not Found", status: false });
+            return res.status(404).json({ message: `Sales return with ID ${salesReturnId} not found`, status: false });
         }
-        const updatedSalesReturn = req.body;
-        const updateSalesReturn = await SalesReturn.findByIdAndUpdate(salesReturnId, updatedSalesReturn, { new: true })
-        return updateSalesReturn ? res.status(200).json({ message: "SalesReturn Updated Successfully", status: true }) : res.status(400).json({ message: "Something Went Wrong", status: false })
-    }
-    catch (err) {
-        console.log(err);
-        return res.status(500).json({ error: "Internal Server Error", status: false })
+        const originalReturnItems = existingSalesReturn.productItems;
+        const orderId = existingSalesReturn.orderId;
+        await SalesReturn.updateOne({ _id: salesReturnId }, { $set: updateData });
+        const promises = updateData.productItems.map(async ({ productId, Qty_Return }) => {
+            const order = await CreateOrder.findOne({ _id: orderId });
+            if (!order) {
+                throw new Error(`Order ${orderId} not found`);
+            }
+            const orderItem = order.orderItem.find(item => item.productId.toString() === productId);
+
+            if (orderItem) {
+                orderItem.qty -= Qty_Return;
+                const product = await Product.findOne({ _id: productId });
+                if (product) {
+                    product.Size += Qty_Return;
+                    await product.save();
+                }
+                await order.save();
+            }
+        });
+        await Promise.all(promises);
+        const updatedSalesReturn = await SalesReturn.findOne({ _id: salesReturnId });
+        return res.status(200).json({ message: 'Sales return updated successfully', updatedSalesReturn });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error, status: false });
     }
 }
 export const saveSalesReturnCreateOrder = async (req, res) => {
     const returnItems = req.body.returnItems;
     const { orderId } = req.body;
     try {
-        const promises = returnItems.map(async ({ productId, Qty_Return, price }) => {
+        const promises = returnItems.map(async ({ productId, Qty_Return, Qty_Sales, price }) => {
             const product = await Product.findOne({ _id: productId })
             const order = await CreateOrder.findOne({ _id: orderId });
             if (!order) {
@@ -157,10 +204,17 @@ export const saveSalesReturnCreateOrder = async (req, res) => {
             if (!orderItem) {
                 throw new Error(`Product ${productId} not found in order ${orderId}`);
             }
-            product.Size += Qty_Return;
-            orderItem.qty -= Qty_Return;
-            orderItem.status = 'return';
-            await order.save();
+            if (Qty_Sales === 1) {
+                product.Size += Qty_Return;
+                orderItem.qty -= Qty_Return;
+                order.status = "return";
+                orderItem.status = 'return';
+                await order.save();
+            } else {
+                product.Size += Qty_Return;
+                orderItem.qty -= Qty_Return;
+                await order.save();
+            }
         });
         await Promise.all(promises);
         const totalAmount = returnItems.reduce((total, item) => {

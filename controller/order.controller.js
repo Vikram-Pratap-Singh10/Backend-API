@@ -52,6 +52,9 @@ export const placeOrder = async (req, res, next) => {
                 shippingCost: req.body.shippingCost,
                 taxAmount: req.body.taxAmount,
                 status: req.body.status,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude,
+                currentAddress: req.body.currentAddress,
                 orderItem: orderItems
             });
 
@@ -98,6 +101,9 @@ export const placeOrderHistoryByUserId = async (req, res, next) => {
                 shippingCost: order.shippingCost,
                 taxAmount: order.taxAmount,
                 orderItems: formattedOrderItems,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude,
+                currentAddress: req.body.currentAddress,
                 status: order.status,
                 createdAt: order.createdAt,
                 updatedAt: order.updatedAt
@@ -142,6 +148,9 @@ export const placeOrderHistory = async (req, res, next) => {
                 shippingCost: order.shippingCost,
                 taxAmount: order.taxAmount,
                 status: order.status,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude,
+                currentAddress: req.body.currentAddress,
                 orderItems: formattedOrderItems,
                 createdAt: order.createdAt,
                 updatedAt: order.updatedAt
@@ -243,6 +252,9 @@ export const createOrder = async (req, res, next) => {
                 discount: req.body.discount,
                 shippingCost: req.body.shippingCost,
                 taxAmount: req.body.taxAmount,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude,
+                currentAddress: req.body.currentAddress,
                 status: req.body.status,
                 orderItem: orderItems
             });
@@ -288,6 +300,9 @@ export const createOrderHistoryByUserId = async (req, res, next) => {
                 shippingCost: order.shippingCost,
                 taxAmount: order.taxAmount,
                 orderItems: formattedOrderItems,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude,
+                currentAddress: req.body.currentAddress,
                 status: order.status,
                 createdAt: order.createdAt,
                 updatedAt: order.updatedAt
@@ -331,6 +346,9 @@ export const createOrderHistory = async (req, res, next) => {
                 discount: order.discount,
                 shippingCost: order.shippingCost,
                 taxAmount: order.taxAmount,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude,
+                currentAddress: req.body.currentAddress,
                 status: order.status,
                 orderItems: formattedOrderItems,
                 createdAt: order.createdAt,
