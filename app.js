@@ -25,7 +25,8 @@ import CreditNoteRouter from "./routes/creditNote.route.js";
 import PurchaseReturnRouter from "./routes/purchaseReturn.route.js";
 import DebitNoteRouter from "./routes/debitNote.route.js";
 import PromotionRouter from "./routes/promotion.route.js";
-
+import HierarchyRouter from "./routes/createHierarchy.route.js";
+import GoodDispatchRouter from "./routes/goodDispatch.route.js"
 
 import mongoose from 'mongoose';
 const app = express();
@@ -61,6 +62,8 @@ app.use("/credit-note", CreditNoteRouter);
 app.use("/purchase-return", PurchaseReturnRouter);
 app.use("/debit-note", DebitNoteRouter);
 app.use("/promotion", PromotionRouter);
+app.use("/hierarchy", HierarchyRouter);
+app.use("/good-dispatch", GoodDispatchRouter)
 
 mongoose.connect(process.env.DATABASE_URL, {
   useUnifiedTopology: true,
