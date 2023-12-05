@@ -87,7 +87,7 @@ export const saveSalesReturnOrder = async (req, res) => {
     const returnItems = req.body.returnItems;
     const { orderId } = req.body;
     try {
-        const promises = returnItems.map(async ({ productId, Qty_Return, price }) => {
+        const promises = returnItems.map(async ({ productId, Qty_Return, Qty_Sales, price }) => {
             const product = await Product.findOne({ _id: productId })
             const order = await Order.findOne({ _id: orderId });
             if (!order) {
