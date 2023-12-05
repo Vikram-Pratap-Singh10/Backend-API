@@ -2,7 +2,7 @@ import axios from "axios";
 import { Party } from "../model/partyCreation.model.js";
 
 export const PartyXml = async (req, res) => {
-    const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/PartyCreationConfig.xml";
+    const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/PartyCreation.xml";
     try {
         const response = await axios.get(fileUrl);
         const data = response.data;

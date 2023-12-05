@@ -3,7 +3,6 @@ import { Order } from "../model/order.model.js";
 import { User } from "../model/user.model.js";
 import { Product } from "../model/product.model.js";
 import { CreateOrder } from "../model/createOrder.model.js";
-import { Role } from "../model/role.model.js";
 
 export const OrderXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateCustomerConfig.xml";
@@ -125,7 +124,6 @@ export const placeOrderHistory = async (req, res, next) => {
         if (!orders || orders.length === 0) {
             return res.status(404).json({ message: "No orders found", status: false });
         }
-        // const user = await Role.find({createdBy:})
         const formattedOrders = orders.map(order => {
             const formattedOrderItems = order.orderItem.map(item => ({
                 product: item.productId,
