@@ -1,0 +1,14 @@
+import mongoose from "mongoose";
+
+const HierarchySchema = new mongoose.Schema({
+    parentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "role"
+    },
+    childId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "role"
+    }
+});
+
+export const CreateHierarachy = mongoose.model("createHierarchy", HierarchySchema)
