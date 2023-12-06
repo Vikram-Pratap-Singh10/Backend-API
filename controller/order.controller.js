@@ -3,6 +3,7 @@ import { Order } from "../model/order.model.js";
 import { User } from "../model/user.model.js";
 import { Product } from "../model/product.model.js";
 import { CreateOrder } from "../model/createOrder.model.js";
+import { findUserDetails, getUserHierarchy } from "../rolePermission/permission.js";
 
 export const OrderXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateCustomerConfig.xml";
@@ -69,6 +70,8 @@ export const placeOrder = async (req, res, next) => {
 export const placeOrderHistoryByUserId = async (req, res, next) => {
     try {
         const userId = req.params.id;
+        const userHierarchy = await findUserDetails(userId);
+        const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await Order.find({ userId: userId }).populate({
             path: 'orderItem.productId',
             model: 'product'
@@ -77,30 +80,6 @@ export const placeOrderHistoryByUserId = async (req, res, next) => {
         if (!orders || orders.length === 0) {
             return res.status(404).json({ message: "No orders found for the user", status: false });
         }
-        // ---------------------------
-        // const findUserDetails = async (userId, depth = 5) => {
-        //     if (depth === 0) {
-        //         return null;
-        //     }
-        //     const user = await User.findById({ _id: userId });
-        //     if (!user) {
-        //         return null;
-        //     }
-        //     const createdById = user.created_by?.toString();
-        //     if (createdById) {
-        //         const details = await findUserDetails(createdById, depth - 1);
-        //         if (details) {
-        //             return details;
-        //         }
-        //     }
-        //     return user;
-        // };
-        // const userDetails = await findUserDetails(userId);
-        // req.body.details = userDetails;
-        // console.log(req.body.details);
-        // ---------------------------
-
-
         const formattedOrders = orders.map(order => {
             const formattedOrderItems = order.orderItem.map(item => ({
                 product: item.productId,
@@ -133,7 +112,7 @@ export const placeOrderHistoryByUserId = async (req, res, next) => {
                 updatedAt: order.updatedAt
             };
         });
-        return res.status(200).json({ orderHistory: formattedOrders, status: true });
+        return res.status(200).json({ orderHistory: formattedOrders, adminDetail, status: true });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: err });
@@ -141,6 +120,9 @@ export const placeOrderHistoryByUserId = async (req, res, next) => {
 };
 export const placeOrderHistory = async (req, res, next) => {
     try {
+        const userId = req.params.id;
+        const userHierarchy = await findUserDetails(userId);
+        const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await Order.find({}).populate({
             path: 'orderItem.productId',
             model: 'product'
@@ -180,7 +162,7 @@ export const placeOrderHistory = async (req, res, next) => {
                 updatedAt: order.updatedAt
             };
         });
-        return res.status(200).json({ orderHistory: formattedOrders, status: true });
+        return res.status(200).json({ orderHistory: formattedOrders, adminDetail, status: true });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: err });
@@ -293,6 +275,8 @@ export const createOrder = async (req, res, next) => {
 export const createOrderHistoryByUserId = async (req, res, next) => {
     try {
         const userId = req.params.id;
+        const userHierarchy = await findUserDetails(userId);
+        const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await CreateOrder.find({ userId: userId }).populate({
             path: 'orderItem.productId',
             model: 'product'
@@ -332,7 +316,7 @@ export const createOrderHistoryByUserId = async (req, res, next) => {
                 updatedAt: order.updatedAt
             };
         });
-        return res.status(200).json({ orderHistory: formattedOrders, status: true });
+        return res.status(200).json({ orderHistory: formattedOrders, adminDetail, status: true });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: err });
@@ -340,6 +324,9 @@ export const createOrderHistoryByUserId = async (req, res, next) => {
 };
 export const createOrderHistory = async (req, res, next) => {
     try {
+        const userId = req.params.id;
+        const userHierarchy = await findUserDetails(userId);
+        const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await CreateOrder.find({}).populate({
             path: 'orderItem.productId',
             model: 'product'
@@ -379,7 +366,7 @@ export const createOrderHistory = async (req, res, next) => {
                 updatedAt: order.updatedAt
             };
         });
-        return res.status(200).json({ orderHistory: formattedOrders, status: true });
+        return res.status(200).json({ orderHistory: formattedOrders, adminDetail, status: true });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: err });
@@ -442,21 +429,21 @@ export const updateCreateOrder = async (req, res, next) => {
 };
 
 
-async function getUserHierarchy(parentId) {
-    try {
-        const users = await User.find({ created_by: parentId, status: 'Active' });
-        let results = [];
-        for (const user of users) {
-            results.push(user);
-            const subUsers = await getUserHierarchy(user._id);
-            results = results.concat(subUsers);
-        }
-        return results;
-    } catch (error) {
-        console.error('Error in getUserHierarchy:', error);
-        throw error;
-    }
-}
+// async function getUserHierarchy(parentId) {
+//     try {
+//         const users = await User.find({ created_by: parentId, status: 'Active' });
+//         let results = [];
+//         for (const user of users) {
+//             results.push(user);
+//             const subUsers = await getUserHierarchy(user._id);
+//             results = results.concat(subUsers);
+//         }
+//         return results;
+//     } catch (error) {
+//         console.error('Error in getUserHierarchy:', error);
+//         throw error;
+//     }
+// }
 export const test = async (req, res) => {
     const parentId = req.params.parentId;
     try {
@@ -464,6 +451,38 @@ export const test = async (req, res) => {
         console.log(userHierarchy.length)
         res.json(userHierarchy);
     } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+// async function findUserDetails(userId) {
+//     try {
+//         const user = await User.findOne({ _id: userId, status: 'Active' });
+//         if (!user) {
+//             return null;
+//         }
+//         const results = [user];
+//         if (user.created_by) {
+//             const createdById = user.created_by.toString();
+//             const subUsers = await findUserDetails(createdById);
+//             if (Array.isArray(subUsers)) {
+//                 results.push(...subUsers);
+//             }
+//         }
+//         return results;
+//     } catch (error) {
+//         console.error('Error in findUserDetails:', error);
+//         throw error;
+//     }
+// }
+export const test1 = async (req, res) => {
+    const parentId = req.params.parentId;
+    try {
+        const userHierarchy = await findUserDetails(parentId);
+        console.log(userHierarchy.length)
+        res.json(userHierarchy);
+    } catch (error) {
+        console.log(error)
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
