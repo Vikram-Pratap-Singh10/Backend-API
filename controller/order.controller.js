@@ -77,6 +77,30 @@ export const placeOrderHistoryByUserId = async (req, res, next) => {
         if (!orders || orders.length === 0) {
             return res.status(404).json({ message: "No orders found for the user", status: false });
         }
+        // ---------------------------
+        // const findUserDetails = async (userId, depth = 5) => {
+        //     if (depth === 0) {
+        //         return null;
+        //     }
+        //     const user = await User.findById({ _id: userId });
+        //     if (!user) {
+        //         return null;
+        //     }
+        //     const createdById = user.created_by?.toString();
+        //     if (createdById) {
+        //         const details = await findUserDetails(createdById, depth - 1);
+        //         if (details) {
+        //             return details;
+        //         }
+        //     }
+        //     return user;
+        // };
+        // const userDetails = await findUserDetails(userId);
+        // req.body.details = userDetails;
+        // console.log(req.body.details);
+        // ---------------------------
+
+
         const formattedOrders = orders.map(order => {
             const formattedOrderItems = order.orderItem.map(item => ({
                 product: item.productId,
@@ -416,3 +440,30 @@ export const updateCreateOrder = async (req, res, next) => {
         return res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
+
+async function getUserHierarchy(parentId) {
+    try {
+        const users = await User.find({ created_by: parentId, status: 'Active' });
+        let results = [];
+        for (const user of users) {
+            results.push(user);
+            const subUsers = await getUserHierarchy(user._id);
+            results = results.concat(subUsers);
+        }
+        return results;
+    } catch (error) {
+        console.error('Error in getUserHierarchy:', error);
+        throw error;
+    }
+}
+export const test = async (req, res) => {
+    const parentId = req.params.parentId;
+    try {
+        const userHierarchy = await getUserHierarchy(parentId);
+        console.log(userHierarchy.length)
+        res.json(userHierarchy);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
