@@ -2,7 +2,7 @@ import { User } from "../model/user.model.js";
 
 export const getUserHierarchy = async function getUserHierarchy(parentId) {
     try {
-        const users = await User.find({ created_by: parentId, status: 'Active' });
+        const users = await User.find({ created_by: parentId, status: 'Active' }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" });
         let results = [];
         for (const user of users) {
             results.push(user);
@@ -17,7 +17,7 @@ export const getUserHierarchy = async function getUserHierarchy(parentId) {
 }
 export const findUserDetails = async function findUserDetails(userId) {
     try {
-        const user = await User.findOne({ _id: userId, status: 'Active' });
+        const user = await User.findOne({ _id: userId, status: 'Active' }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" });
         if (!user) {
             return null;
         }
