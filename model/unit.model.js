@@ -122,12 +122,12 @@ const UnitSchema = new mongoose.Schema({
     secondaryUnit: {
         type: String
     },
-    fromConversionTo: {
-        type: String
+    unitQty: {
+        type: Number
     },
     box: {
         type: String
     }
-})
+},{ timestamps: true })
 
 export const Unit = mongoose.model("unit", UnitSchema)
