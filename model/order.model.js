@@ -11,6 +11,9 @@ const orderItemsSchema = new mongoose.Schema({
     price: {
         type: Number
     },
+    unitQty:{
+        type:Number
+    },
     status: {
         type: String,
         default: "ordered"

@@ -4,8 +4,6 @@ import express from "express";
 import path from "path"
 import fs from "fs"
 import { fileURLToPath } from "url";
-// import CreateAccountRouter from "./routes/createAccount.route.js";
-// -----------------------------------------------------------
 import UserRouter from "./routes/user.route.js";
 import CustomerRouter from "./routes/customer.route.js";
 import RoleRouter from "./routes/role.route.js";
@@ -42,8 +40,6 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-// app.use("/create-account", CreateAccountRouter);
-// ---------------------------------------
 app.use("/user", UserRouter);
 app.use("/customer", CustomerRouter)
 app.use("/role", RoleRouter);
@@ -67,14 +63,13 @@ app.use("/hierarchy", HierarchyRouter);
 app.use("/good-dispatch", GoodDispatchRouter)
 app.use("/primary-unit", AddPrimaryUnitRouter)
 
-mongoose.connect(process.env.DATABASE_URL, {
-  useUnifiedTopology: true,
-  useNewUrlParser: true
-}).then(() => {
+mongoose.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlParser: true }).then(() => {
   console.log("DB CONNECTED SUCCEFULLY");
-}).catch((error) => {
-  console.log(error);
-});
+})
+  .catch((error) => {
+    console.log(error);
+  });
+
 app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port 5000`);
+  console.log(`Server is running on port ${process.env.PORT}`);
 });
