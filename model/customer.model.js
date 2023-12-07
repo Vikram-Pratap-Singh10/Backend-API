@@ -3,12 +3,19 @@ import convert from 'xml-js';
 import axios from 'axios';
 
 var status = 'status'
+let rolename = 'rolename';
+let created_by = 'created_by';
+let latitude = "latitude";
+let longitude = "longitude";
+let currentAddress = "currentAddress";
 
 async function createSchema() {
   const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateCustomerConfig.xml');
   const xmlFile = ff.data;
   const jsonData = JSON.parse(convert.xml2json(xmlFile, { compact: true, spaces: 2 }));
   const schemaDefinition = {};
+  schemaDefinition[rolename] = String;
+  schemaDefinition[created_by] = String;
   schemaDefinition[status] = String
   if (Array.isArray(jsonData.CreateCustomer.input)) {
     jsonData.CreateCustomer.input.forEach((input, index) => {
@@ -42,6 +49,9 @@ async function createSchema() {
       schemaDefinition[name] = String;
     }
   }
+  schemaDefinition[latitude] = Number;
+  schemaDefinition[longitude] = Number;
+  schemaDefinition[currentAddress] = String;
   if (jsonData.CreateCustomer.MyDropDown) {
     if (Array.isArray(jsonData.CreateCustomer.MyDropDown)) {
       jsonData.CreateCustomer.MyDropDown.forEach((dropdown) => {
