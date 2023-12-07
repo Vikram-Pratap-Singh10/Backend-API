@@ -128,6 +128,6 @@ const UnitSchema = new mongoose.Schema({
     box: {
         type: String
     }
-},{ timestamps: true })
+}, { timestamps: true })
 
 export const Unit = mongoose.model("unit", UnitSchema)
