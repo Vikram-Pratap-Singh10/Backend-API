@@ -25,7 +25,8 @@ import DebitNoteRouter from "./routes/debitNote.route.js";
 import PromotionRouter from "./routes/promotion.route.js";
 import HierarchyRouter from "./routes/createHierarchy.route.js";
 import GoodDispatchRouter from "./routes/goodDispatch.route.js";
-import AddPrimaryUnitRouter from "./routes/addPrimaryUnit.route.js"
+import AddPrimaryUnitRouter from "./routes/addPrimaryUnit.route.js";
+import CompanyDetailsRouter from "./routes/companyDetails.route.js"
 
 import mongoose from 'mongoose';
 const app = express();
@@ -62,6 +63,7 @@ app.use("/promotion", PromotionRouter);
 app.use("/hierarchy", HierarchyRouter);
 app.use("/good-dispatch", GoodDispatchRouter)
 app.use("/primary-unit", AddPrimaryUnitRouter)
+app.use("/company-detail", CompanyDetailsRouter)
 
 mongoose.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlParser: true }).then(() => {
   console.log("DB CONNECTED SUCCEFULLY");

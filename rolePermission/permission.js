@@ -2,14 +2,14 @@ import { Customer } from "../model/customer.model.js";
 import { User } from "../model/user.model.js";
 let check = 'User'
 
-export const getUserHierarchy = async function getUserHierarchy(parentId) {
+export const getUserHierarchy = async function getUserHierarchy(parentId, model) {
     try {
-        // let U = (check === model) ? User : Customer
-        const users = await User.find({ created_by: parentId, status: 'Active' }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" });
+        let U = (check === model) ? User : Customer
+        const users = await U.find({ created_by: parentId, status: 'Active' }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" });
         let results = [];
         for (const user of users) {
             results.push(user);
-            const subUsers = await getUserHierarchy(user._id);
+            const subUsers = await getUserHierarchy(user._id, model);
             results = results.concat(subUsers);
         }
         return results;
@@ -18,16 +18,17 @@ export const getUserHierarchy = async function getUserHierarchy(parentId) {
         throw error;
     }
 }
-export const findUserDetails = async function findUserDetails(userId) {
+export const findUserDetails = async function findUserDetails(userId, model) {
     try {
-        const user = await User.findOne({ _id: userId, status: 'Active' }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" });
+        let U = (check === model) ? User : Customer
+        const user = await U.findOne({ _id: userId, status: 'Active' }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" });
         if (!user) {
             return null;
         }
         const results = [user];
         if (user.created_by) {
             const createdById = user.created_by.toString();
-            const subUsers = await findUserDetails(createdById);
+            const subUsers = await findUserDetails(createdById, model);
             if (Array.isArray(subUsers)) {
                 results.push(...subUsers);
             }
