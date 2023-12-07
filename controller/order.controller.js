@@ -70,7 +70,7 @@ export const placeOrder = async (req, res, next) => {
 export const placeOrderHistoryByUserId = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const userHierarchy = await findUserDetails(userId, "User");
+        const userHierarchy = await findUserDetails(userId);
         const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await Order.find({ userId: userId }).populate({
             path: 'orderItem.productId',
@@ -84,6 +84,7 @@ export const placeOrderHistoryByUserId = async (req, res, next) => {
             const formattedOrderItems = order.orderItem.map(item => ({
                 product: item.productId,
                 qty: item.qty,
+                unitQty: item.unitQty,
                 price: item.price,
                 status: item.status
             }));
@@ -122,7 +123,7 @@ export const placeOrderHistoryByUserId = async (req, res, next) => {
 export const placeOrderHistory = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const userHierarchy = await findUserDetails(userId, "User");
+        const userHierarchy = await findUserDetails(userId);
         const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await Order.find({}).populate({
             path: 'orderItem.productId',
@@ -135,6 +136,7 @@ export const placeOrderHistory = async (req, res, next) => {
             const formattedOrderItems = order.orderItem.map(item => ({
                 product: item.productId,
                 qty: item.qty,
+                unitQty: item.unitQty,
                 price: item.price,
                 status: item.status
             }));
@@ -277,7 +279,7 @@ export const createOrder = async (req, res, next) => {
 export const createOrderHistoryByUserId = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const userHierarchy = await findUserDetails(userId, "User");
+        const userHierarchy = await findUserDetails(userId);
         const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await CreateOrder.find({ userId: userId }).populate({
             path: 'orderItem.productId',
@@ -290,6 +292,7 @@ export const createOrderHistoryByUserId = async (req, res, next) => {
             const formattedOrderItems = order.orderItem.map(item => ({
                 product: item.productId,
                 qty: item.qty,
+                unitQty: item.unitQty,
                 price: item.price,
                 status: item.status
             }));
@@ -328,7 +331,7 @@ export const createOrderHistoryByUserId = async (req, res, next) => {
 export const createOrderHistory = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const userHierarchy = await findUserDetails(userId, "User");
+        const userHierarchy = await findUserDetails(userId);
         const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await CreateOrder.find({}).populate({
             path: 'orderItem.productId',
@@ -341,6 +344,7 @@ export const createOrderHistory = async (req, res, next) => {
             const formattedOrderItems = order.orderItem.map(item => ({
                 product: item.productId,
                 qty: item.qty,
+                unitQty: item.unitQty,
                 price: item.price,
                 status: item.status
             }));
