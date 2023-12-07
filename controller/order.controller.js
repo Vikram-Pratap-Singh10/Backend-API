@@ -70,7 +70,7 @@ export const placeOrder = async (req, res, next) => {
 export const placeOrderHistoryByUserId = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const userHierarchy = await findUserDetails(userId);
+        const userHierarchy = await findUserDetails(userId, "User");
         const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await Order.find({ userId: userId }).populate({
             path: 'orderItem.productId',
@@ -122,7 +122,7 @@ export const placeOrderHistoryByUserId = async (req, res, next) => {
 export const placeOrderHistory = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const userHierarchy = await findUserDetails(userId);
+        const userHierarchy = await findUserDetails(userId, "User");
         const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await Order.find({}).populate({
             path: 'orderItem.productId',
@@ -277,7 +277,7 @@ export const createOrder = async (req, res, next) => {
 export const createOrderHistoryByUserId = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const userHierarchy = await findUserDetails(userId);
+        const userHierarchy = await findUserDetails(userId, "User");
         const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await CreateOrder.find({ userId: userId }).populate({
             path: 'orderItem.productId',
@@ -328,7 +328,7 @@ export const createOrderHistoryByUserId = async (req, res, next) => {
 export const createOrderHistory = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const userHierarchy = await findUserDetails(userId);
+        const userHierarchy = await findUserDetails(userId, "User");
         const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await CreateOrder.find({}).populate({
             path: 'orderItem.productId',
