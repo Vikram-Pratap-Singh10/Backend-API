@@ -45,18 +45,18 @@ export const ViewUser = async (req, res, next) => {
     try {
         const userId = req.params.id;
         const adminDetail = await getUserHierarchy(userId);
-        const users = await User.find().sort({ sortorder: -1 }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" });
-        if (!users || users.length === 0) {
-            return res.status(404).json({ error: "Users Not Found", status: false });
-        }
+        // const users = await User.find().sort({ sortorder: -1 }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" });
+        // if (!users || users.length === 0) {
+        //     return res.status(404).json({ error: "Users Not Found", status: false });
+        // }
         // const userDetailsWithAdminDetails = users.map(user => {
         //     const adminDetails = userHierarchy.filter(admin => admin._id === user.created_by?.toString());
         //     return { User: user, adminDetails };
         // });
-        const userDetails = users.map(user => {
-            return { User: user, adminDetail };
-        });
-        return res.status(200).json({ userDetails, status: true });
+        // const userDetails = users.map(user => {
+        //     return { User: user, adminDetail };
+        // });
+        return res.status(200).json({ adminDetail, status: true });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: "Internal Server Error", status: false });
@@ -69,7 +69,7 @@ export const ViewUserById = async (req, res, next) => {
         const adminDetails = await getUserHierarchy(userId);
         let user = await User.findById({ _id: req.params.id }).sort({ sortorder: -1 }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" })
         const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
-        return user ? res.status(200).json({ User: user, adminDetails: adminDetail, adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+        return user ? res.status(200).json({ User: user, adminDetails: adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
         console.log(err);

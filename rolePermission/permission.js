@@ -1,7 +1,10 @@
+import { Customer } from "../model/customer.model.js";
 import { User } from "../model/user.model.js";
+let check = 'User'
 
 export const getUserHierarchy = async function getUserHierarchy(parentId) {
     try {
+        // let U = (check === model) ? User : Customer
         const users = await User.find({ created_by: parentId, status: 'Active' }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" });
         let results = [];
         for (const user of users) {
