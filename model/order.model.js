@@ -12,7 +12,7 @@ const orderItemsSchema = new mongoose.Schema({
         type: Number
     },
     unitQty:{
-        type:Number
+        type:String
     },
     status: {
         type: String,

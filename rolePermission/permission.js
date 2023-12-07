@@ -39,3 +39,30 @@ export const findUserDetails = async function findUserDetails(userId, model) {
         throw error;
     }
 }
+export const getUser = async function getUserHierarchy(parentId, model) {
+    try {
+        let U;
+        if (model === 'User') {
+            U = User;
+        } else if (model === 'Customer') {
+            U = Customer;
+        } else {
+            throw new Error('Invalid model specified');
+        }
+        const users = await U.find({ created_by: parentId, status: 'Active' })
+            .populate({ path: "rolename", model: "role" })
+            .populate({ path: "created_by", model: "user" });
+
+        let results = [];
+        for (const user of users) {
+            results.push(user);
+            const subUsers = await getUserHierarchy(user._id, model);
+            results = results.concat(subUsers);
+        }
+        return results;
+    } catch (error) {
+        console.error('Error in getUserHierarchy:', error);
+        throw error;
+    }
+};
+// const adminDetails = await getUserHierarchy(userId, 'Customer')

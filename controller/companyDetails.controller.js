@@ -33,7 +33,6 @@ export const saveCompanyDetails = async (req, res, next) => {
         return res.status(500).json({ error: "Internal Server Error", status: false })
     }
 }
-
 export const viewCompanyDetails = async (req, res, next) => {
     try {
         const companyDetail = await CompanyDetails.find().sort({ sortorder: -1 })
