@@ -5,7 +5,7 @@ import multer from "multer";
 const router = express.Router();
 const upload = multer({ dest: "public/Images/" })
 
-router.post("/save-company-details", upload.single("file"), saveCompanyDetails);
-router.get("/view-company-details", viewCompanyDetails);
+router.post("/save-company-details", upload.any("files"), saveCompanyDetails);
+router.get("/view-company-details/:id", viewCompanyDetails);
 
 export default router;

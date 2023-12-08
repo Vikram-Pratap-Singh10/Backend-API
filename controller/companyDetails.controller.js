@@ -1,14 +1,21 @@
 import { CompanyDetails } from "../model/companyDetails.model.js";
+import { getUserHierarchy } from "../rolePermission/permission.js";
 
 export const saveCompanyDetails = async (req, res, next) => {
     try {
         const companyDetail = await CompanyDetails.find().sort({ sortorder: -1 })
         if (companyDetail.length === 0) {
-            if (req.file) {
-                req.body.logo = req.file.filename
+            if (req.files) {
+                req.files.map(file => {
+                    if (file.fieldname === "signature") {
+                        req.body.signature = file.filename;
+                    }
+                    else {
+                        req.body.logo = file.filename;
+                    }
+                })
             }
             const companyDetail = await CompanyDetails.create(req.body)
-            console.log(companyDetail)
             return companyDetail ? res.status(200).json({ message: "data save successfull", status: true }) : res.status(400).json({ message: "something went wrong", status: false })
         }
         else {
@@ -19,8 +26,15 @@ export const saveCompanyDetails = async (req, res, next) => {
                 return res.status(404).json({ error: 'goodDispatch not found', status: false });
             }
             else {
-                if (req.file) {
-                    req.body.logo = req.file.filename
+                if (req.files) {
+                    req.files.map(file => {
+                        if (file.fieldname === "signature") {
+                            req.body.signature = file.filename;
+                        }
+                        else {
+                            req.body.logo = file.filename;
+                        }
+                    })
                 }
                 const companyDetails = req.body;
                 const updateDetails = await CompanyDetails.findByIdAndUpdate(companyId, companyDetails, { new: true });
@@ -35,8 +49,12 @@ export const saveCompanyDetails = async (req, res, next) => {
 }
 export const viewCompanyDetails = async (req, res, next) => {
     try {
-        const companyDetail = await CompanyDetails.find().sort({ sortorder: -1 })
-        return companyDetail ? res.status(200).json({ CompanyDetail: companyDetail, status: true }) : res.status(400).json({ message: "Not Found", status: false })
+        const userId = req.params.id;
+        const adminDetails = await getUserHierarchy(userId);
+        if (adminDetails.length > 0) {
+            const companyDetail = await CompanyDetails.find().sort({ sortorder: -1 })
+            return companyDetail ? res.status(200).json({ CompanyDetail: companyDetail, status: true }) : res.status(400).json({ message: "Not Found", status: false })
+        }
     }
     catch (err) {
         console.log(err)
