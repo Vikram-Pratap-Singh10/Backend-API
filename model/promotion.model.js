@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const PromotionSchema = new mongoose.Schema({
+    created_by: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+    },
     percentageWise: [{
         totalAmount: {
             type: Number

@@ -3,12 +3,16 @@ import convert from 'xml-js';
 import axios from 'axios';
 
 var status = 'status'
+let created_by = 'created_by';
+let rolename = 'rolename';
 
 async function createSchema() {
     const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateSalesManagerConfig.xml');
     const xmlFile = ff.data;
     const jsonData = JSON.parse(convert.xml2json(xmlFile, { compact: true, spaces: 2 }));
     const schemaDefinition = {};
+    schemaDefinition[rolename] = String;
+    schemaDefinition[created_by] = String;
     schemaDefinition[status] = String
     if (Array.isArray(jsonData.Createsalesmanager.input)) {
         jsonData.Createsalesmanager.input.forEach((input, index) => {
