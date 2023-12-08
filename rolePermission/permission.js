@@ -61,3 +61,32 @@ export const getUserHierarchy = async function getUserHierarchy(parentId, proces
     }
 };
 
+export const getCustomerHierarchy = async function getCustomerHierarchy(parentId, processedIds = new Set()) {
+    try {
+        if (processedIds.has(parentId)) {
+            return [];
+        }
+        processedIds.add(parentId);
+        const users = await User.find({ created_by: parentId, status: 'Active' })
+            .populate({ path: "rolename", model: "role" })
+            .populate({ path: "created_by", model: "user" });
+        const customers = await Customer.find({ created_by: parentId, status: 'Active' })
+            .populate({ path: "rolename", model: "role" })
+            .populate({ path: "created_by", model: "user" });
+        let results = customers;
+        for (const user of users) {
+            const subResults = await getCustomerHierarchy(user._id, processedIds);
+            results = results.concat(subResults);
+        }
+        for (const customer of customers) {
+            const subResults = await getCustomerHierarchy(customer._id, processedIds);
+            results = results.concat(subResults);
+        }
+        return results;
+    } catch (error) {
+        console.error('Error in getCustomerHierarchy:', error);
+        throw error;
+    }
+};
+
+
