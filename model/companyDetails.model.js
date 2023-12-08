@@ -18,6 +18,9 @@ const CompanySchema = new mongoose.Schema({
     },
     logo: {
         type: String
+    },
+    signature: {
+        type: String
     }
 })
 export const CompanyDetails = mongoose.model("companyDetail", CompanySchema)
