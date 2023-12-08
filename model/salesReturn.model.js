@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const SalesReturnSchema = new mongoose.Schema({
+    created_by: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user"
+    },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user"

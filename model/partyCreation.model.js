@@ -2,13 +2,17 @@ import mongoose from 'mongoose';
 import convert from 'xml-js';
 import axios from 'axios';
 
-var status = 'status'
+var status = 'status';
+let rolename = 'rolename';
+let created_by = 'created_by';
 
 async function createSchema() {
     const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/PartyCreation.xml');
     const xmlFile = ff.data;
     const jsonData = JSON.parse(convert.xml2json(xmlFile, { compact: true, spaces: 2 }));
     const schemaDefinition = {};
+    schemaDefinition[rolename] = String;
+    schemaDefinition[created_by] = String;
     schemaDefinition[status] = String
     if (Array.isArray(jsonData.CreateParty.input)) {
         jsonData.CreateParty.input.forEach((input, index) => {
