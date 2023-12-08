@@ -116,6 +116,10 @@ import mongoose from "mongoose"
 // export const Unit = mongoose.model('unit', UnitSchema);
 
 const UnitSchema = new mongoose.Schema({
+    created_by: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+    },
     primaryUnit: {
         type: String
     },

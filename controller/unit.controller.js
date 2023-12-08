@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Unit } from "../model/unit.model.js";
+import { getUnitHierarchy, getUserHierarchy } from "../rolePermission/permission.js";
 
 export const UnitXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateUnit.xml";
@@ -24,8 +25,11 @@ export const SaveUnit = async (req, res) => {
 }
 export const ViewUnit = async (req, res, next) => {
     try {
+        const userId = req.params.id;
+        const adminDetails = await getUnitHierarchy(userId);
+        const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
         let unit = await Unit.find().sort({ sortorder: -1 })
-        return unit ? res.status(200).json({ Unit: unit, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+        return unit ? res.status(200).json({ Unit: adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
         console.log(err);
