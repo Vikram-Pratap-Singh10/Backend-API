@@ -2,7 +2,7 @@ import axios from "axios";
 import { Product } from "../model/product.model.js";
 
 export const ProductXml = async (req, res) => {
-    const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateProduct.xml";
+    const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/Product.xml";
     try {
         const response = await axios.get(fileUrl);
         const data = response.data;
@@ -40,7 +40,7 @@ export const SaveProduct = async (req, res) => {
 export const ViewProduct = async (req, res, next) => {
     try {
         let product = await Product.find().sort({ sortorder: -1 })
-        return product ? res.status(200).json({Product: product, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+        return product ? res.status(200).json({ Product: product, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
         console.log(err);
@@ -49,8 +49,8 @@ export const ViewProduct = async (req, res, next) => {
 }
 export const ViewProductById = async (req, res, next) => {
     try {
-        let product = await Product.findById({_id:req.params.id}).sort({ sortorder: -1 })
-        return product ? res.status(200).json({Product: product, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+        let product = await Product.findById({ _id: req.params.id }).sort({ sortorder: -1 })
+        return product ? res.status(200).json({ Product: product, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
         console.log(err);
