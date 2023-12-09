@@ -11,20 +11,7 @@ const CreditNoteSchema = new mongoose.Schema({
     orderId: {
         type: String
     },
-    productItems: [{
-        productId: {
-            type: String
-        },
-        Qty_Sales: {
-            type: Number
-        },
-        Qty_Return: {
-            type: Number
-        },
-        Product_Price: {
-            type: Number
-        }
-    }],
+    productItems: [],
     totalAmount: {
         type: Number
     }
