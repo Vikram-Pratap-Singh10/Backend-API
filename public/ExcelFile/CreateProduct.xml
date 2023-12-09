@@ -48,6 +48,12 @@
         <placeholder>Enter Size </placeholder>
     </input>
     <input>
+        <label>Discount</label>
+        <type type="number"/>
+        <name>discount</name>
+        <placeholder>Enter Discount</placeholder>
+    </input>
+    <input>
         <label>HSN Code</label>
         <type type="text"/>
         <name>HSN_Code</name>

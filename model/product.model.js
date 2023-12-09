@@ -7,7 +7,7 @@ let rolename = 'rolename';
 let created_by = 'created_by';
 
 async function createSchema() {
-    const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/Product.xml');
+    const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateProduct.xml');
     const xmlFile = ff.data;
     const jsonData = JSON.parse(convert.xml2json(xmlFile, { compact: true, spaces: 2 }));
     const schemaDefinition = {};

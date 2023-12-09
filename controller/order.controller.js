@@ -4,6 +4,7 @@ import { User } from "../model/user.model.js";
 import { Product } from "../model/product.model.js";
 import { CreateOrder } from "../model/createOrder.model.js";
 import { findUserDetails, getUserHierarchy } from "../rolePermission/permission.js";
+import { CreditNote } from "../model/creditNote.model.js";
 
 export const OrderXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateCustomerConfig.xml";
@@ -21,7 +22,6 @@ export const placeOrder = async (req, res, next) => {
     try {
         const orderItems = req.body.orderItems;
         const user = await User.findOne({ _id: req.body.userId });
-
         if (!user) {
             return res.status(401).json({ message: "No user found", status: false });
         } else {
@@ -58,7 +58,6 @@ export const placeOrder = async (req, res, next) => {
                 currentAddress: req.body.currentAddress,
                 orderItem: orderItems
             });
-
             const savedOrder = await order.save();
             return res.status(200).json({ orderDetail: savedOrder, status: true });
         }
@@ -221,6 +220,13 @@ export const updatePlaceOrderStatus = async (req, res) => {
         }
         order.status = status;
         await order.save();
+        // if (status === 'completed') {
+        //     req.body.totalAmount = order.grandTotal;
+        //     req.body.productItems = order.orderItem;
+        //     req.body.userId = order.userId;
+        //     req.body.orderId = order._id;
+        //     await CreditNote.create(req.body)
+        // }
         return res.status(200).json({ Order: order, status: true });
     } catch (error) {
         console.error(error);
@@ -390,6 +396,13 @@ export const updateCreateOrderStatus = async (req, res) => {
         }
         order.status = status;
         await order.save();
+        // if (status === 'completed') {
+        //     req.body.totalAmount = order.grandTotal;
+        //     req.body.productItems = order.orderItem;
+        //     req.body.userId = order.userId;
+        //     req.body.orderId = order._id;
+        //     await CreditNote.create(req.body)
+        // }
         return res.status(200).json({ Order: order, status: true });
     } catch (error) {
         console.error(error);

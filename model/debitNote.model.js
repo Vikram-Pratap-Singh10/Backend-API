@@ -11,17 +11,7 @@ const DebitNoteSchema = new mongoose.Schema({
     purchaseOrderId: {
         type: String
     },
-    productItems: [{
-        productId: {
-            type: String
-        },
-        qty: {
-            type: Number
-        },
-        price: {
-            type: Number
-        }
-    }],
+    productItems: [],
     totalAmount: {
         type: Number
     }

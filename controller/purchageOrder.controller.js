@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { Product } from "../model/product.model.js";
 import { PurchaseOrder } from "../model/purchaseOrder.model.js";
 import { User } from "../model/user.model.js";
+import { DebitNote } from "../model/debitNote.model.js";
 
 export const purchaseOrder = async (req, res, next) => {
     try {
@@ -136,6 +137,13 @@ export const updatePurchaseOrderStatus = async (req, res) => {
         }
         order.status = status;
         await order.save();
+        // if (status === 'completed') {
+        //     req.body.totalAmount = order.grandTotal;
+        //     req.body.productItems = order.orderItems;
+        //     req.body.userId = order.userId;
+        //     req.body.orderId = order._id;
+        //     await DebitNote.create(req.body)
+        // }
         return res.status(200).json({ Order: order, status: true });
     } catch (error) {
         console.error(error);
