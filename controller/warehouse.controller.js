@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Warehouse } from "../model/warehouse.model.js";
+import { getWarehouseHierarchy } from "../rolePermission/permission.js";
 
 export const WarehouseXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/AddWarehouse.xml";
@@ -25,8 +26,11 @@ export const SaveWarehouse = async (req, res, next) => {
 }
 export const ViewWarehouse = async (req, res, next) => {
     try {
+        const userId = req.params.id;
+        const adminDetails = await getWarehouseHierarchy(userId);
+        const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
         let warehouse = await Warehouse.find().sort({ sortorder: -1 })
-        return warehouse ? res.status(200).json({ Warehouse: warehouse, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+        return warehouse ? res.status(200).json({ Warehouse: adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
         console.log(err);
