@@ -4,6 +4,6 @@ import { SavePromotion, ViewPromotion } from "../controller/promotion.controller
 const router = express.Router();
 
 router.post("/save-promotion", SavePromotion);
-router.get("/view-promotion", ViewPromotion)
+router.get("/view-promotion/:id", ViewPromotion)
 
 export default router;
