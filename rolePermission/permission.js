@@ -1,6 +1,7 @@
 import { Category } from "../model/category.model.js";
 import { CompanyDetails } from "../model/companyDetails.model.js";
 import { Customer } from "../model/customer.model.js";
+import { Product } from "../model/product.model.js";
 import { Promotion } from "../model/promotion.model.js";
 import { Unit } from "../model/unit.model.js";
 import { User } from "../model/user.model.js";
@@ -208,6 +209,32 @@ export const getPromotionHierarchy = async function getCustomerHierarchy(parentI
             .populate({ path: "rolename", model: "role" })
             .populate({ path: "created_by", model: "user" });
         const customers = await Promotion.find({ created_by: parentId }).populate({ path: "created_by", model: "user" });
+        let results = customers;
+        for (const user of users) {
+            const subResults = await getCustomerHierarchy(user._id, processedIds);
+            results = results.concat(subResults);
+        }
+        for (const customer of customers) {
+            const subResults = await getCustomerHierarchy(customer._id, processedIds);
+            results = results.concat(subResults);
+        }
+        return results;
+    } catch (error) {
+        console.error('Error in getCustomerHierarchy:', error);
+        throw error;
+    }
+};
+
+export const getProductHierarchy = async function getCustomerHierarchy(parentId, processedIds = new Set()) {
+    try {
+        if (processedIds.has(parentId)) {
+            return [];
+        }
+        processedIds.add(parentId);
+        const users = await User.find({ created_by: parentId, status: 'Active' })
+            .populate({ path: "rolename", model: "role" })
+            .populate({ path: "created_by", model: "user" });
+        const customers = await Product.find({ created_by: parentId }).populate({ path: "created_by", model: "user" });
         let results = customers;
         for (const user of users) {
             const subResults = await getCustomerHierarchy(user._id, processedIds);
