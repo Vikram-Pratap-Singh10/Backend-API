@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Product } from "../model/product.model.js";
+import { getProductHierarchy } from "../rolePermission/permission.js";
 
 export const ProductXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateProduct.xml";
@@ -39,8 +40,11 @@ export const SaveProduct = async (req, res) => {
 }
 export const ViewProduct = async (req, res, next) => {
     try {
+        const userId = req.params.id;
+        const adminDetails = await getProductHierarchy(userId);
+        const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
         let product = await Product.find().sort({ sortorder: -1 })
-        return product ? res.status(200).json({ Product: product, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+        return product ? res.status(200).json({ Product: adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
         console.log(err);

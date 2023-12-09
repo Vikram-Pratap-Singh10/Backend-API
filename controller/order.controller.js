@@ -449,6 +449,24 @@ export const updateCreateOrder = async (req, res, next) => {
     }
 };
 
+export const autoBillingLock = async (req, res, next) => {
+    try {
+        const time1 = req.body.time;
+        // const timestamp = new Date(orderAudit[0].timestamp);
+        const currentDate = new Date();
+        const timeDifference = currentDate - time1;
+        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+        // const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        // const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+        const time = `${days} days,`;
+        console.log(time)
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error", status: false })
+    }
+}
+
 
 // async function getUserHierarchy(parentId) {
 //     try {
@@ -475,7 +493,6 @@ export const test = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
-
 // async function findUserDetails(userId) {
 //     try {
 //         const user = await User.findOne({ _id: userId, status: 'Active' });
