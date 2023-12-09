@@ -111,7 +111,6 @@ async function createSchema() {
             schemaDefinition[check] = String
         }
     }
-
     return new mongoose.Schema(schemaDefinition, { timestamps: true });
 }
 
