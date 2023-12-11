@@ -3,26 +3,13 @@ import { StockUpdation } from "../model/stockUpdation.model.js";
 
 export const saveFactorytoWarehouse = async (req, res, next) => {
     try {
-        const productItems = req.body.productItems;
-        const billAmount = productItems.reduce((total, orderItem) => {
-            return total + (orderItem.price * orderItem.quantity);
-        }, 0);
-        // for (const orderItem of orderItems) {
-        //     const product = await Product.findOne({ _id: orderItem.productId });
-        //     if (product) {
-        //         product.Size -= orderItem.qty;
-        //         await product.save();
-        //     } else {
-        //         return res.status(404).json(`Product with ID ${orderItem.productId} not found`);
-        //     }
-        // }
         const factory = await Factory.create(req.body)
         const stockUpdation = await StockUpdation.create(req.body)
         return (factory && stockUpdation) ? res.status(200).json({ Factory: factory, stockUpdation, status: true }) : res.status(400).json({ message: "Something Went Wrong", status: false })
     }
     catch (err) {
         console.log(err);
-        return req.status(500).json({ error: err, status: false })
+        return req.status(500).json({ error: "Internal Server Error", status: false })
     }
 }
 export const getFactoryData = async (req, res, next) => {

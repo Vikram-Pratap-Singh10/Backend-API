@@ -1,39 +1,43 @@
 import mongoose from "mongoose";
 
 const FactorySchema = new mongoose.Schema({
-    warehouseId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"warehouse"
+    created_by: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
     },
-    stockTransferDate:{
-        type:String
+    warehouseToId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "warehouse"
     },
-    productItems:[{
-        productId:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"product"
+    stockTransferDate: {
+        type: String
+    },
+    productItems: [{
+        productId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "product"
         },
-        unitType:{
-            type:String
+        unitType: {
+            type: String
         },
-        Size:{
-            type:Number
+        Size: {
+            type: Number
         },
-        transferQty:{
-            type:Number
+        transferQty: {
+            type: Number
         },
-        price:{
-            type:Number
+        price: {
+            type: Number
         },
-        totalPrice:{
-            type:Number
+        totalPrice: {
+            type: Number
         }
     }],
-    grandTotal:{
-        type:Number
+    grandTotal: {
+        type: Number
     },
-    status:{
-        type:String
+    status: {
+        type: String
     }
-})
-export const Factory = mongoose.model("factory",FactorySchema)
+}, { timestamps: true })
+export const Factory = mongoose.model("factory", FactorySchema)
