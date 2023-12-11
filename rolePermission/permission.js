@@ -141,7 +141,6 @@ export const getUnitHierarchy = async function getUnitHierarchy(parentId, proces
     }
 };
 
-
 export const getCategoryHierarchy = async function getCustomerHierarchy(parentId, processedIds = new Set()) {
     try {
         if (processedIds.has(parentId)) {
@@ -412,7 +411,6 @@ export const getCustomerHierarchy = async function getCustomerHierarchy(parentId
         throw error;
     }
 };
-
 
 export const getStockHierarchy = async function getUnitHierarchy(parentId, processedIds = new Set()) {
     try {

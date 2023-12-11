@@ -3,7 +3,7 @@ import { Warehouse } from "../model/warehouse.model.js";
 import { getWarehouseHierarchy } from "../rolePermission/permission.js";
 
 export const WarehouseXml = async (req, res) => {
-    const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/AddWarehouse.xml";
+    const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/Warehouse.xml";
     try {
         const response = await axios.get(fileUrl);
         const data = response.data;

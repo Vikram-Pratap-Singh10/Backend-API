@@ -10,7 +10,7 @@ let productItems = "productItems";
 let grandTotal = "grandTotal"
 
 async function createSchema() {
-  const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/AddWarehouse.xml');
+  const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/Warehouse.xml');
   const xmlFile = ff.data;
   const jsonData = JSON.parse(convert.xml2json(xmlFile, { compact: true, spaces: 2 }));
   const schemaDefinition = {};
