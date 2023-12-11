@@ -1,17 +1,28 @@
 import { Factory } from "../model/factory.model.js";
-import { StockUpdation } from "../model/stockUpdation.model.js";
+import { Warehouse } from "../model/warehouse.model.js";
 
 export const saveFactorytoWarehouse = async (req, res, next) => {
     try {
-        const factory = await Factory.create(req.body)
-        const stockUpdation = await StockUpdation.create(req.body)
-        return (factory && stockUpdation) ? res.status(200).json({ Factory: factory, stockUpdation, status: true }) : res.status(400).json({ message: "Something Went Wrong", status: false })
+        const { warehouseToId, grandTotal, status, stockTransferDate, productItems } = req.body;
+        const existingWarehouse = await Warehouse.findById(warehouseToId);
+        if (!existingWarehouse) {
+            return res.status(404).json({ message: 'Warehouse not found', status: false });
+        }
+        const factory = await Factory.create(req.body);
+        existingWarehouse.grandTotal = grandTotal;
+        existingWarehouse.stockTransferDate = stockTransferDate;
+        existingWarehouse.status = status;
+        productItems.forEach(item => {
+            existingWarehouse.productItems.push(item);
+        });
+        await existingWarehouse.save();
+        return res.status(200).json({ Factory: factory, Warehouse: existingWarehouse, status: true });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal Server Error', status: false });
     }
-    catch (err) {
-        console.log(err);
-        return req.status(500).json({ error: "Internal Server Error", status: false })
-    }
-}
+};
+
 export const getFactoryData = async (req, res, next) => {
     try {
         const factory = await Factory.find({}).populate({
@@ -33,7 +44,7 @@ export const getFactoryData = async (req, res, next) => {
             return {
                 _id: factory._id,
                 stockTransferDate: factory.stockTransferDate,
-                warehouseFromId: factory.warehouseFromId,
+                warehouseToId: factory.warehouseToId,
                 grandTotal: factory.grandTotal,
                 productItems: formattedItems,
                 status: factory.status,

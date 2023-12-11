@@ -26,10 +26,8 @@ export const SaveUnit = async (req, res) => {
 export const ViewUnit = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const adminDetails = await getUnitHierarchy(userId);
-        const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
-        let unit = await Unit.find().sort({ sortorder: -1 })
-        return unit ? res.status(200).json({ Unit: adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+        const adminDetail = await getUnitHierarchy(userId);
+        return (adminDetail.length>0) ? res.status(200).json({ Unit: adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
         console.log(err);
