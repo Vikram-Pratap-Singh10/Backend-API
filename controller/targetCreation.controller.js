@@ -53,12 +53,12 @@ export const UpdateTargetCreation = async (req, res, next) => {
 export const ViewTargetCreation = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const adminDetails = await getTargetCreationHierarchy(userId);
-        const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
-        let target = await TargetCreation.find().sort({ sortorder: -1 })
-            .populate({ path: 'salesPersonId', model: 'salesPerson' })
-            .populate({ path: "products.productId", model: "product" });
-        return target ? res.status(200).json({ TargetCreation: adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false });
+        const adminDetail = await getTargetCreationHierarchy(userId);
+        // const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
+        // let target = await TargetCreation.find().sort({ sortorder: -1 })
+        //     .populate({ path: 'salesPersonId', model: 'salesPerson' })
+        //     .populate({ path: "products.productId", model: "product" });
+        return (adminDetail.length > 0) ? res.status(200).json({ TargetCreation: adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false });
     }
     catch (err) {
         console.log(err);

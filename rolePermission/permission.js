@@ -3,12 +3,11 @@ import { CompanyDetails } from "../model/companyDetails.model.js";
 import { Customer } from "../model/customer.model.js";
 import { Product } from "../model/product.model.js";
 import { Promotion } from "../model/promotion.model.js";
-import { StockUpdation } from "../model/stockUpdation.model.js";
 import { TargetCreation } from "../model/targetCreation.model.js";
 import { Unit } from "../model/unit.model.js";
 import { User } from "../model/user.model.js";
 import { Warehouse } from "../model/warehouse.model.js";
-let check = 'User'
+let check = 'User';
 
 export const getUser = async function getUserHierarchy(parentId, model) {
     try {
@@ -141,30 +140,51 @@ export const getUnitHierarchy = async function getUnitHierarchy(parentId, proces
     }
 };
 
-export const getCategoryHierarchy = async function getCustomerHierarchy(parentId, processedIds = new Set()) {
+// export const getCategoryHierarchy = async function getCustomerHierarchy(parentId, processedIds = new Set()) {
+//     try {
+//         if (processedIds.has(parentId)) {
+//             return [];
+//         }
+//         processedIds.add(parentId);
+//         const users = await User.find({ created_by: parentId, status: 'Active' })
+//             .populate({ path: "created_by", model: "user" });
+//         const customers = await Category.find({ created_by: parentId, status: 'Active' }).populate({ path: "created_by", model: "user" });
+//         let results = customers;
+//         for (const user of users) {
+//             const subResults = await getCustomerHierarchy(user._id, processedIds);
+//             results = results.concat(subResults);
+//         }
+//         for (const customer of customers) {
+//             const subResults = await getCustomerHierarchy(customer._id, processedIds);
+//             results = results.concat(subResults);
+//         }
+//         return results;
+//     } catch (error) {
+//         console.error('Error in getCustomerHierarchy:', error);
+//         throw error;
+//     }
+// };
+export const getCategoryHierarchy = async function getCategoryHierarchy(parentId, processedIds = new Set()) {
     try {
         if (processedIds.has(parentId)) {
             return [];
         }
         processedIds.add(parentId);
-        const users = await User.find({ created_by: parentId, status: 'Active' })
-            .populate({ path: "created_by", model: "user" });
-        const customers = await Category.find({ created_by: parentId, status: 'Active' }).populate({ path: "created_by", model: "user" });
-        let results = customers;
-        for (const user of users) {
-            const subResults = await getCustomerHierarchy(user._id, processedIds);
-            results = results.concat(subResults);
-        }
-        for (const customer of customers) {
-            const subResults = await getCustomerHierarchy(customer._id, processedIds);
-            results = results.concat(subResults);
-        }
-        return results;
+        const [users, categories] = await Promise.all([
+            User.find({ created_by: parentId, status: 'Active' }).lean(),
+            Category.find({ created_by: parentId, status: 'Active' }).lean()
+        ]);
+        let results = categories;
+        const subUserIds = users.map(user => user._id);
+        const subResultsPromises = subUserIds.map(userId => getCategoryHierarchy(userId, processedIds));
+        const subResults = await Promise.all(subResultsPromises);
+        return results.concat(subResults.flat());
     } catch (error) {
-        console.error('Error in getCustomerHierarchy:', error);
+        console.error('Error in getCategoryHierarchy:', error);
         throw error;
     }
 };
+
 
 export const getCompanyDetailHierarchy = async function getCustomerHierarchy(parentId, processedIds = new Set()) {
     try {
@@ -296,8 +316,6 @@ export const getTargetCreationHierarchy = async function getTargetCreationHierar
             return [];
         }
         processedIds.add(parentId);
-
-        // Fetch users and target creations in parallel
         const [users, targetCreations] = await Promise.all([
             User.find({ created_by: parentId, status: 'Active' }).lean(),
             TargetCreation.find({ created_by: parentId })
@@ -305,16 +323,10 @@ export const getTargetCreationHierarchy = async function getTargetCreationHierar
                 .populate({ path: 'products.productId', model: 'product' })
                 .lean()
         ]);
-
         let results = targetCreations;
-
-        // Use a single query to fetch all sub-results
         const subUserIds = users.map(user => user._id);
         const subResultsPromises = subUserIds.map(userId => getTargetCreationHierarchy(userId, processedIds));
-
         const subResults = await Promise.all(subResultsPromises);
-
-        // Combine results and flatten the array
         return results.concat(subResults.flat());
     } catch (error) {
         console.error('Error in getTargetCreationHierarchy:', error);
@@ -420,7 +432,7 @@ export const getStockHierarchy = async function getUnitHierarchy(parentId, proce
         processedIds.add(parentId);
         const [users, units] = await Promise.all([
             User.find({ created_by: parentId, status: 'Active' }).lean(),
-            StockUpdation.find({ created_by: parentId }).lean()
+            Warehouse.find({ created_by: parentId }).lean()
         ]);
         let results = units;
         const subUserIds = users.map(user => user._id);

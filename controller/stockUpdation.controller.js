@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { StockUpdation } from "../model/stockUpdation.model.js";
 import { getStockHierarchy } from "../rolePermission/permission.js";
+import { Warehouse } from "../model/warehouse.model.js";
 
 export const viewWarehouse = async (req, res, next) => {
     try {
@@ -41,8 +42,8 @@ export const stockTransferToWarehouse = async (req, res) => {
     try {
         const { warehouseToId, warehouseFromId, stockTransferDate, productItems, grandTotal, status } = req.body;
         for (const item of productItems) {
-            const sourceProduct = await StockUpdation.findOne({
-                warehouseToId: warehouseFromId,
+            const sourceProduct = await Warehouse.findOne({
+                _id: warehouseFromId,
                 'productItems.productId': item.productId,
             });
             if (sourceProduct) {
@@ -56,7 +57,7 @@ export const stockTransferToWarehouse = async (req, res) => {
 
                     await sourceProduct.save();
 
-                    const destinationProduct = await StockUpdation.findOne({
+                    const destinationProduct = await Warehouse.findOne({
                         warehouseToId,
                         'productItems.productId': item.productId,
                     });
@@ -70,17 +71,7 @@ export const stockTransferToWarehouse = async (req, res) => {
 
                         await destinationProduct.save();
                     } else {
-                        await StockUpdation.updateOne(
-                            {
-                                warehouseToId,
-                            },
-                            {
-                                $push: {
-                                    productItems: item,
-                                },
-                            },
-                            { upsert: true }
-                        );
+                        await Warehouse.updateOne({ warehouseToId, }, { $push: { productItems: item, }, }, { upsert: true });
                     }
                 } else {
                     return res.status(400).json({ error: 'Insufficient quantity in the source warehouse or product not found' });
@@ -89,7 +80,7 @@ export const stockTransferToWarehouse = async (req, res) => {
                 return res.status(400).json({ error: 'Product not found in the source warehouse' });
             }
         }
-        const stockTransfer = new StockUpdation({
+        const stockTransfer = new Warehouse({
             warehouseToId,
             warehouseFromId,
             stockTransferDate,
@@ -106,12 +97,11 @@ export const stockTransferToWarehouse = async (req, res) => {
 };
 
 export const viewWarehouseStock = async (req, res) => {
-    const warehouseId = req.params.id;
     try {
         const userId = req.params.userid;
         const adminDetail = await getStockHierarchy(userId);
         // const warehouse = await StockUpdation.find({ warehouseToId: warehouseId });
-        if (adminDetail.length>0) {
+        if (adminDetail.length > 0) {
             return res.status(200).json({ Warehouse: adminDetail, status: true });
         } else {
             res.status(404).json({ message: 'Warehouse not found', status: false });
