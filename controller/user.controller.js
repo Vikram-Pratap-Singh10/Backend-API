@@ -3,6 +3,7 @@ import axios from 'axios';
 import { User } from '../model/user.model.js';
 import Jwt from "jsonwebtoken";
 import { getUserHierarchy } from '../rolePermission/permission.js';
+import { Warehouse } from '../model/warehouse.model.js';
 
 export const UserXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/Createuser.xml";
@@ -92,46 +93,92 @@ export const UpdateUser = async (req, res, next) => {
 };
 // -----------------------------------------------
 const otpStore = {};
+// export const SignIn = async (req, res, next) => {
+//     try {
+//         const { email, password, latitude, longitude, currentAddress } = req.body
+//         const otp = Math.floor(100000 + Math.random() * 900000);
+//         otpStore[email] = otp;
+//         const createAccount = await User.findOne({ email: email }).populate({ path: "rolename", model: "role" });;
+//         const warehouse = await Warehouse.findOne({ email: email }).populate({ path: "rolename", model: "role" });
+//         // let status = await bcryptjs.compare(password,createAccount.password)
+//         if (!createAccount || !warehouse) {
+//             return res.status(400).json({ message: 'Incorrect email' });
+//         }
+//         else if (createAccount.password !== password || warehouse.passowrd !== password) {
+//             return res.status(400).json({ message: 'Incorrect password' });
+//         }
+//         else if (createAccount.gmail === true) {
+//             var mailOptions = {
+//                 from: {
+//                     name: 'SoftNumen',
+//                     address: 'noreply@softnumen'
+//                 },
+//                 to: createAccount.email,
+//                 subject: 'Verification for login',
+//                 html: '<div style={{fontFamily: "Helvetica,Arial,sans-serif",minWidth: 1000,overflow: "auto",lineHeight: 2}}<div style={{ margin: "50px auto", width: "70%", padding: "20px 0" }}><div style={{ borderBottom: "1px solid #eee" }}><a href=""style={{ fontSize: "1.4em",color: "#00466a" textDecoration: "none",fontWeight: 600}}></a></div><p style={{ fontSize: "1.1em" }}>Hi,</p><p>Thank you for choosing Our Company. Use the following OTP to complete your Sign In procedures.</p><h2 value="otp" style={{ background: "#00466a", margin: "0 auto",width: "max-content" padding: "0 10px",color: "#fff",borderRadius: 4}}>' + otp + '</h2><p style={{ fontSize: "0.9em" }}Regards,<br />SoftNumen Software Solutions</p><hr style={{ border: "none", borderTop: "1px solid #eee" }} /></div</div>',
+//             };
+//             await User.updateOne({ email }, { $set: { latitude, longitude, currentAddress } });
+//             await transporter.sendMail(mailOptions, (error, info) => {
+//                 (!error) ? res.status(201).json({ user: { ...createAccount.toObject(), password: undefined }, message: "send otp on email", status: true }) : console.log(error) || res.json({ error: "something went wrong" });
+//             });
+//             // return res.status(201).json({ user: { ...createAccount.toObject(), password: undefined }, message: "otp send on mail", status: true })
+//         }
+//         else {
+//             let token = await Jwt.sign({ subject: createAccount.email }, "dfdfjdkfdjfkdjf")
+//             await User.updateOne({ email }, { $set: { latitude, longitude, currentAddress } });
+//             return res.json({ message: 'Login successful', warehouse: { ...warehouse.toObject(), password: undefined, token }, user: { ...createAccount.toObject(), password: undefined, token }, status: true });
+//         }
+//     }
+//     catch (err) {
+//         console.log(err);
+//         return res.status(500).json({ error: "Internal Server Error", status: false });
+//     }
+// }
 export const SignIn = async (req, res, next) => {
     try {
-        const { email, password, latitude, longitude, currentAddress } = req.body
+        const { email, password, latitude, longitude, currentAddress } = req.body;
         const otp = Math.floor(100000 + Math.random() * 900000);
         otpStore[email] = otp;
-        const createAccount = await User.findOne({ email: email }).populate({ path: "rolename", model: "role" });;
-        // let status = await bcryptjs.compare(password,createAccount.password)
-        if (!createAccount) {
-            return res.status(400).json({ message: 'Incorrect email' });
+        let existingAccount = await User.findOne({ email }).populate({ path: 'rolename', model: 'role' });
+        if (!existingAccount) {
+            existingAccount = await Warehouse.findOne({ email }).populate({ path: 'rolename', model: 'role' });
+            if (!existingAccount) {
+                return res.status(400).json({ message: 'Incorrect email' });
+            }
         }
-        else if (createAccount.password !== password) {
+        if (existingAccount.password !== password) {
             return res.status(400).json({ message: 'Incorrect password' });
         }
-        else if (createAccount.gmail === true) {
-            var mailOptions = {
-                from: {
-                    name: 'SoftNumen',
-                    address: 'noreply@softnumen'
-                },
-                to: createAccount.email,
-                subject: 'Verification for login',
-                html: '<div style={{fontFamily: "Helvetica,Arial,sans-serif",minWidth: 1000,overflow: "auto",lineHeight: 2}}<div style={{ margin: "50px auto", width: "70%", padding: "20px 0" }}><div style={{ borderBottom: "1px solid #eee" }}><a href=""style={{ fontSize: "1.4em",color: "#00466a" textDecoration: "none",fontWeight: 600}}></a></div><p style={{ fontSize: "1.1em" }}>Hi,</p><p>Thank you for choosing Our Company. Use the following OTP to complete your Sign In procedures.</p><h2 value="otp" style={{ background: "#00466a", margin: "0 auto",width: "max-content" padding: "0 10px",color: "#fff",borderRadius: 4}}>' + otp + '</h2><p style={{ fontSize: "0.9em" }}Regards,<br />SoftNumen Software Solutions</p><hr style={{ border: "none", borderTop: "1px solid #eee" }} /></div</div>',
+
+        if (existingAccount.gmail === true) {
+            const mailOptions = {
+                // ... your mail options
             };
             await User.updateOne({ email }, { $set: { latitude, longitude, currentAddress } });
-            await transporter.sendMail(mailOptions, (error, info) => {
-                (!error) ? res.status(201).json({ user: { ...createAccount.toObject(), password: undefined }, message: "send otp on email", status: true }) : console.log(error) || res.json({ error: "something went wrong" });
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (!error) {
+                    return res.status(201).json({ user: { ...existingAccount.toObject(), password: undefined }, message: 'Send OTP on email', status: true });
+                } else {
+                    console.log(error);
+                    return res.status(500).json({ error: 'Failed to send OTP email', status: false });
+                }
             });
-            // return res.status(201).json({ user: { ...createAccount.toObject(), password: undefined }, message: "otp send on mail", status: true })
-        }
-        else {
-            let token = await Jwt.sign({ subject: createAccount.email }, "dfdfjdkfdjfkdjf")
+        } else {
+            const token = Jwt.sign({ subject: existingAccount.email }, 'dfdfjdkfdjfkdjf');
+
             await User.updateOne({ email }, { $set: { latitude, longitude, currentAddress } });
-            return res.json({ message: 'Login successful', user: { ...createAccount.toObject(), password: undefined, token }, status: true });
+
+            return res.json({
+                message: 'Login successful',
+                user: { ...existingAccount.toObject(), password: undefined, token },
+                status: true
+            });
         }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal Server Error', status: false });
     }
-    catch (err) {
-        console.log(err);
-        return res.status(500).json({ error: "Internal Server Error", status: false });
-    }
-}
+};
 export const verifyOTP = async (req, res) => {
     const { email, otp } = req.body;
     try {
