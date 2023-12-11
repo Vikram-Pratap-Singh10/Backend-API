@@ -6,6 +6,6 @@ const router = express.Router();
 router.post("/stock-transfer-warehouse", stockTransferToWarehouse)
 router.get("/view-warehouse-stock", viewWarehouse)
 
-router.get("/view-warehouse-stock/:userid/:id", viewWarehouseStock)
+router.get("/view-warehouse-stock/:id", viewWarehouseStock)
 
 export default router;
