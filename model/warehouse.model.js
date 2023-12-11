@@ -5,6 +5,9 @@ import axios from 'axios';
 var status = 'status';
 let rolename = 'rolename';
 let created_by = 'created_by';
+let stockTransferDate = "stockTransferDate";
+let productItems = "productItems";
+let grandTotal = "grandTotal"
 
 async function createSchema() {
   const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/AddWarehouse.xml');
@@ -13,7 +16,7 @@ async function createSchema() {
   const schemaDefinition = {};
   schemaDefinition[rolename] = String;
   schemaDefinition[created_by] = String;
-  schemaDefinition[status] = String
+
   if (Array.isArray(jsonData.AddWareHouse.input)) {
     jsonData.AddWareHouse.input.forEach((input, index) => {
       const name = input.name._text;
@@ -44,6 +47,9 @@ async function createSchema() {
       schemaDefinition[name] = String;
     }
   }
+  schemaDefinition[stockTransferDate] = String;
+  schemaDefinition[productItems] = [{ productId: String, unitType: String, Size: String, transferQty: Number, price: Number, totalPrice: Number }, { timestamps: true }];
+  schemaDefinition[grandTotal] = Number
   if (jsonData.AddWareHouse.MyDropdown) {
     if (Array.isArray(jsonData.AddWareHouse.MyDropdown)) {
       jsonData.AddWareHouse.MyDropdown.forEach((dropdown) => {
@@ -111,6 +117,7 @@ async function createSchema() {
     }
   }
 
+  schemaDefinition[status] = String
   return new mongoose.Schema(schemaDefinition, { timestamps: true });
 }
 

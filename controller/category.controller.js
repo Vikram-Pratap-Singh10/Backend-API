@@ -17,8 +17,8 @@ export const saveCategory = async (req, res) => {
 export const ViewCategory = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const adminDetails = await getCategoryHierarchy(userId);
-        const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
+        const adminDetail = await getCategoryHierarchy(userId);
+        // const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
         let categories = await Category.find().sort({ sortorder: -1 })
         return categories ? res.status(200).json({ Category: adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }

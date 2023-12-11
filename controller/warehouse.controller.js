@@ -27,8 +27,8 @@ export const SaveWarehouse = async (req, res, next) => {
 export const ViewWarehouse = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const adminDetails = await getWarehouseHierarchy(userId);
-        const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
+        const adminDetail = await getWarehouseHierarchy(userId);
+        // const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
         let warehouse = await Warehouse.find().sort({ sortorder: -1 })
         return warehouse ? res.status(200).json({ Warehouse: adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { StockUpdation } from "../model/stockUpdation.model.js";
+import { getStockHierarchy } from "../rolePermission/permission.js";
 
 export const viewWarehouse = async (req, res, next) => {
     try {
@@ -103,6 +104,23 @@ export const stockTransferToWarehouse = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+export const viewWarehouseStock = async (req, res) => {
+    const warehouseId = req.params.id;
+    try {
+        const userId = req.params.userid;
+        const adminDetail = await getStockHierarchy(userId);
+        // const warehouse = await StockUpdation.find({ warehouseToId: warehouseId });
+        if (adminDetail.length>0) {
+            return res.status(200).json({ Warehouse: adminDetail, status: true });
+        } else {
+            res.status(404).json({ message: 'Warehouse not found', status: false });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 
 
 

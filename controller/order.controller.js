@@ -451,15 +451,15 @@ export const updateCreateOrder = async (req, res, next) => {
 
 export const autoBillingLock = async (req, res, next) => {
     try {
-        const time1 = req.body.time;
-        // const timestamp = new Date(orderAudit[0].timestamp);
+        const order = await Order.find({ userId: req.params.id })
+        const time1 = await new Date(order[order.length - 1].createdAt);
         const currentDate = new Date();
         const timeDifference = currentDate - time1;
         const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        // const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        // const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-        const time = `${days} days,`;
-        console.log(time)
+        if (days >= 15) {
+            return console.log("right")
+        }
+        console.log("all right")
     }
     catch (err) {
         console.log(err);

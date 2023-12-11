@@ -43,8 +43,8 @@ export const SaveCustomer = async (req, res, next) => {
 export const ViewCustomer = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const adminDetails = await getCustomerHierarchy(userId);
-        const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
+        const adminDetail = await getCustomerHierarchy(userId);
+        // const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
         let customer = await Customer.find().sort({ sortorder: -1 })
         return customer ? res.status(200).json({ Customer: adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }

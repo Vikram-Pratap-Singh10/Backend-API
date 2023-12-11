@@ -14,8 +14,8 @@ export const SavePromotion = async (req, res, next) => {
 export const ViewPromotion = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const adminDetails = await getPromotionHierarchy(userId);
-        const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
+        const adminDetail = await getPromotionHierarchy(userId);
+        // const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
         const promotion = await Promotion.find().sort({ sortorder: -1 })
         return (promotion.length > 0) ? res.status(200).json({ Promotion: adminDetail, status: true }) : res.status(404).json({ message: "Not Found", status: false })
     }

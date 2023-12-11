@@ -54,10 +54,9 @@ export const ViewUser = async (req, res, next) => {
 export const ViewUserById = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const adminDetails = await getUserHierarchy(userId);
-        let user = await User.findById({ _id: req.params.id }).sort({ sortorder: -1 }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" })
-        const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
-        return user ? res.status(200).json({ User: user, adminDetails: adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+        const adminDetail = await getUserHierarchy(userId);
+        // let user = await User.findById({ _id: req.params.id }).sort({ sortorder: -1 }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" })
+        return (adminDetail.length > 0) ? res.status(200).json({ adminDetails: adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
         console.log(err);
