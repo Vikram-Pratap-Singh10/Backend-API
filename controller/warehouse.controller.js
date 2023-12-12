@@ -38,6 +38,18 @@ export const ViewWarehouse = async (req, res, next) => {
         return res.status(500).json({ error: "Internal Server Error", status: false });
     }
 }
+
+export const ViewWarehouseList = async (req, res, next) => {
+    try {
+        let warehouse = await Warehouse.find().sort({ sortorder: -1 })
+        return warehouse ? res.status(200).json({ Warehouse: warehouse, status: true }) : res.status(404).json({ error: "Not Found", status: false })
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error", status: false });
+    }
+}
+
 export const ViewWarehouseById = async (req, res, next) => {
     try {
         let warehouse = await Warehouse.findById({ _id: req.params.id }).sort({ sortorder: -1 }).populate({
