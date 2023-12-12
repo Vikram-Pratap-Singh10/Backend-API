@@ -69,8 +69,8 @@ export const placeOrder = async (req, res, next) => {
 export const placeOrderHistoryByUserId = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const userHierarchy = await findUserDetails(userId);
-        const adminDetail = (userHierarchy[userHierarchy.length - 1])
+        // const userHierarchy = await findUserDetails(userId);
+        // const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await Order.find({ userId: userId }).populate({
             path: 'orderItem.productId',
             model: 'product'
@@ -108,12 +108,12 @@ export const placeOrderHistoryByUserId = async (req, res, next) => {
                 longitude: req.body.longitude,
                 currentAddress: req.body.currentAddress,
                 status: order.status,
-                adminDetail: adminDetail,
+                // adminDetail: adminDetail,
                 createdAt: order.createdAt,
                 updatedAt: order.updatedAt
             };
         });
-        return res.status(200).json({ orderHistory: formattedOrders, adminDetail, status: true });
+        return res.status(200).json({ orderHistory: formattedOrders, status: true });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: err });
@@ -285,8 +285,8 @@ export const createOrder = async (req, res, next) => {
 export const createOrderHistoryByUserId = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const userHierarchy = await findUserDetails(userId);
-        const adminDetail = (userHierarchy[userHierarchy.length - 1])
+        // const userHierarchy = await findUserDetails(userId);
+        // const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await CreateOrder.find({ userId: userId }).populate({
             path: 'orderItem.productId',
             model: 'product'
@@ -323,12 +323,12 @@ export const createOrderHistoryByUserId = async (req, res, next) => {
                 longitude: req.body.longitude,
                 currentAddress: req.body.currentAddress,
                 status: order.status,
-                adminDetail: adminDetail,
+                // adminDetail: adminDetail,
                 createdAt: order.createdAt,
                 updatedAt: order.updatedAt
             };
         });
-        return res.status(200).json({ orderHistory: formattedOrders, adminDetail, status: true });
+        return res.status(200).json({ orderHistory: formattedOrders, status: true });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: err });
