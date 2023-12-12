@@ -3,6 +3,7 @@ import { Product } from "../model/product.model.js";
 import { PurchaseOrder } from "../model/purchaseOrder.model.js";
 import { User } from "../model/user.model.js";
 import { DebitNote } from "../model/debitNote.model.js";
+import { findUserDetails } from "../rolePermission/permission.js";
 
 export const purchaseOrder = async (req, res, next) => {
     try {
@@ -83,6 +84,9 @@ export const purchaseOrderHistoryByUserId = async (req, res, next) => {
 };
 export const purchaseOrderHistory = async (req, res, next) => {
     try {
+        const userId = req.params.id;
+        const userHierarchy = await findUserDetails(userId);
+        const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const orders = await PurchaseOrder.find({}).populate({
             path: 'orderItems.productId',
             model: 'product'
@@ -117,6 +121,7 @@ export const purchaseOrderHistory = async (req, res, next) => {
                 currentAddress: req.body.currentAddress,
                 status: order.status,
                 orderItems: formattedOrderItems,
+                adminDetail: adminDetail,
                 createdAt: order.createdAt,
                 updatedAt: order.updatedAt
             };
