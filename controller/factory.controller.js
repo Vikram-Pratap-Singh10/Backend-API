@@ -1,4 +1,5 @@
 import { Factory } from "../model/factory.model.js";
+import { StockUpdation } from "../model/stockUpdation.model.js";
 import { Warehouse } from "../model/warehouse.model.js";
 
 export const saveFactorytoWarehouse = async (req, res, next) => {
@@ -9,6 +10,7 @@ export const saveFactorytoWarehouse = async (req, res, next) => {
             return res.status(404).json({ message: 'Warehouse not found', status: false });
         }
         const factory = await Factory.create(req.body);
+        const stock = await StockUpdation.create(req.body)
         existingWarehouse.grandTotal = grandTotal;
         existingWarehouse.stockTransferDate = stockTransferDate;
         existingWarehouse.status = status;
