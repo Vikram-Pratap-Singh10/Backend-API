@@ -335,6 +335,8 @@ export const getCompanyDetailHierarchy = async function getCompanyDetailHierarch
 //     }
 // };
 
+
+
 export const getWarehouseHierarchy = async function getWarehouseHierarchy(parentId, processedIds = new Set()) {
     try {
         if (processedIds.has(parentId)) {
@@ -355,6 +357,49 @@ export const getWarehouseHierarchy = async function getWarehouseHierarchy(parent
         throw error;
     }
 };
+
+// export const getWarehouseHierarchy = async function getWarehouseHierarchy(warehouseId, userId, processedIds = new Set()) {
+//     try {
+//         if (!warehouseId && !userId) {
+//             throw new Error('Either warehouseId or userId must be provided.');
+//         }
+
+//         if (processedIds.has(warehouseId || userId)) {
+//             return [];
+//         }
+
+//         processedIds.add(warehouseId || userId);
+
+//         let users = [];
+//         let warehouses = [];
+
+//         if (userId) {
+//             users = await User.find({ created_by: userId, status: 'Active' }).lean();
+//         }
+
+//         if (warehouseId || userId) {
+//             warehouses = await Warehouse.find({ _: warehouseId || userId }).lean();
+//         }
+
+//         let results = warehouses;
+
+//         if (userId) {
+//             const subUserIds = users.map(user => user._id);
+//             const subResultsPromises = subUserIds.map(subUserId => getWarehouseHierarchy(null, subUserId, processedIds));
+//             const subResults = await Promise.all(subResultsPromises);
+//             results = results.concat(subResults.flat());
+//         }
+
+//         return results;
+//     } catch (error) {
+//         console.error('Error in getWarehouseHierarchy:', error);
+//         throw error;
+//     }
+// };
+
+
+
+
 
 
 export const getProductHierarchy = async function getProductHierarchy(parentId, processedIds = new Set()) {
