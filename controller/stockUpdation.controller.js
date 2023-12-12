@@ -48,30 +48,23 @@ export const stockTransferToWarehouse = async (req, res) => {
             });
             if (sourceProduct) {
                 const sourceProductItem = sourceProduct.productItems.find(
-                    (pItem) => pItem.productId.equals(new mongoose.Types.ObjectId(item.productId))
-                );
+                    (pItem) => pItem.productId === item.productId);
                 if (sourceProductItem) {
                     sourceProductItem.transferQty -= item.transferQty;
                     sourceProductItem.totalPrice -= item.totalPrice;
                     sourceProduct.markModified('productItems');
-
                     await sourceProduct.save();
-
                     const destinationProduct = await Warehouse.findOne({
-                        warehouseToId,
+                        _id: warehouseToId,
                         'productItems.productId': item.productId,
                     });
-
                     if (destinationProduct) {
-                        const destinationProductItem = destinationProduct.productItems.find((pItem) => pItem.productId.equals(new mongoose.Types.ObjectId(item.productId))
-                        );
-
+                        const destinationProductItem = destinationProduct.productItems.find((pItem) => pItem.productId === item.productId);
                         destinationProductItem.transferQty += item.transferQty;
                         destinationProductItem.totalPrice += item.totalPrice;
-
                         await destinationProduct.save();
                     } else {
-                        await Warehouse.updateOne({ warehouseToId, }, { $push: { productItems: item, }, }, { upsert: true });
+                        await Warehouse.updateOne({ _id: warehouseToId, }, { $push: { productItems: item, }, }, { upsert: true });
                     }
                 } else {
                     return res.status(400).json({ error: 'Insufficient quantity in the source warehouse or product not found' });
@@ -95,7 +88,6 @@ export const stockTransferToWarehouse = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
-
 export const viewWarehouseStock = async (req, res) => {
     try {
         const userId = req.params.userid;
