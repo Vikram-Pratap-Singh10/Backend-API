@@ -7,7 +7,8 @@ let rolename = 'rolename';
 let created_by = 'created_by';
 let stockTransferDate = "stockTransferDate";
 let productItems = "productItems";
-let grandTotal = "grandTotal"
+let grandTotal = "grandTotal";
+let exportId = 'exportId';
 
 async function createSchema() {
   const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/Warehouse.xml');
@@ -16,7 +17,7 @@ async function createSchema() {
   const schemaDefinition = {};
   schemaDefinition[rolename] = String;
   schemaDefinition[created_by] = String;
-
+  schemaDefinition[exportId] = String;
   if (Array.isArray(jsonData.AddWareHouse.input)) {
     jsonData.AddWareHouse.input.forEach((input, index) => {
       const name = input.name._text;

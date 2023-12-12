@@ -12,6 +12,7 @@ export const saveFactorytoWarehouse = async (req, res, next) => {
         existingWarehouse.grandTotal = grandTotal;
         existingWarehouse.stockTransferDate = stockTransferDate;
         existingWarehouse.status = status;
+        existingWarehouse.exportId = factory._id;
         productItems.forEach(item => {
             existingWarehouse.productItems.push(item);
         });
@@ -28,7 +29,7 @@ export const getFactoryData = async (req, res, next) => {
         const factory = await Factory.find({}).populate({
             path: 'productItems.productId',
             model: 'product'
-        }).exec();
+        }).populate({ path: "warehouseToId", model: "warehouse" }).exec();
         if (!factory || factory.length === 0) {
             return res.status(404).json({ message: "No factory found", status: false });
         }
@@ -56,5 +57,77 @@ export const getFactoryData = async (req, res, next) => {
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: err, status: false });
+    }
+};
+
+// export const updateStatus = async (req, res) => {
+//     try {
+//         const warehouseToId = req.params.id;
+//         const { status } = req.body;
+//         const order = await Factory.findOne({ warehouseToId: warehouseToId }).sort({ sortorder: -1 });
+//         if (!order) {
+//             return res.status(404).json({ message: 'Place order not found' });
+//         }
+//         order.status = status;
+//         await order.save();
+//         // if (status === 'completed') {
+//         //     req.body.totalAmount = order.grandTotal;
+//         //     req.body.productItems = order.orderItem;
+//         //     req.body.userId = order.userId;
+//         //     req.body.orderId = order._id;
+//         //     await CreditNote.create(req.body)
+//         // }
+//         return res.status(200).json({ Order: order, status: true });
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ error: error, status: false });
+//     }
+// }
+
+
+// export const updateFactoryInWarehouse = async (req, res, next) => {
+//     try {
+//         const { warehouseToId } = req.params;
+//         const { grandTotal, status, stockTransferDate, productItems } = req.body;
+//         const existingWarehouse = await Warehouse.findById(warehouseToId);
+//         if (!existingWarehouse) {
+//             return res.status(404).json({ message: 'Warehouse not found', status: false });
+//         }
+//         existingWarehouse.grandTotal = grandTotal;
+//         existingWarehouse.stockTransferDate = stockTransferDate;
+//         existingWarehouse.status = status;
+//         existingWarehouse.productItems = productItems;
+//         await existingWarehouse.save();
+
+//         return res.status(200).json({ Warehouse: existingWarehouse, status: true });
+//     } catch (err) {
+//         console.error(err);
+//         return res.status(500).json({ error: 'Internal Server Error', status: false });
+//     }
+// };
+
+export const updateFactorytoWarehouse = async (req, res, next) => {
+    try {
+        const warehouseToId = req.params.id
+        const { grandTotal, status, stockTransferDate, productItems } = req.body;
+        const existingWarehouse = await Warehouse.findById(warehouseToId);
+        if (!existingWarehouse) {
+            return res.status(404).json({ message: 'Warehouse not found', status: false });
+        }
+        const ware = await Warehouse.findByIdAndUpdate(warehouseToId, req.body, { new: true })
+        // existingWarehouse.grandTotal = grandTotal;
+        // existingWarehouse.stockTransferDate = stockTransferDate;
+        // existingWarehouse.status = status;
+        // existingWarehouse.productItems = productItems;
+        // await existingWarehouse.save();
+        const factoryId = existingWarehouse.exportId;
+        const existingFactory = await Factory.findByIdAndUpdate(factoryId, req.body, { new: true });
+        if (!existingFactory) {
+            return res.status(404).json({ message: 'Factory not found', status: false });
+        }
+        return res.status(200).json({ Warehouse: ware, Factory: existingFactory, status: true });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal Server Error', status: false });
     }
 };

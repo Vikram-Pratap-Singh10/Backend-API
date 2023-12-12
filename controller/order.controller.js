@@ -452,11 +452,14 @@ export const updateCreateOrder = async (req, res, next) => {
 export const autoBillingLock = async (req, res, next) => {
     try {
         const order = await Order.find({ userId: req.params.id })
+        const orders = await order[order.length - 1];
         const time1 = await new Date(order[order.length - 1].createdAt);
         const currentDate = new Date();
         const timeDifference = currentDate - time1;
         const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
         if (days >= 15) {
+            orders.status = "locked";
+            await order.save();
             return console.log("right")
         }
         console.log("all right")
