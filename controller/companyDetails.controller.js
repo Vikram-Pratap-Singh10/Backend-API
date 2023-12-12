@@ -50,8 +50,8 @@ export const saveCompanyDetails = async (req, res, next) => {
 export const viewCompanyDetails = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const adminDetail = await getCompanyDetailHierarchy(userId);
-        // const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
+        const adminDetails = await getCompanyDetailHierarchy(userId);
+        const adminDetail = adminDetails.length === 1 ? adminDetails[0] : adminDetails;
         const companyDetail = await CompanyDetails.find().sort({ sortorder: -1 })
         return companyDetail ? res.status(200).json({ CompanyDetail: adminDetail, status: true }) : res.status(400).json({ message: "Not Found", status: false })
     }

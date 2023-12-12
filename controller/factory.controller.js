@@ -108,24 +108,24 @@ export const getFactoryData = async (req, res, next) => {
 
 export const updateFactorytoWarehouse = async (req, res, next) => {
     try {
-        const warehouseToId = req.params.id
+        const factoryId = req.params.id
         const { grandTotal, status, stockTransferDate, productItems } = req.body;
-        const existingWarehouse = await Warehouse.findById(warehouseToId);
-        if (!existingWarehouse) {
-            return res.status(404).json({ message: 'Warehouse not found', status: false });
+        const existingFactory = await Factory.findById(factoryId);
+        if (!existingFactory) {
+            return res.status(404).json({ message: 'Factory not found', status: false });
         }
-        const ware = await Warehouse.findByIdAndUpdate(warehouseToId, req.body, { new: true })
+        const factory = await Factory.findByIdAndUpdate(factoryId, req.body, { new: true })
         // existingWarehouse.grandTotal = grandTotal;
         // existingWarehouse.stockTransferDate = stockTransferDate;
         // existingWarehouse.status = status;
         // existingWarehouse.productItems = productItems;
         // await existingWarehouse.save();
-        const factoryId = existingWarehouse.exportId;
-        const existingFactory = await Factory.findByIdAndUpdate(factoryId, req.body, { new: true });
-        if (!existingFactory) {
-            return res.status(404).json({ message: 'Factory not found', status: false });
+        const warehouseId = existingFactory.warehouseToId;
+        const existingWarehouse = await Warehouse.findByIdAndUpdate(warehouseId, req.body, { new: true });
+        if (!existingWarehouse) {
+            return res.status(404).json({ message: 'Warehouse not found', status: false });
         }
-        return res.status(200).json({ Warehouse: ware, Factory: existingFactory, status: true });
+        return res.status(200).json({ Warehouse: existingWarehouse, Factory: factory, status: true });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'Internal Server Error', status: false });
