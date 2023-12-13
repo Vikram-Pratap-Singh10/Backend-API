@@ -44,7 +44,7 @@ export const SaveUser = async (req, res, next) => {
 // ---------------------------------
 export const ViewUser = async (req, res, next) => {
     try {
-        let user = await User.findById({ _id: req.params.id }).sort({ sortorder: -1 }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" })
+        let user = await User.findById({ _id: req.params.id }).sort({ sortorder: -1 }).populate({ path: "productItems.productId", model: "product" })
         return res.status(200).json({ User: user, status: true });
     } catch (err) {
         console.error(err);
