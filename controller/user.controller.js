@@ -2,7 +2,7 @@ import ExcelJS from 'exceljs'
 import axios from 'axios';
 import { User } from '../model/user.model.js';
 import Jwt from "jsonwebtoken";
-import { getUserHierarchy, getUserHierarchyWithProducts, getUserWarehouseHierarchy } from '../rolePermission/permission.js';
+import { getUserHierarchy, getUserWarehouseHierarchy } from '../rolePermission/permission.js';
 import { Warehouse } from '../model/warehouse.model.js';
 
 export const UserXml = async (req, res) => {
@@ -56,7 +56,6 @@ export const ViewUserById = async (req, res, next) => {
     try {
         const userId = req.params.id;
         const adminDetail = await getUserHierarchy(userId);
-        // let user = await User.findById({ _id: req.params.id }).sort({ sortorder: -1 }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" })
         return (adminDetail.length > 0) ? res.status(200).json({ adminDetails: adminDetail, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
