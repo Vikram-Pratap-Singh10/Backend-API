@@ -32,7 +32,7 @@ export const getFactoryData = async (req, res, next) => {
         const factory = await Factory.find({}).populate({
             path: 'productItems.productId',
             model: 'product'
-        }).populate({ path: "warehouseToId", model: "warehouse" }).exec();
+        }).populate({ path: "warehouseToId", model: "user" }).exec();
         if (!factory || factory.length === 0) {
             return res.status(404).json({ message: "No factory found", status: false });
         }
