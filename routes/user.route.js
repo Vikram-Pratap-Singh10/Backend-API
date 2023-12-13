@@ -1,5 +1,5 @@
 import express from "express";
-import { DeleteUser, EditProfile, SaveUser, SignIn, UpdateUser, UserXml, ViewUser, ViewUserById, forgetPassword, otpVerify, updatePassword, verifyOTP } from "../controller/user.controller.js";
+import { DeleteUser, EditProfile, SaveUser, SignIn, UpdateUser, UserXml, ViewUser, ViewUserById, ViewWarehouse, forgetPassword, otpVerify, updatePassword, verifyOTP } from "../controller/user.controller.js";
 import multer from "multer";
 
 const router = express.Router();
@@ -19,5 +19,7 @@ router.post("/edit-profile/:id", upload.single("file"), EditProfile);
 router.post("/forget-password", forgetPassword)
 router.post("/otp-verify", otpVerify)
 router.post("/update-password/:id", updatePassword)
+
+router.get("/view-warehouse/:id", ViewWarehouse);
 
 export default router;

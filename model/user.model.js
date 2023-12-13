@@ -9,6 +9,10 @@ let latitude = "latitude";
 let longitude = "longitude";
 let currentAddress = "currentAddress";
 
+let stockTransferDate = "stockTransferDate";
+let productItems = "productItems";
+let grandTotal = "grandTotal";
+
 async function createSchema() {
   const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/Createuser.xml');
   const xmlFile = ff.data;
@@ -17,6 +21,9 @@ async function createSchema() {
   schemaDefinition[rolename] = String;
   schemaDefinition[created_by] = String;
   schemaDefinition[status] = String;
+  schemaDefinition[stockTransferDate] = String;
+  schemaDefinition[productItems] = [{ productId: String, unitType: String, Size: String, transferQty: Number, price: Number, totalPrice: Number }, { timestamps: true }];
+  schemaDefinition[grandTotal] = Number
   if (Array.isArray(jsonData.CreateUser.input)) {
     jsonData.CreateUser.input.forEach((input, index) => {
       const name = input.name._text;
