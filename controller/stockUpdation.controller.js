@@ -98,7 +98,7 @@ export const stockTransferToWarehouse = async (req, res) => {
                     });
                     if (destinationProduct) {
                         const destinationProductItem = destinationProduct.productItems.find((pItem) => pItem.productId === item.productId);
-                        destinationProductItem.transferQty += item.transferQty;
+                        destinationProductItem.Size += item.transferQty;
                         destinationProductItem.totalPrice += item.totalPrice;
                         await destinationProduct.save();
                     } else {
