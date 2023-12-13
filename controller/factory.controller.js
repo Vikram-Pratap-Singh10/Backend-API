@@ -11,7 +11,8 @@ export const saveFactorytoWarehouse = async (req, res, next) => {
             return res.status(404).json({ message: 'Warehouse not found', status: false });
         }
         const factory = await Factory.create(req.body);
-        const stock = await StockUpdation.create(req.body)
+        req.body.exportId = await factory._id;
+        const stock = await StockUpdation.create(req.body);
         existingWarehouse.grandTotal = grandTotal;
         existingWarehouse.stockTransferDate = stockTransferDate;
         existingWarehouse.status = status;

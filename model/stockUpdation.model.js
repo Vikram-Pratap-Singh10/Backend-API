@@ -7,14 +7,18 @@ const StockUpdationSchema = new mongoose.Schema({
     },
     warehouseToId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "warehouse"
+        ref: "user"
     },
     warehouseFromId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "warehouse"
+        ref: "user"
     },
     stockTransferDate: {
         type: String
+    },
+    exportId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "factory"
     },
     productItems: [{
         productId: {
@@ -25,6 +29,9 @@ const StockUpdationSchema = new mongoose.Schema({
             type: String
         },
         Size: {
+            type: Number
+        },
+        currentStock: {
             type: Number
         },
         transferQty: {
