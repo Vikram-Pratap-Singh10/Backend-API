@@ -576,3 +576,32 @@ export const getUserWarehouseHierarchy = async function getUserHierarchy(parentI
         throw error;
     }
 };
+
+
+
+export const getUserHierarchyWithProducts = async function getUserHierarchyWithProducts(parentId, processedIds = new Set()) {
+    try {
+        if (processedIds.has(parentId)) {
+            return { user: null, products: [] };
+        }
+        processedIds.add(parentId);
+        const [user, products] = await Promise.all([
+            User.findOne({ _id: parentId, status: 'Active' }).lean(),
+            Product.find({ created_by: parentId }).lean()
+        ]);
+        if (!user) {
+            return { user: null, products: [] };
+        }
+        const subResultsPromises = products.map(product => 
+            getUserHierarchyWithProducts(product._id, processedIds)
+        );
+        const subResults = await Promise.all(subResultsPromises);
+        return {
+            user,
+            products: products.concat(subResults.map(result => result.products).flat())
+        };
+    } catch (error) {
+        console.error('Error in getUserHierarchyWithProducts:', error);
+        throw error;
+    }
+};

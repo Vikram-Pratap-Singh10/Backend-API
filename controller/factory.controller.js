@@ -1,11 +1,12 @@
 import { Factory } from "../model/factory.model.js";
 import { StockUpdation } from "../model/stockUpdation.model.js";
+import { User } from "../model/user.model.js";
 import { Warehouse } from "../model/warehouse.model.js";
 
 export const saveFactorytoWarehouse = async (req, res, next) => {
     try {
         const { warehouseToId, grandTotal, status, stockTransferDate, productItems } = req.body;
-        const existingWarehouse = await Warehouse.findById(warehouseToId);
+        const existingWarehouse = await User.findById(warehouseToId);
         if (!existingWarehouse) {
             return res.status(404).json({ message: 'Warehouse not found', status: false });
         }
@@ -123,7 +124,7 @@ export const updateFactorytoWarehouse = async (req, res, next) => {
         // existingWarehouse.productItems = productItems;
         // await existingWarehouse.save();
         const warehouseId = existingFactory.warehouseToId;
-        const existingWarehouse = await Warehouse.findByIdAndUpdate(warehouseId, req.body, { new: true });
+        const existingWarehouse = await User.findByIdAndUpdate(warehouseId, req.body, { new: true });
         if (!existingWarehouse) {
             return res.status(404).json({ message: 'Warehouse not found', status: false });
         }

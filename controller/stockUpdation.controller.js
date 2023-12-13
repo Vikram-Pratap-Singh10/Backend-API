@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { StockUpdation } from "../model/stockUpdation.model.js";
 import { getStockHierarchy } from "../rolePermission/permission.js";
 import { Warehouse } from "../model/warehouse.model.js";
+import { User } from "../model/user.model.js";
 
 export const viewInWardStockToWarehouse = async (req, res, next) => {
     try {
@@ -79,7 +80,7 @@ export const stockTransferToWarehouse = async (req, res) => {
     try {
         const { warehouseToId, warehouseFromId, stockTransferDate, productItems, grandTotal, status } = req.body;
         for (const item of productItems) {
-            const sourceProduct = await Warehouse.findOne({
+            const sourceProduct = await User.findOne({
                 _id: warehouseFromId,
                 'productItems.productId': item.productId,
             });
@@ -91,7 +92,7 @@ export const stockTransferToWarehouse = async (req, res) => {
                     sourceProductItem.totalPrice -= item.totalPrice;
                     sourceProduct.markModified('productItems');
                     await sourceProduct.save();
-                    const destinationProduct = await Warehouse.findOne({
+                    const destinationProduct = await User.findOne({
                         _id: warehouseToId,
                         'productItems.productId': item.productId,
                     });
@@ -101,7 +102,7 @@ export const stockTransferToWarehouse = async (req, res) => {
                         destinationProductItem.totalPrice += item.totalPrice;
                         await destinationProduct.save();
                     } else {
-                        await Warehouse.updateOne({ _id: warehouseToId, }, { $push: { productItems: item, }, }, { upsert: true });
+                        await User.updateOne({ _id: warehouseToId, }, { $push: { productItems: item, }, }, { upsert: true });
                     }
                 } else {
                     return res.status(400).json({ error: 'Insufficient quantity in the source warehouse or product not found' });
@@ -156,7 +157,7 @@ export const updateWarehousetoWarehouse = async (req, res, next) => {
         // existingWarehouse.productItems = productItems;
         // await existingWarehouse.save();
         const warehouseId = existingFactory.warehouseToId;
-        const existingWarehouse = await Warehouse.findByIdAndUpdate(warehouseId, req.body, { new: true });
+        const existingWarehouse = await User.findByIdAndUpdate(warehouseId, req.body, { new: true });
         if (!existingWarehouse) {
             return res.status(404).json({ message: 'Warehouse not found', status: false });
         }
