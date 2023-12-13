@@ -558,3 +558,21 @@ export const getStockHierarchy = async function getUnitHierarchy(parentId, proce
         throw error;
     }
 };
+
+
+export const getUserWarehouseHierarchy = async function getUserHierarchy(parentId, processedIds = new Set()) {
+    try {
+        if (processedIds.has(parentId)) {
+            return [];
+        }
+        processedIds.add(parentId);
+        const users = await User.find({ created_by: parentId, status: 'Active' }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" }).lean();
+        const subUserIds = users.map(user => user._id);
+        const subResultsPromises = subUserIds.map(userId => getUserHierarchy(userId, processedIds));
+        const subResults = await Promise.all(subResultsPromises);
+        return users.concat(subResults.flat());
+    } catch (error) {
+        console.error('Error in getUserHierarchy:', error);
+        throw error;
+    }
+};
