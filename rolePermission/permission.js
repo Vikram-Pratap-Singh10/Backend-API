@@ -503,7 +503,6 @@ export const getUserHierarchy = async function getUserHierarchy(parentId, proces
         }
         processedIds.add(parentId);
         const users = await User.find({ created_by: parentId }).lean();
-        console.log(users)
         const subUserIds = users.map(user => user._id);
         const subResultsPromises = subUserIds.map(userId => getUserHierarchy(userId, processedIds));
         const subResults = await Promise.all(subResultsPromises);
@@ -569,7 +568,7 @@ export const getUserWarehouseHierarchy = async function getUserHierarchy(parentI
             return [];
         }
         processedIds.add(parentId);
-        const users = await User.find({ created_by: parentId }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" }).lean();
+        const users = await User.find({ created_by: parentId }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" }).populate({ path: "productItems.productId", model: "product" }).lean();
         const subUserIds = users.map(user => user._id);
         const subResultsPromises = subUserIds.map(userId => getUserHierarchy(userId, processedIds));
         const subResults = await Promise.all(subResultsPromises);
@@ -580,8 +579,6 @@ export const getUserWarehouseHierarchy = async function getUserHierarchy(parentI
     }
 };
 
-
-
 export const getUserHierarchyWithProducts = async function getUserHierarchyWithProducts(parentId, processedIds = new Set()) {
     try {
         if (processedIds.has(parentId)) {
@@ -589,7 +586,7 @@ export const getUserHierarchyWithProducts = async function getUserHierarchyWithP
         }
         processedIds.add(parentId);
         const [user, products] = await Promise.all([
-            User.findOne({ _id: parentId, status: 'Active' }).lean(),
+            User.findOne({ _id: parentId }).lean(),
             Product.find({ created_by: parentId }).lean()
         ]);
         if (!user) {
