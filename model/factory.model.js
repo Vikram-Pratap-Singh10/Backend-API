@@ -23,6 +23,9 @@ const FactorySchema = new mongoose.Schema({
         Size: {
             type: Number
         },
+        currentStock: {
+            type: Number
+        },
         transferQty: {
             type: Number
         },
