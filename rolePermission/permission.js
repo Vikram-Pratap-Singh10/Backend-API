@@ -502,7 +502,8 @@ export const getUserHierarchy = async function getUserHierarchy(parentId, proces
             return [];
         }
         processedIds.add(parentId);
-        const users = await User.find({ created_by: parentId, status: 'Active' }).lean();
+        const users = await User.find({ created_by: parentId }).lean();
+        console.log(users)
         const subUserIds = users.map(user => user._id);
         const subResultsPromises = subUserIds.map(userId => getUserHierarchy(userId, processedIds));
         const subResults = await Promise.all(subResultsPromises);
@@ -512,6 +513,8 @@ export const getUserHierarchy = async function getUserHierarchy(parentId, proces
         throw error;
     }
 };
+
+
 
 export const getCustomerHierarchy = async function getCustomerHierarchy(parentId, processedIds = new Set()) {
     try {
@@ -592,7 +595,7 @@ export const getUserHierarchyWithProducts = async function getUserHierarchyWithP
         if (!user) {
             return { user: null, products: [] };
         }
-        const subResultsPromises = products.map(product => 
+        const subResultsPromises = products.map(product =>
             getUserHierarchyWithProducts(product._id, processedIds)
         );
         const subResults = await Promise.all(subResultsPromises);
