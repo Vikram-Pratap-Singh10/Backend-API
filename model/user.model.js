@@ -14,6 +14,7 @@ let productItems = "productItems";
 let grandTotal = "grandTotal";
 let currentStock = "currentStock";
 let transferStatus = "transferStatus";
+let warehouseFromId = "warehouseFromId"
 
 async function createSchema() {
   const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/Createuser.xml');
@@ -25,6 +26,7 @@ async function createSchema() {
   schemaDefinition[status] = String;
   schemaDefinition[stockTransferDate] = String;
   schemaDefinition[productItems] = [{ productId: String, unitType: String, Size: Number, currentStock: Number, transferQty: Number, price: Number, totalPrice: Number }, { timestamps: true }];
+  schemaDefinition[warehouseFromId] = String
   schemaDefinition[grandTotal] = Number;
   schemaDefinition[transferStatus] = String;
   if (Array.isArray(jsonData.CreateUser.input)) {
