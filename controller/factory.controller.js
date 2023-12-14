@@ -5,7 +5,7 @@ import { Warehouse } from "../model/warehouse.model.js";
 
 export const saveFactorytoWarehouse = async (req, res, next) => {
     try {
-        const { warehouseToId, grandTotal, status, stockTransferDate, productItems } = req.body;
+        const { warehouseToId, grandTotal, transferStatus, stockTransferDate, productItems } = req.body;
         const existingWarehouse = await User.findById(warehouseToId);
         if (!existingWarehouse) {
             return res.status(404).json({ message: 'Warehouse not found', status: false });
@@ -15,7 +15,7 @@ export const saveFactorytoWarehouse = async (req, res, next) => {
         const stock = await StockUpdation.create(req.body);
         existingWarehouse.grandTotal = grandTotal;
         existingWarehouse.stockTransferDate = stockTransferDate;
-        existingWarehouse.status = status;
+        existingWarehouse.transferStatus = transferStatus;
         existingWarehouse.exportId = factory._id;
         productItems.forEach(item => {
             existingWarehouse.productItems.push(item);
