@@ -139,7 +139,7 @@ export const updateFactorytoWarehouse = async (req, res, next) => {
 
 export const saveFactorytoWarehouse1 = async (req, res, next) => {
     try {
-        const { warehouseToId, grandTotal, status, stockTransferDate, productItems } = req.body;
+        const { warehouseToId, grandTotal, transferStatus, stockTransferDate, productItems } = req.body;
         const existingWarehouse = await User.findById(warehouseToId);
         if (!existingWarehouse) {
             return res.status(404).json({ message: 'Warehouse not found', status: false });
@@ -149,7 +149,7 @@ export const saveFactorytoWarehouse1 = async (req, res, next) => {
         const stock = await StockUpdation.create(req.body);
         existingWarehouse.grandTotal = grandTotal;
         existingWarehouse.stockTransferDate = stockTransferDate;
-        existingWarehouse.status = status;
+        existingWarehouse.transferStatus = transferStatus;
         existingWarehouse.exportId = factory._id;
 
         productItems.forEach(item => {
@@ -169,4 +169,41 @@ export const saveFactorytoWarehouse1 = async (req, res, next) => {
         return res.status(500).json({ error: 'Internal Server Error', status: false });
     }
 };
+
+export const deleteProductFromWarehouse = async (req, res, next) => {
+    try {
+        const { warehouseId, productId } = req.params;
+        const existingWarehouse = await User.findById(warehouseId);
+
+        if (!existingWarehouse) {
+            return res.status(404).json({ message: 'Warehouse not found', status: false });
+        }
+        const productIndex = existingWarehouse.productItems.findIndex(
+            item => item.productId === productId
+        );
+        if (productIndex !== -1) {
+            const deletedProduct = existingWarehouse.productItems[productIndex];
+            existingWarehouse.productItems[productIndex].quantity -= 1;
+            if (existingWarehouse.productItems[productIndex].quantity === 0) {
+                existingWarehouse.productItems.splice(productIndex, 1);
+            }
+            await existingWarehouse.save();
+            const factoryId = deletedProduct.factoryId;
+            return res.status(200).json({
+                message: 'Product deleted from warehouse successfully',
+                factoryId: factoryId,
+                status: true
+            });
+        } else {
+            return res.status(404).json({
+                message: 'Product not found in the warehouse',
+                status: false
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal Server Error', status: false });
+    }
+};
+
 
