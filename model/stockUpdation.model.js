@@ -47,7 +47,7 @@ const StockUpdationSchema = new mongoose.Schema({
     grandTotal: {
         type: Number
     },
-    status: {
+    transferStatus: {
         type: String
     }
 }, { timestamps: true })
