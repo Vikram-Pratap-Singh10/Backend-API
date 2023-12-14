@@ -29,7 +29,7 @@ export const viewInWardStockToWarehouse = async (req, res, next) => {
                 warehouseFromId: factory.warehouseFromId,
                 grandTotal: factory.grandTotal,
                 productItems: formattedItems,
-                status: factory.status,
+                transferStatus: factory.transferStatus,
                 createdAt: factory.createdAt,
                 updatedAt: factory.updatedAt
             };
@@ -65,7 +65,7 @@ export const viewOutWardStockToWarehouse = async (req, res, next) => {
                 warehouseFromId: factory.warehouseFromId,
                 grandTotal: factory.grandTotal,
                 productItems: formattedItems,
-                status: factory.status,
+                transferStatus: factory.transferStatus,
                 createdAt: factory.createdAt,
                 updatedAt: factory.updatedAt
             };
