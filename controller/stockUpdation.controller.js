@@ -46,7 +46,7 @@ export const viewOutWardStockToWarehouse = async (req, res, next) => {
         const factory = await StockUpdation.find({ warehouseFromId: req.params.id }).populate({
             path: 'productItems.productId',
             model: 'product'
-        }).populate({ path: "warehouseToId", model: "user" }).exec();
+        }).populate({ path: "warehouseFromId", model: "user" }).exec();
         if (!factory || factory.length === 0) {
             return res.status(404).json({ message: "No warehouse found", status: false });
         }
@@ -89,7 +89,7 @@ export const stockTransferToWarehouse = async (req, res) => {
                 const sourceProductItem = sourceProduct.productItems.find(
                     (pItem) => pItem.productId === item.productId);
                 if (sourceProductItem) {
-                    sourceProductItem.transferQty -= item.transferQty;
+                    sourceProductItem.Size -= item.transferQty;
                     sourceProductItem.totalPrice -= item.totalPrice;
                     sourceProduct.markModified('productItems');
                     await sourceProduct.save();

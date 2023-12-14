@@ -1,6 +1,7 @@
 import axios from "axios";
 import { TargetCreation } from "../model/targetCreation.model.js";
 import { getTargetCreationHierarchy } from "../rolePermission/permission.js";
+import { Order } from "../model/order.model.js";
 
 export const targetCreationXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/TargetCreation.xml";
@@ -107,5 +108,94 @@ export const deleteProductFromTargetCreation = async (req, res, next) => {
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: err, status: false });
+    }
+};
+
+
+
+export const Achievement = async (req, res) => {
+    try {
+        const salespersonId = req.params.id;
+        const targets1 = await TargetCreation.findOne({ salesPersonId: salespersonId })
+        const startDate = new Date(targets1.startDate);
+        const endDate = new Date(targets1.endDate);
+
+        // Fetch targets within the date range from the database
+        const targets = await TargetCreation.findOne({
+            salesPersonId: salespersonId,
+            startDate: { $gte: startDate },
+            endDate: { $lte: endDate }
+        });
+        console.log(targets)
+        if (!targets) {
+            return res.status(404).json({ error: 'Targets not found', status: false });
+        }
+
+        // Assuming orders is your dummy order data
+        const orders = [
+            {
+                fullName: "vikram",
+                grandTotal: 31.98,
+                orderItem: [
+                    {
+                        "salesPersonId": "656f112403940932515551c5",
+                        "productId": "65742de03b6e254dd2162c8a",
+                        "quantity": 2,
+                        "totalPrice": 31.98,
+                        "orderDate": "2023-12-15T12:00:00.000Z"
+                    }
+                ]
+            },
+            {
+                fullName: "vikram",
+                grandTotal: 31.98,
+                orderItem: [{
+                    "salesPersonId": "656f112403940932515551c5",
+                    "productId": "65742de03b6e254dd2162c8a",
+                    "quantity": 2,
+                    "totalPrice": 31.98,
+                    "orderDate": "2023-12-20T15:30:00.000Z"
+                }]
+            },
+            {
+                fullName: "vikram",
+                grandTotal: 31.98,
+                orderItem: [{
+                    "salesPersonId": "656f112403940932515551c5",
+                    "productId": "6574312fae0b864e8563020e",
+                    "quantity": 2,
+                    "totalPrice": 49.98,
+                    "orderDate": "2023-12-10T10:45:00.000Z"
+                }]
+            }
+            // Add more orders as needed
+        ];
+
+        // Calculate achievements for each product
+        const achievements = targets.products.flatMap(targetProduct => {
+            const matchingOrder = orders.find(order => order.orderItem[0].productId === targetProduct.productId);
+            if (matchingOrder) {
+                return {
+                    productId: targetProduct.productId,
+                    targetQuantity: targetProduct.qtyAssign,
+                    actualQuantity: matchingOrder.orderItem[0].quantity,
+                    achievementPercentage: (matchingOrder.orderItem[0].quantity / targetProduct.qtyAssign) * 100,
+                    targetTotalPrice: targetProduct.totalPrice,
+                    actualTotalPrice: matchingOrder.orderItem[0].totalPrice
+                };
+            } else {
+                return null; // No matching order for this targetProduct
+            }
+        }).filter(Boolean); // Remove null values
+
+        // Calculate overall achievement
+        const overallTargetQuantity = targets.products.reduce((total, targetProduct) => total + targetProduct.qtyAssign, 0);
+        const overallActualQuantity = achievements.reduce((total, achievement) => total + achievement.actualQuantity, 0);
+        const overallAchievementPercentage = (overallActualQuantity / overallTargetQuantity) * 100;
+
+        res.json({ achievements, overallAchievementPercentage });
+    } catch (error) {
+        console.error('Error calculating achievements:', error);
+        res.status(500).json({ error: 'Internal Server Error', status: false });
     }
 };
