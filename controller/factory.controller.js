@@ -135,3 +135,38 @@ export const updateFactorytoWarehouse = async (req, res, next) => {
         return res.status(500).json({ error: 'Internal Server Error', status: false });
     }
 };
+
+
+export const saveFactorytoWarehouse1 = async (req, res, next) => {
+    try {
+        const { warehouseToId, grandTotal, status, stockTransferDate, productItems } = req.body;
+        const existingWarehouse = await User.findById(warehouseToId);
+        if (!existingWarehouse) {
+            return res.status(404).json({ message: 'Warehouse not found', status: false });
+        }
+        const factory = await Factory.create(req.body);
+        req.body.exportId = factory._id;
+        const stock = await StockUpdation.create(req.body);
+        existingWarehouse.grandTotal = grandTotal;
+        existingWarehouse.stockTransferDate = stockTransferDate;
+        existingWarehouse.status = status;
+        existingWarehouse.exportId = factory._id;
+
+        productItems.forEach(item => {
+            const existingProduct = existingWarehouse.productItems.find(
+                existingItem => existingItem.productId === item.productId
+            );
+            if (existingProduct) {
+                existingProduct.quantity += item.quantity;
+            } else {
+                existingWarehouse.productItems.push(item);
+            }
+        });
+        await existingWarehouse.save();
+        return res.status(200).json({ Factory: factory, Warehouse: existingWarehouse, status: true });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal Server Error', status: false });
+    }
+};
+
