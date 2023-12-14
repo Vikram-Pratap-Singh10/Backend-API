@@ -52,7 +52,7 @@ export const getFactoryData = async (req, res, next) => {
                 warehouseToId: factory.warehouseToId,
                 grandTotal: factory.grandTotal,
                 productItems: formattedItems,
-                status: factory.status,
+                transferStatus: factory.transferStatus,
                 createdAt: factory.createdAt,
                 updatedAt: factory.updatedAt
             };
