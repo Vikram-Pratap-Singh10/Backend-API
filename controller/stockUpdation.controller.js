@@ -10,7 +10,7 @@ export const viewInWardStockToWarehouse = async (req, res, next) => {
         const factory = await StockUpdation.find({ warehouseToId: req.params.id }).populate({
             path: 'productItems.productId',
             model: 'product'
-        }).populate({ path: "warehouseFromId", model: "user" }).exec();
+        }).populate({ path: "warehouseFromId", model: "user" }).populate({ path: "warehouseToId", model: "user" }).exec();
         if (!factory || factory.length === 0) {
             return res.status(404).json({ message: "No warehouse found", status: false });
         }
@@ -27,6 +27,7 @@ export const viewInWardStockToWarehouse = async (req, res, next) => {
                 _id: factory._id,
                 stockTransferDate: factory.stockTransferDate,
                 warehouseFromId: factory.warehouseFromId,
+                warehouseToId: factory.warehouseToId,
                 grandTotal: factory.grandTotal,
                 productItems: formattedItems,
                 transferStatus: factory.transferStatus,
@@ -46,7 +47,7 @@ export const viewOutWardStockToWarehouse = async (req, res, next) => {
         const factory = await StockUpdation.find({ warehouseFromId: req.params.id }).populate({
             path: 'productItems.productId',
             model: 'product'
-        }).populate({ path: "warehouseToId", model: "user" }).exec();
+        }).populate({ path: "warehouseToId", model: "user" }).populate({ path: "warehouseFromId", model: "user" }).exec();
         if (!factory || factory.length === 0) {
             return res.status(404).json({ message: "No warehouse found", status: false });
         }
@@ -63,6 +64,7 @@ export const viewOutWardStockToWarehouse = async (req, res, next) => {
                 _id: factory._id,
                 stockTransferDate: factory.stockTransferDate,
                 warehouseFromId: factory.warehouseFromId,
+                warehouseToId: factory.warehouseToId,
                 grandTotal: factory.grandTotal,
                 productItems: formattedItems,
                 transferStatus: factory.transferStatus,
@@ -103,7 +105,17 @@ export const stockTransferToWarehouse = async (req, res) => {
                         destinationProductItem.totalPrice += item.totalPrice;
                         await destinationProduct.save();
                     } else {
-                        await User.updateOne({ _id: warehouseToId, }, { $push: { productItems: item, stockTransferDate: stockTransferDate, transferStatus: transferStatus, grandTotal: grandTotal, warehouseFromId: warehouseFromId }, }, { upsert: true });
+                        await User.updateOne({ _id: warehouseToId },
+                            {
+                                $push: { productItems: item },
+                                $set: {
+                                    stockTransferDate: stockTransferDate,
+                                    transferStatus: transferStatus,
+                                    grandTotal: grandTotal,
+                                    warehouseFromId: warehouseFromId
+                                }
+                            },
+                            { upsert: true });
                     }
                 } else {
                     return res.status(400).json({ error: 'Insufficient quantity in the source warehouse or product not found' });
