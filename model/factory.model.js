@@ -39,7 +39,7 @@ const FactorySchema = new mongoose.Schema({
     grandTotal: {
         type: Number
     },
-    status: {
+    transferStatus: {
         type: String
     }
 }, { timestamps: true })
