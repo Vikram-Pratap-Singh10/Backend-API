@@ -113,7 +113,7 @@ export const getFactoryData = async (req, res, next) => {
 export const updateFactorytoWarehouse = async (req, res, next) => {
     try {
         const factoryId = req.params.id
-        const { grandTotal, status, stockTransferDate, productItems } = req.body;
+        const { grandTotal, transferStatus, stockTransferDate, productItems } = req.body;
         const existingFactory = await Factory.findById(factoryId);
         if (!existingFactory) {
             return res.status(404).json({ message: 'Factory not found', status: false });

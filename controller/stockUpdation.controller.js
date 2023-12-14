@@ -79,7 +79,7 @@ export const viewOutWardStockToWarehouse = async (req, res, next) => {
 
 export const stockTransferToWarehouse = async (req, res) => {
     try {
-        const { warehouseToId, warehouseFromId, stockTransferDate, productItems, grandTotal, status } = req.body;
+        const { warehouseToId, warehouseFromId, stockTransferDate, productItems, grandTotal, transferStatus } = req.body;
         for (const item of productItems) {
             const sourceProduct = await User.findOne({
                 _id: warehouseFromId,
@@ -103,7 +103,7 @@ export const stockTransferToWarehouse = async (req, res) => {
                         destinationProductItem.totalPrice += item.totalPrice;
                         await destinationProduct.save();
                     } else {
-                        await User.updateOne({ _id: warehouseToId, }, { $push: { productItems: item, }, }, { upsert: true });
+                        await User.updateOne({ _id: warehouseToId, }, { $push: { productItems: item, stockTransferDate: stockTransferDate, transferStatus: transferStatus, grandTotal: grandTotal, warehouseFromId: warehouseFromId }, }, { upsert: true });
                     }
                 } else {
                     return res.status(400).json({ error: 'Insufficient quantity in the source warehouse or product not found' });
@@ -118,7 +118,7 @@ export const stockTransferToWarehouse = async (req, res) => {
             stockTransferDate,
             productItems,
             grandTotal,
-            status,
+            transferStatus,
         });
         await stockTransfer.save();
         return res.status(201).json({ message: 'Stock transfer successful' });
@@ -146,7 +146,7 @@ export const viewWarehouseStock = async (req, res) => {
 export const updateWarehousetoWarehouse = async (req, res, next) => {
     try {
         const factoryId = req.params.id
-        const { grandTotal, status, stockTransferDate, productItems } = req.body;
+        const { grandTotal, transferStatus, stockTransferDate, productItems } = req.body;
         const existingFactory = await StockUpdation.findById(factoryId);
         if (!existingFactory) {
             return res.status(404).json({ message: 'Warehouse not found', status: false });
