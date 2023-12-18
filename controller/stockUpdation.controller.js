@@ -91,7 +91,8 @@ export const stockTransferToWarehouse = async (req, res) => {
                 const sourceProductItem = sourceProduct.productItems.find(
                     (pItem) => pItem.productId === item.productId);
                 if (sourceProductItem) {
-                    sourceProductItem.Size -= item.transferQty;
+                    sourceProductItem.Size -= item.Size;
+                    sourceProductItem.currentStock -= (item.transferQty * item.Size);
                     sourceProductItem.totalPrice -= item.totalPrice;
                     sourceProduct.markModified('productItems');
                     await sourceProduct.save();
@@ -101,7 +102,8 @@ export const stockTransferToWarehouse = async (req, res) => {
                     });
                     if (destinationProduct) {
                         const destinationProductItem = destinationProduct.productItems.find((pItem) => pItem.productId === item.productId);
-                        destinationProductItem.Size += item.transferQty;
+                        destinationProductItem.Size += item.Size;
+                        sourceProductItem.currentStock += (item.transferQty * item.Size);
                         destinationProductItem.totalPrice += item.totalPrice;
                         await destinationProduct.save();
                     } else {

@@ -1,9 +1,8 @@
 import { Factory } from "../model/factory.model.js";
 import { StockUpdation } from "../model/stockUpdation.model.js";
 import { User } from "../model/user.model.js";
-import { Warehouse } from "../model/warehouse.model.js";
 
-export const saveFactorytoWarehouse = async (req, res, next) => {
+export const saveFactorytoWarehouse1 = async (req, res, next) => {
     try {
         const { warehouseToId, grandTotal, transferStatus, stockTransferDate, productItems } = req.body;
         const existingWarehouse = await User.findById(warehouseToId);
@@ -135,9 +134,7 @@ export const updateFactorytoWarehouse = async (req, res, next) => {
         return res.status(500).json({ error: 'Internal Server Error', status: false });
     }
 };
-
-
-export const saveFactorytoWarehouse1 = async (req, res, next) => {
+export const saveFactorytoWarehouse = async (req, res, next) => {
     try {
         const { warehouseToId, grandTotal, transferStatus, stockTransferDate, productItems } = req.body;
         const existingWarehouse = await User.findById(warehouseToId);
@@ -157,7 +154,9 @@ export const saveFactorytoWarehouse1 = async (req, res, next) => {
                 existingItem => existingItem.productId === item.productId
             );
             if (existingProduct) {
-                existingProduct.quantity += item.quantity;
+                existingProduct.Size += item.Size;
+                existingProduct.transferQty += item.transferQty;
+                existingProduct.currentStock += (item.Size * item.transferQty);
             } else {
                 existingWarehouse.productItems.push(item);
             }

@@ -17,7 +17,7 @@ export const OrderXml = async (req, res) => {
         return res.status(500).send("Error reading the file");
     }
 };
-    
+
 export const placeOrder = async (req, res, next) => {
     try {
         const orderItems = req.body.orderItems;
@@ -476,3 +476,98 @@ export const autoBillingLock = async (req, res, next) => {
         return res.status(500).json({ error: "Internal Server Error", status: false })
     }
 }
+
+export const SalesOrderList = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const userHierarchy = await findUserDetails(userId);
+        const adminDetail = (userHierarchy[userHierarchy.length - 1])
+        const orders = await Order.find({}).populate({
+            path: 'orderItem.productId',
+            model: 'product'
+        }).populate({ path: "partyId", model: "party" }).exec();
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({ message: "No orders found", status: false });
+        }
+        const formattedOrders = orders.map(order => {
+            const formattedOrderItems = order.orderItem.map(item => ({
+                product: item.productId,
+                qty: item.qty,
+                unitQty: item.unitQty,
+                price: item.price,
+                status: item.status
+            }));
+            return {
+                _id: order._id,
+                userId: order.userId,
+                partyId: order.partyId,
+                fullName: order.fullName,
+                address: order.address,
+                MobileNo: order.MobileNo,
+                country: order.country,
+                state: order.state,
+                city: order.city,
+                landMark: order.landMark,
+                pincode: order.pincode,
+                grandTotal: order.grandTotal,
+                discount: order.discount,
+                shippingCost: order.shippingCost,
+                taxAmount: order.taxAmount,
+                status: order.status,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude,
+                currentAddress: req.body.currentAddress,
+                orderItems: formattedOrderItems,
+                adminDetail: adminDetail,
+                createdAt: order.createdAt,
+                updatedAt: order.updatedAt
+            };
+        });
+        const createOrder = await CreateOrder.find({}).populate({
+            path: 'orderItem.productId',
+            model: 'product'
+        }).populate({ path: "partyId", model: "party" }).exec();
+        if (!createOrder || createOrder.length === 0) {
+            return res.status(404).json({ message: "No orders found", status: false });
+        }
+        const Orders = createOrder.map(order => {
+            const formattedOrderItems = order.orderItem.map(item => ({
+                product: item.productId,
+                qty: item.qty,
+                unitQty: item.unitQty,
+                price: item.price,
+                status: item.status
+            }));
+            return {
+                _id: order._id,
+                userId: order.userId,
+                partyId: order.partyId,
+                fullName: order.fullName,
+                address: order.address,
+                MobileNo: order.MobileNo,
+                country: order.country,
+                state: order.state,
+                city: order.city,
+                landMark: order.landMark,
+                pincode: order.pincode,
+                grandTotal: order.grandTotal,
+                discount: order.discount,
+                shippingCost: order.shippingCost,
+                taxAmount: order.taxAmount,
+                status: order.status,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude,
+                currentAddress: req.body.currentAddress,
+                orderItems: formattedOrderItems,
+                adminDetail: adminDetail,
+                createdAt: order.createdAt,
+                updatedAt: order.updatedAt
+            };
+        });
+        const ordersDetails = await formattedOrders.concat(Orders)
+        return res.status(200).json({ orderHistory: ordersDetails, status: true });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: err });
+    }
+};

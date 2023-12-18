@@ -1,5 +1,5 @@
 import express from "express";
-import { OrderXml, autoBillingLock, createOrder, createOrderHistory, createOrderHistoryByUserId, placeOrder, placeOrderHistory, placeOrderHistoryByUserId, updateCreateOrder, updateCreateOrderStatus, updatePlaceOrder, updatePlaceOrderStatus } from "../controller/order.controller.js";
+import { OrderXml, SalesOrderList, autoBillingLock, createOrder, createOrderHistory, createOrderHistoryByUserId, placeOrder, placeOrderHistory, placeOrderHistoryByUserId, updateCreateOrder, updateCreateOrderStatus, updatePlaceOrder, updatePlaceOrderStatus } from "../controller/order.controller.js";
 
 const router = express.Router();
 
@@ -18,5 +18,6 @@ router.put("/update-create-order/:id", updateCreateOrder);
 router.put("/update-create-order-status/:id", updateCreateOrderStatus);
 
 router.get("/billing/:id", autoBillingLock)
+router.get("/view-sales-order/:id", SalesOrderList);
 
 export default router;
