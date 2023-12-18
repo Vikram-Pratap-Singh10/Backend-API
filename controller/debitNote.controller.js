@@ -1,10 +1,36 @@
 import { DebitNote } from "../model/debitNote.model.js";
+import { findCreditNoteDetails } from "../rolePermission/permission.js";
 
 
 export const viewDebitNote = async (req, res, next) => {
     try {
+        const userId = req.params.id;
+        const userHierarchy = await findCreditNoteDetails(userId);
+        const adminDetail = (userHierarchy[userHierarchy.length - 1])
         const debitNote = await DebitNote.find().sort({ sortorder: -1 }).populate({ path: "userId", model: "user" }).populate({ path: "productItems.productId", model: "product" })
-        return debitNote ? res.status(200).json({ DebitNote: debitNote, status: true }) : res.status(400).json({ message: "Not Found", status: false })
+        if (!debitNote || debitNote.length === 0) {
+            return res.status(404).json({ message: "No creditNote found", status: false });
+        }
+        const formattedOrders = debitNote.map(order => {
+            const formattedOrderItems = order.productItems.map(item => ({
+                product: item.productId,
+                qty: item.qty,
+                unitQty: item.unitQty,
+                price: item.price,
+                status: item.status
+            }));
+            return {
+                _id: order._id,
+                userId: order.userId,
+                purchaseOrderId: order.purchaseOrderId,
+                totalAmount: order.totalAmount,
+                productItems: formattedOrderItems,
+                adminDetail: adminDetail,
+                createdAt: order.createdAt,
+                updatedAt: order.updatedAt
+            };
+        });
+        return res.status(200).json({ DebitNote: formattedOrders, status: true })
     }
     catch (err) {
         console.log(err);

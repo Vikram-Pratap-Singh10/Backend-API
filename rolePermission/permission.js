@@ -1,5 +1,6 @@
 import { Category } from "../model/category.model.js";
 import { CompanyDetails } from "../model/companyDetails.model.js";
+import { CreditNote } from "../model/creditNote.model.js";
 import { Customer } from "../model/customer.model.js";
 import { Product } from "../model/product.model.js";
 import { Promotion } from "../model/promotion.model.js";
@@ -605,7 +606,49 @@ export const getUserHierarchyWithProducts = async function getUserHierarchyWithP
         throw error;
     }
 };
+// ---------------------------------------------------------------------
+export const getCreditNoteHierarchy = async function getCustomerHierarchy(parentId, processedIds = new Set()) {
+    try {
+        if (processedIds.has(parentId)) {
+            return [];
+        }
+        processedIds.add(parentId);
+        const [users, creditNote] = await Promise.all([
+            User.find({ created_by: parentId, status: 'Active' }).populate({ path: "created_by", model: "user" }).lean(),
+            CreditNote.find({ created_by: parentId, status: 'Active' }).populate({ path: "created_by", model: "user" }).populate({ path: "userId", model: "user" }).populate({ path: "productItems.productId", model: "product" }).lean()
+        ]);
+        let results = creditNote;
+        const subUserIds = users.map(user => user._id);
+        const subResultsPromises = subUserIds.map(userId => getCustomerHierarchy(userId, processedIds));
+        const subResults = await Promise.all(subResultsPromises);
+        return results.concat(subResults.flat());
+    } catch (error) {
+        console.error('Error in getCustomerHierarchy:', error);
+        throw error;
+    }
+};
 
+export const findCreditNoteDetails = async function findUserDetails(userId) {
+    try {
+        // let U = (check === model) ? User : Customer
+        const user = await User.findOne({ _id: userId, status: 'Active' }).populate({ path: "rolename", model: "role" }).populate({ path: "created_by", model: "user" });
+        if (!user) {
+            return null;
+        }
+        const results = [user];
+        if (user.created_by) {
+            const createdById = user.created_by.toString();
+            const subUsers = await findUserDetails(createdById);
+            if (Array.isArray(subUsers)) {
+                results.push(...subUsers);
+            }
+        }
+        return results;
+    } catch (error) {
+        console.error('Error in findUserDetails:', error);
+        throw error;
+    }
+}
 
 
 

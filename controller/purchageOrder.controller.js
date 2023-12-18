@@ -13,7 +13,7 @@ export const purchaseOrder = async (req, res, next) => {
             return res.status(401).json({ message: "No user found", status: false });
         } else {
             const billAmount = orderItems.reduce((total, orderItem) => {
-                return total + (orderItem.price * orderItem.quantity);
+                return total + (orderItem.price * orderItem.qty);
             }, 0);
             for (const orderItem of orderItems) {
                 const product = await Product.findOne({ _id: orderItem.productId });
@@ -26,6 +26,10 @@ export const purchaseOrder = async (req, res, next) => {
             }
             req.body.userId = user._id;
             const order = await PurchaseOrder.create(req.body)
+            req.body.purchaseOrderId = await order._id;
+            req.body.totalAmount = billAmount;
+            req.body.productItems = orderItems;
+            await DebitNote.create(req.body)
             return order ? res.status(200).json({ orderDetail: order, status: true }) : res.status(400).json({ message: "Something Went Wrong", status: false })
         }
     }
