@@ -2,6 +2,7 @@ import axios from "axios";
 import { TargetCreation } from "../model/targetCreation.model.js";
 import { getTargetCreationHierarchy } from "../rolePermission/permission.js";
 import { Order } from "../model/order.model.js";
+import { Product } from "../model/product.model.js";
 
 export const targetCreationXml = async (req, res) => {
     const fileUrl = "https://xmlfile.blr1.cdn.digitaloceanspaces.com/TargetCreation.xml";
@@ -113,93 +114,70 @@ export const deleteProductFromTargetCreation = async (req, res, next) => {
 
 
 
-// export const Achievement = async (req, res) => {
+// export const Achievement7 = async (req, res) => {
 //     try {
 //         const salespersonId = req.params.id;
-//         const targets1 = await TargetCreation.findOne({ salesPersonId: salespersonId })
+//         const targets1 = await TargetCreation.findOne({ salesPersonId: salespersonId });
 //         const startDate = new Date(targets1.startDate);
 //         const endDate = new Date(targets1.endDate);
-
-//         // Fetch targets within the date range from the database
 //         const targets = await TargetCreation.findOne({
 //             salesPersonId: salespersonId,
 //             startDate: { $gte: startDate },
 //             endDate: { $lte: endDate }
 //         });
-//         console.log(targets)
 //         if (!targets) {
 //             return res.status(404).json({ error: 'Targets not found', status: false });
 //         }
+//         const orders = await Order.find({ userId: salespersonId });
 
-//         // Assuming orders is your dummy order data
-//         const orders = [
-//             {
-//                 fullName: "vikram",
-//                 grandTotal: 31.98,
-//                 orderItem: [
-//                     {
-//                         "salesPersonId": "656f112403940932515551c5",
-//                         "productId": "65742de03b6e254dd2162c8a",
-//                         "quantity": 7,
-//                         "totalPrice": 31.98,
-//                         "orderDate": "2023-12-15T12:00:00.000Z"
-//                     }
-//                 ]
-//             },
-//             {
-//                 fullName: "vikram",
-//                 grandTotal: 31.98,
-//                 orderItem: [{
-//                     "salesPersonId": "656f112403940932515551c5",
-//                     "productId": "65742de03b6e254dd2162c8a",
-//                     "quantity": 3,
-//                     "totalPrice": 31.98,
-//                     "orderDate": "2023-12-20T15:30:00.000Z"
-//                 }]
-//             },
-//             {
-//                 fullName: "vikram",
-//                 grandTotal: 31.98,
-//                 orderItem: [{
-//                     "salesPersonId": "656f112403940932515551c5",
-//                     "productId": "6574312fae0b864e8563020e",
-//                     "quantity": 5,
-//                     "totalPrice": 49.98,
-//                     "orderDate": "2023-12-10T10:45:00.000Z"
-//                 }]
+//         if (!orders || orders.length === 0) {
+//             return res.status(404).json({ error: 'Orders not found', status: false });
+//         }
+//         const allOrderItems = orders.flatMap(order => order.orderItem);
+
+//         const aggregatedOrders = allOrderItems.reduce((acc, item) => {
+//             const existingItem = acc.find(accItem => accItem.productId === item.productId);
+//             if (existingItem) {
+//                 existingItem.qty += item.qty;
+//                 existingItem.price += item.price;
+//             } else {
+//                 acc.push({
+//                     productId: item.productId,
+//                     qty: item.qty,
+//                     price: item.price,
+//                 });
 //             }
-//             // Add more orders as needed
-//         ];
-
-//         // Calculate achievements for each product
+//             return acc;
+//         }, []);
 //         const achievements = targets.products.flatMap(targetProduct => {
-//             const matchingOrder = orders.find(order => order.orderItem[0].productId === targetProduct.productId);
-//             if (matchingOrder) {
+//             const matchingOrders = aggregatedOrders.filter(order => order.productId.toString() === targetProduct.productId);
+//             if (matchingOrders.length > 0) {
+//                 const actualQuantity = matchingOrders.reduce((total, order) => total + order.qty, 0);
+//                 const actualTotalPrice = matchingOrders.reduce((total, order) => total + order.qty * order.price, 0);
+
 //                 return {
 //                     productId: targetProduct.productId,
 //                     targetQuantity: targetProduct.qtyAssign,
-//                     actualQuantity: matchingOrder.orderItem[0].quantity,
-//                     achievementPercentage: (matchingOrder.orderItem[0].quantity / targetProduct.qtyAssign) * 100,
-//                     targetTotalPrice: targetProduct.totalPrice,
-//                     actualTotalPrice: matchingOrder.orderItem[0].totalPrice
+//                     actualQuantity: actualQuantity,
+//                     achievementPercentage: (actualQuantity / targetProduct.qtyAssign) * 100,
+//                     targetTotalPrice: targetProduct.price,
+//                     actualTotalPrice: actualTotalPrice
 //                 };
 //             } else {
-//                 return null; // No matching order for this targetProduct
+//                 return null;
 //             }
-//         }).filter(Boolean); // Remove null values
+//         }).filter(Boolean);
 
-//         // Calculate overall achievement
 //         const overallTargetQuantity = targets.products.reduce((total, targetProduct) => total + targetProduct.qtyAssign, 0);
 //         const overallActualQuantity = achievements.reduce((total, achievement) => total + achievement.actualQuantity, 0);
 //         const overallAchievementPercentage = (overallActualQuantity / overallTargetQuantity) * 100;
 
-//         res.json({ achievements, overallAchievementPercentage });
+//         return res.status(200).json({ achievements, overallAchievementPercentage });
 //     } catch (error) {
 //         console.error('Error calculating achievements:', error);
 //         res.status(500).json({ error: 'Internal Server Error', status: false });
 //     }
 // };
-
 
 export const Achievement = async (req, res) => {
     try {
@@ -212,73 +190,52 @@ export const Achievement = async (req, res) => {
             startDate: { $gte: startDate },
             endDate: { $lte: endDate }
         });
-        console.log(targets);
+
         if (!targets) {
             return res.status(404).json({ error: 'Targets not found', status: false });
         }
-        const orders = [
-            {
-                fullName: "vikram",
-                grandTotal: 31.98,
-                orderItem: [
-                    {
-                        "salesPersonId": "656f112403940932515551c5",
-                        "productId": "65742de03b6e254dd2162c8a",
-                        "quantity": 6,
-                        "totalPrice": 31.98,
-                        "orderDate": "2023-12-15T12:00:00.000Z"
-                    }
-                ]
-            },
-            {
-                fullName: "vikram",
-                grandTotal: 31.98,
-                orderItem: [{
-                    "salesPersonId": "656f112403940932515551c5",
-                    "productId": "65742de03b6e254dd2162c8a",
-                    "quantity": 3,
-                    "totalPrice": 31.98,
-                    "orderDate": "2023-12-20T15:30:00.000Z"
-                }]
-            },
-            {
-                fullName: "vikram",
-                grandTotal: 31.98,
-                orderItem: [{
-                    "salesPersonId": "656f112403940932515551c5",
-                    "productId": "6574312fae0b864e8563020e",
-                    "quantity": 5,
-                    "totalPrice": 49.98,
-                    "orderDate": "2023-12-10T10:45:00.000Z"
-                }]
+        const orders = await Order.find({ userId: salespersonId });
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({ error: 'Orders not found', status: false });
+        }
+        const allOrderItems = orders.flatMap(order => order.orderItem);
+        const aggregatedOrders = allOrderItems.reduce((acc, item) => {
+            const existingItem = acc.find(accItem => accItem.productId.toString() === item.productId._id.toString());
+            if (existingItem) {
+                existingItem.qty += item.qty;
+                existingItem.price += item.price;
+            } else {
+                acc.push({
+                    productId: item.productId._id.toString(),
+                    qty: item.qty,
+                    price: item.price,
+                });
             }
-        ];
-        const aggregatedOrders = orders.reduce((acc, order) => {
-            order.orderItem.forEach(item => {
-                const existingItem = acc.find(accItem => accItem.productId === item.productId);
-                if (existingItem) {
-                    existingItem.quantity += item.quantity;
-                    existingItem.totalPrice += item.totalPrice;
-                } else {
-                    acc.push({
-                        productId: item.productId,
-                        quantity: item.quantity,
-                        totalPrice: item.totalPrice,
-                    });
-                }
-            });
             return acc;
         }, []);
+
+        const productDetailsMap = {};
+        const productIds = aggregatedOrders.map(order => order.productId);
+        const products = await Product.find({ _id: { $in: productIds } });
+        products.forEach(product => {
+            productDetailsMap[product._id.toString()] = product;
+        });
         const achievements = targets.products.flatMap(targetProduct => {
-            const matchingOrder = aggregatedOrders.find(order => order.productId === targetProduct.productId);
-            if (matchingOrder) {
+            const matchingOrders = aggregatedOrders.filter(order => order.productId === targetProduct.productId);
+            if (matchingOrders.length > 0) {
+                const actualQuantity = matchingOrders.reduce((total, order) => total + order.qty, 0);
+                const actualTotalPrice = matchingOrders.reduce((total, order) => total + order.qty * order.price, 0);
+                const productDetails = productDetailsMap[targetProduct.productId.toString()] || {};
                 return {
-                    productId: targetProduct.productId,
+                    product: {
+                        productId: targetProduct.productId,
+                        details: productDetails,
+                    },
                     targetQuantity: targetProduct.qtyAssign,
-                    actualQuantity: matchingOrder.quantity,
-                    achievementPercentage: (matchingOrder.quantity / targetProduct.qtyAssign) * 100,
-                    targetTotalPrice: targetProduct.totalPrice,
-                    actualTotalPrice: matchingOrder.totalPrice
+                    actualQuantity: actualQuantity,
+                    achievementPercentage: (actualQuantity / targetProduct.qtyAssign) * 100,
+                    targetTotalPrice: targetProduct.price,
+                    actualTotalPrice: actualTotalPrice
                 };
             } else {
                 return null;
@@ -287,9 +244,12 @@ export const Achievement = async (req, res) => {
         const overallTargetQuantity = targets.products.reduce((total, targetProduct) => total + targetProduct.qtyAssign, 0);
         const overallActualQuantity = achievements.reduce((total, achievement) => total + achievement.actualQuantity, 0);
         const overallAchievementPercentage = (overallActualQuantity / overallTargetQuantity) * 100;
-        res.json({ achievements, overallAchievementPercentage });
+        // console.log(achievements.products.detail.Size)
+        return res.status(200).json({ achievements, overallAchievementPercentage });
     } catch (error) {
         console.error('Error calculating achievements:', error);
         res.status(500).json({ error: 'Internal Server Error', status: false });
     }
 };
+
+

@@ -11,6 +11,6 @@ router.put("/update-target-creation/:id", UpdateTargetCreation);
 router.get("/view-target-creation-by-id/:id", ViewTargetCreationById)
 router.delete('/:targetId/product/:productId', deleteProductFromTargetCreation);
 
-router.get("/achievement/:id", Achievement)
+router.get("/target-achieve/:id", Achievement)
 
 export default router;

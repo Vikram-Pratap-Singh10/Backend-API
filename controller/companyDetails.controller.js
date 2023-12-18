@@ -1,5 +1,5 @@
 import { CompanyDetails } from "../model/companyDetails.model.js";
-import { getCompanyDetailHierarchy, getUserHierarchy } from "../rolePermission/permission.js";
+import { getCompanyDetailHierarchy } from "../rolePermission/permission.js";
 
 export const saveCompanyDetails = async (req, res, next) => {
     try {
@@ -59,4 +59,4 @@ export const viewCompanyDetails = async (req, res, next) => {
         console.log(err)
         return res.status(500).json({ error: "Internal Server Error", status: false })
     }
-}
+}                      

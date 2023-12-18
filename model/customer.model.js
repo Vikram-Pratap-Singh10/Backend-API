@@ -8,6 +8,8 @@ let created_by = 'created_by';
 let latitude = "latitude";
 let longitude = "longitude";
 let currentAddress = "currentAddress";
+let autoBillingStatus = "autoBillingStatus"
+let autoBillingDuration = "autoBillingDuration"
 
 async function createSchema() {
   const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/CreateCustomerConfig.xml');
@@ -52,6 +54,8 @@ async function createSchema() {
   schemaDefinition[latitude] = Number;
   schemaDefinition[longitude] = Number;
   schemaDefinition[currentAddress] = String;
+  schemaDefinition[autoBillingDuration] = Number;
+  schemaDefinition[autoBillingStatus] = String;
   if (jsonData.CreateCustomer.MyDropDown) {
     if (Array.isArray(jsonData.CreateCustomer.MyDropDown)) {
       jsonData.CreateCustomer.MyDropDown.forEach((dropdown) => {
