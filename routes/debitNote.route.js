@@ -3,7 +3,7 @@ import { viewDebitNote, viewDebitNoteById } from "../controller/debitNote.contro
 
 const router = express.Router();
 
-router.get("/view-debit-note", viewDebitNote);
+router.get("/view-debit-note/:id", viewDebitNote);
 router.get("/view-debit-note-by-id/:id", viewDebitNoteById)
 
 export default router;

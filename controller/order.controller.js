@@ -17,7 +17,7 @@ export const OrderXml = async (req, res) => {
         return res.status(500).send("Error reading the file");
     }
 };
-
+    
 export const placeOrder = async (req, res, next) => {
     try {
         const orderItems = req.body.orderItems;
@@ -59,6 +59,10 @@ export const placeOrder = async (req, res, next) => {
                 orderItem: orderItems
             });
             const savedOrder = await order.save();
+            // req.body.orderId = savedOrder._id;
+            // req.body.totalAmount = billAmount;
+            // req.body.productItems = orderItems;
+            // await CreditNote.create(req.body)
             return res.status(200).json({ orderDetail: savedOrder, status: true });
         }
     } catch (err) {
@@ -275,6 +279,9 @@ export const createOrder = async (req, res, next) => {
                 orderItem: orderItems
             });
             const savedOrder = await order.save();
+            // req.body.totalAmount = billAmount;
+            // req.body.productItems = orderItems;
+            // await CreditNote.create(req.body)
             return res.status(200).json({ orderDetail: savedOrder, status: true });
         }
     } catch (err) {
@@ -467,63 +474,5 @@ export const autoBillingLock = async (req, res, next) => {
     catch (err) {
         console.log(err);
         return res.status(500).json({ error: "Internal Server Error", status: false })
-    }
-}
-
-
-// async function getUserHierarchy(parentId) {
-//     try {
-//         const users = await User.find({ created_by: parentId, status: 'Active' });
-//         let results = [];
-//         for (const user of users) {
-//             results.push(user);
-//             const subUsers = await getUserHierarchy(user._id);
-//             results = results.concat(subUsers);
-//         }
-//         return results;
-//     } catch (error) {
-//         console.error('Error in getUserHierarchy:', error);
-//         throw error;
-//     }
-// }
-export const test = async (req, res) => {
-    const parentId = req.params.parentId;
-    try {
-        const userHierarchy = await getUserHierarchy(parentId);
-        console.log(userHierarchy.length)
-        res.json(userHierarchy);
-    } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-}
-// async function findUserDetails(userId) {
-//     try {
-//         const user = await User.findOne({ _id: userId, status: 'Active' });
-//         if (!user) {
-//             return null;
-//         }
-//         const results = [user];
-//         if (user.created_by) {
-//             const createdById = user.created_by.toString();
-//             const subUsers = await findUserDetails(createdById);
-//             if (Array.isArray(subUsers)) {
-//                 results.push(...subUsers);
-//             }
-//         }
-//         return results;
-//     } catch (error) {
-//         console.error('Error in findUserDetails:', error);
-//         throw error;
-//     }
-// }
-export const test1 = async (req, res) => {
-    const parentId = req.params.parentId;
-    try {
-        const userHierarchy = await findUserDetails(parentId);
-        console.log(userHierarchy.length)
-        res.json(userHierarchy);
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ error: 'Internal Server Error' });
     }
 }
