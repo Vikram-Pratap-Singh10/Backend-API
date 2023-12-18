@@ -1,5 +1,5 @@
 import { CompanyDetails } from "../model/companyDetails.model.js";
-import { getCompanyDetailHierarchy } from "../rolePermission/permission.js";
+import { getCompanyDetailHierarchy, getCompanyDetailHierarchy1 } from "../rolePermission/permission.js";
 
 export const saveCompanyDetails = async (req, res, next) => {
     try {

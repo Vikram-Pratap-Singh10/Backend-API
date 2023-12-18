@@ -650,5 +650,44 @@ export const findCreditNoteDetails = async function findUserDetails(userId) {
     }
 }
 
+// --------------------------------------------------
+export const getCompanyDetailHierarchy1 = async function getCompanyDetailHierarchy(userId, processedIds = new Set()) {
+    try {
+        if (processedIds.has(userId)) {
+            return [];
+        }
+
+        processedIds.add(userId);
+
+        const [userCompanyDetails, subUsers, parentUser] = await Promise.all([
+            CompanyDetails.find({
+                $or: [{ created_by: userId }, { _id: userId }],
+            }).lean(),
+            User.find({ created_by: userId, status: 'Active' }).lean(),
+            User.findOne({ _id: userId, status: 'Active' }).lean(),
+        ]);
+
+        const uniqueResults = userCompanyDetails.filter((value, index, self) => {
+            return self.findIndex(v => v._id.toString() === value._id.toString()) === index;
+        });
+
+        const subUserIds = subUsers.map(user => user._id);
+        const subResultsPromises = subUserIds.map(subUserId => getCompanyDetailHierarchy(subUserId, processedIds));
+
+        const subResults = await Promise.all(subResultsPromises);
+
+        if (parentUser && parentUser.created_by) {
+            const parentResults = await getCompanyDetailHierarchy(parentUser.created_by, processedIds);
+            uniqueResults.push(...parentResults);
+        }
+
+        return uniqueResults.concat(subResults.flat());
+    } catch (error) {
+        console.error('Error in getCompanyDetailHierarchy:', error);
+        throw error;
+    }
+};
+
+
 
 
