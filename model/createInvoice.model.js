@@ -28,6 +28,9 @@ const CreateInvoiceSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "party"
     },
+    orderId: {
+        type: String
+    },
     date: {
         type: Date,
         default: Date.now,
