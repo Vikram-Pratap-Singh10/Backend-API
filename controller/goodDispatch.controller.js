@@ -32,6 +32,7 @@ export const saveGoodDispatch = async (req, res) => {
         await deliveryBoy.save();
         await order.save();
         await orders.save();
+        req.body.orderItems = JSON.parse(req.body.orderItems)
         if (req.files) {
             let image = null;
             let images = null;

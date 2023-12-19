@@ -30,6 +30,7 @@ import CompanyDetailsRouter from "./routes/companyDetails.route.js";
 import FactoryRouter from "./routes/factory.route.js";
 import StockUpdationRouter from "./routes/stockUpdation.route.js";
 import CreateInvoiceRouter from "./routes/createInvoice.route.js";
+import CashBookRouter from "./routes/cashBook.route.js";
 
 import mongoose from 'mongoose';
 const app = express();
@@ -70,6 +71,7 @@ app.use("/company-detail", CompanyDetailsRouter);
 app.use("/factory", FactoryRouter);
 app.use("/stock-updation", StockUpdationRouter);
 app.use("/invoice",CreateInvoiceRouter)
+app.use("/cashbook",CashBookRouter)
 
 mongoose.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlParser: true }).then(() => {
   console.log("DB CONNECTED SUCCEFULLY");
