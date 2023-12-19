@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { StockUpdation } from "../model/stockUpdation.model.js";
 import { getStockHierarchy } from "../rolePermission/permission.js";
-import { Warehouse } from "../model/warehouse.model.js";
 import { User } from "../model/user.model.js";
 import { Factory } from "../model/factory.model.js";
 
