@@ -143,11 +143,11 @@ export const stockTransferToWarehouse = async (req, res) => {
 };
 export const viewWarehouseStock = async (req, res) => {
     try {
-        const userId = req.params.userid;
-        const adminDetail = await getStockHierarchy(userId);
-        // const warehouse = await StockUpdation.find({ warehouseToId: warehouseId });
-        if (adminDetail.length > 0) {
-            return res.status(200).json({ Warehouse: adminDetail, status: true });
+        // const userId = req.params.userid;
+        // const adminDetail = await getStockHierarchy(userId);
+        const warehouse = await StockUpdation.find({}).sort({sortorder:-1});
+        if (warehouse.length > 0) {
+            return res.status(200).json({ Warehouse: warehouse, status: true });
         } else {
             res.status(404).json({ message: 'Warehouse not found', status: false });
         }
