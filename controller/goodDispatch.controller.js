@@ -20,18 +20,22 @@ export const GoodDispathcXml = async (req, res) => {
 export const saveGoodDispatch = async (req, res) => {
     try {
         const order = await Order.findById({ _id: req.body.orderId })
+        if (order) {
+            order.status = "InProcess";
+            await order.save();
+        }
         const orders = await CreateOrder.findById({ _id: req.body.orderId })
+        if (orders) {
+            orders.status = "InProcess";
+            await orders.save();
+        }
         const user = await User.findById({ _id: req.body.userId })
         const deliveryBoy = await User.findById({ _id: req.body.AssignDeliveryBoy });
         const otp = Math.floor(100000 + Math.random() * 900000);
         deliveryBoy.otpVerify = otp;
         user.otpVerify = otp;
-        order.status = "dispatched";
-        orders.status = "dispatched";
         await user.save();
         await deliveryBoy.save();
-        await order.save();
-        await orders.save();
         req.body.orderItems = JSON.parse(req.body.orderItems)
         if (req.files) {
             let image = null;
