@@ -8,16 +8,13 @@ export const SaveInvoiceList = async (req, res, next) => {
         const orderId = req.params.id;
         const order = await Order.findById(orderId);
         const createOrder = await CreateOrder.findById(orderId);
-
         if (!order && !createOrder) {
             return res.status(404).json({ message: "Order not found", status: false });
         }
         const existingInvoice = await InvoiceList.findOne({ orderId });
-
         if (existingInvoice) {
             return res.status(400).json({ message: "Invoice already created for this order", status: false });
         }
-
         const { userId, orderItem, partyId, DateofDelivery, fullName, address, MobileNo, country, state, city, landMark, pincode, grandTotal, discount, taxAmount, shippingCost, status, latitude, longitude, currentAddress, paymentId, paymentMode } = order || createOrder;
 
         const invoiceListData = {
