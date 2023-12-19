@@ -20,22 +20,18 @@ export const GoodDispathcXml = async (req, res) => {
 export const saveGoodDispatch = async (req, res) => {
     try {
         const order = await Order.findById({ _id: req.body.orderId })
-        if (order) {
-            order.status = "InProcess";
-            await order.save();
-        }
         const orders = await CreateOrder.findById({ _id: req.body.orderId })
+        if (!order && !orders) {
+            return res.status(404).json({ message: "Order not found", status: false });
+        }
         if (orders) {
-            orders.status = "InProcess";
+            orders.status = req.body.status;
             await orders.save();
         }
-        const user = await User.findById({ _id: req.body.userId })
-        const deliveryBoy = await User.findById({ _id: req.body.AssignDeliveryBoy });
-        const otp = Math.floor(100000 + Math.random() * 900000);
-        deliveryBoy.otpVerify = otp;
-        user.otpVerify = otp;
-        await user.save();
-        await deliveryBoy.save();
+        if (order) {
+            order.status = req.body.status;
+            await order.save();
+        }
         req.body.orderItems = JSON.parse(req.body.orderItems)
         if (req.files) {
             let image = null;
@@ -51,20 +47,8 @@ export const saveGoodDispatch = async (req, res) => {
             req.body.FetchSalesInvoice = image;
             req.body.CNUpload = images
         }
-        var mailOptions = {
-            from: 'vikramsveltose022@gmail.com',
-            to: `${deliveryBoy.email},${user.email}`,
-            subject: 'Delivery Verification OTP',
-            html: '<div style={{fontFamily: "Helvetica,Arial,sans-serif",minWidth: 1000,overflow: "auto",lineHeight: 2}}<div style={{ margin: "50px auto", width: "70%", padding: "20px 0" }}><div style={{ borderBottom: "1px solid #eee" }}><a href=""style={{ fontSize: "1.4em",color: "#00466a" textDecoration: "none",fontWeight: 600}}></a></div><p style={{ fontSize: "1.1em" }}>Hi,</p><p>otp</p><h2 value="otp" style={{ background: "#00466a", margin: "0 auto",width: "max-content" padding: "0 10px",color: "#fff",borderRadius: 4}}>' + otp + '</h2><p style={{ fontSize: "0.9em" }}Regards,<br />Distribution Management System</p><hr style={{ border: "none", borderTop: "1px solid #eee" }} /></div</div>',
-        };
         const goodDispatch = await GoodDispatch.create(req.body);
-        if (!goodDispatch) {
-            return res.status(400).json({ message: "something went wrong", status: false })
-        }
-        await transporter.sendMail(mailOptions, (error, info) => {
-            (!error) ? response.status(201).json({ message: "save data successfull", status: true }) : console.log(error) || response.status(400).json({ error: "Something Went Wrong", status: false });
-        });
-        // return goodDispatch ? res.status(200).json({ message: "save data successfull", status: true }) : res.status(400).json({ message: "Bad Request", status: false })
+        return goodDispatch ? res.status(200).json({ message: "save data successfull", status: true }) : res.status(400).json({ message: "Bad Request", status: false })
     }
     catch (err) {
         console.log(err);
