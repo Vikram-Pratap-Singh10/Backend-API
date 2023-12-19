@@ -1,6 +1,7 @@
 import { CashBook } from "../model/cashBookOrder.model.js";
 import { Product } from "../model/product.model.js";
 import { User } from "../model/user.model.js";
+import { findUserDetails } from "../rolePermission/permission.js";
 
 export const cashBookOrder = async (req, res, next) => {
     try {
@@ -103,7 +104,7 @@ export const placeOrderHistoryByUserId = async (req, res, next) => {
         return res.status(500).json({ error: err });
     }
 };
-export const placeOrderHistory = async (req, res, next) => {
+export const OrderHistory = async (req, res, next) => {
     try {
         const userId = req.params.id;
         const userHierarchy = await findUserDetails(userId);
@@ -149,7 +150,7 @@ export const placeOrderHistory = async (req, res, next) => {
                 updatedAt: order.updatedAt
             };
         });
-        return res.status(200).json({ CashBook: formattedOrders, adminDetail, status: true });
+        return res.status(200).json({ CashBook: formattedOrders, status: true });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: err });
