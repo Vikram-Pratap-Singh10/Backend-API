@@ -63,3 +63,25 @@ export const viewInvoiceList = async (req, res, next) => {
         return res.status(500).json({ error: "Internal Server Error", status: false })
     }
 }
+export const updateOrderInvoiceStatus = async (req, res) => {
+    try {
+        const { status } = req.body;
+        const order = await InvoiceList.findById({ _id: req.params.id });
+        if (!order) {
+            return res.status(404).json({ message: 'this invoice not found' });
+        }
+        order.status = status;
+        await order.save();
+        // if (status === 'completed') {
+        //     req.body.totalAmount = order.grandTotal;
+        //     req.body.productItems = order.orderItem;
+        //     req.body.userId = order.userId;
+        //     req.body.orderId = order._id;
+        //     await CreditNote.create(req.body)
+        // }
+        return res.status(200).json({ message: "status update successfully", status: true });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error, status: false });
+    }
+}

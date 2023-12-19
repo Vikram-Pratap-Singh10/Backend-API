@@ -1,7 +1,5 @@
 import axios from "axios";
 import { GoodDispatch } from "../model/goodDispatch.model.js";
-import { User } from "../model/user.model.js";
-import transporter from "../service/email.js";
 import { Order } from "../model/order.model.js";
 import { CreateOrder } from "../model/createOrder.model.js";
 
@@ -99,6 +97,17 @@ export const deleteGoodDispatch = async (req, res, next) => {
     try {
         const goodDispatch = await GoodDispatch.findByIdAndDelete({ _id: req.params.id })
         return (goodDispatch) ? res.status(200).json({ message: "delete successful", status: true }) : res.status(404).json({ error: "Not Found", status: false });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error", status: false });
+    }
+}
+
+export const viewOrderForDeliveryBoy = async (req, res, next) => {
+    try {
+        let goodDispatch = await GoodDispatch.find({ AssignDeliveryBoy: req.params.id }).sort({ sortorder: -1 }).populate({ path: "orderItems.productId", model: "product" }).populate({ path: "userId", model: "user" })
+        return (goodDispatch.length > 0) ? res.status(200).json({ OrderList: goodDispatch, status: true }) : res.status(404).json({ error: "Not Found", status: false })
     }
     catch (err) {
         console.log(err);
