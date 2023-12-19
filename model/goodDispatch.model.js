@@ -5,9 +5,13 @@ import axios from 'axios';
 let status = 'status';
 let rolename = 'rolename';
 let created_by = 'created_by';
-
+let orderItems = "orderItems";
+let grandTotal = "grandTotal";
+let fullName = "fullName";
+let address = "address";
+let userId = "userId";
 async function createSchema() {
-    const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/GoodDispatch.xml');
+    const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/GoodDispatchConfig.xml');
     const xmlFile = ff.data;
     const jsonData = JSON.parse(convert.xml2json(xmlFile, { compact: true, spaces: 2 }));
     const schemaDefinition = {};
@@ -45,6 +49,11 @@ async function createSchema() {
             schemaDefinition[name] = String;
         }
     }
+    schemaDefinition[orderItems] = [{ productId: String, unitType: String, Size: Number, currentStock: Number, transferQty: Number, price: Number, totalPrice: Number }, { timestamps: true }];
+    schemaDefinition[grandTotal] = Number;
+    schemaDefinition[fullName] = String;
+    schemaDefinition[address] = String;
+    schemaDefinition[userId] = String;
     if (jsonData.GoodDispatch.MyDropdown) {
         if (Array.isArray(jsonData.GoodDispatch.MyDropdown)) {
             jsonData.GoodDispatch.MyDropdown.forEach((dropdown) => {

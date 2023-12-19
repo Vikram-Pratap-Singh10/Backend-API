@@ -26,7 +26,7 @@ const createOrderSchema = new mongoose.Schema({
     },
     partyId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "party"
+        ref: "user"
     },
     date: {
         type: Date,

@@ -41,7 +41,6 @@ export const viewInWardStockToWarehouse = async (req, res, next) => {
         return res.status(500).json({ error: err, status: false });
     }
 };
-
 export const viewOutWardStockToWarehouse = async (req, res, next) => {
     try {
         const factory = await StockUpdation.find({ warehouseFromId: req.params.id }).populate({
@@ -78,7 +77,6 @@ export const viewOutWardStockToWarehouse = async (req, res, next) => {
         return res.status(500).json({ error: err, status: false });
     }
 };
-
 export const stockTransferToWarehouse = async (req, res) => {
     try {
         const { warehouseToId, warehouseFromId, stockTransferDate, productItems, grandTotal, transferStatus } = req.body;
@@ -143,11 +141,12 @@ export const stockTransferToWarehouse = async (req, res) => {
 };
 export const viewWarehouseStock = async (req, res) => {
     try {
-        // const userId = req.params.userid;
-        // const adminDetail = await getStockHierarchy(userId);
-        const warehouse = await StockUpdation.find({}).sort({sortorder:-1});
-        if (warehouse.length > 0) {
-            return res.status(200).json({ Warehouse: warehouse, status: true });
+        const userId = req.params.userid;
+        const adminDetail = await getStockHierarchy(userId);
+        console.log(adminDetail)
+        // const warehouse = await StockUpdation.find({}).sort({ sortorder: -1 });
+        if (adminDetail.length > 0) {
+            return res.status(200).json({ Warehouse: adminDetail, status: true });
         } else {
             res.status(404).json({ message: 'Warehouse not found', status: false });
         }
@@ -156,7 +155,6 @@ export const viewWarehouseStock = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
-
 export const updateWarehousetoWarehouse = async (req, res, next) => {
     try {
         const factoryId = req.params.id
@@ -186,8 +184,6 @@ export const updateWarehousetoWarehouse = async (req, res, next) => {
         return res.status(500).json({ error: 'Internal Server Error', status: false });
     }
 };
-
-
 export const viewProductInWarehouse = async (req, res, next) => {
     try {
         const warehouse = await User.findById(req.params.id).populate({ path: "productItems.productId", model: "product" });

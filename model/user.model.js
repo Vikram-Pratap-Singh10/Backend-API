@@ -14,7 +14,8 @@ let productItems = "productItems";
 let grandTotal = "grandTotal";
 let currentStock = "currentStock";
 let transferStatus = "transferStatus";
-let warehouseFromId = "warehouseFromId"
+let warehouseFromId = "warehouseFromId";
+let otpVerify = "otpVerify"
 
 async function createSchema() {
   const ff = await axios.get('https://xmlfile.blr1.cdn.digitaloceanspaces.com/Createuser.xml');
@@ -129,7 +130,7 @@ async function createSchema() {
       schemaDefinition[check] = String
     }
   }
-
+  schemaDefinition[otpVerify] = Number;
   return new mongoose.Schema(schemaDefinition, { timestamps: true });
 }
 

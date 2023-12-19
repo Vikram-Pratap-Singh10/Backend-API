@@ -11,8 +11,8 @@ const orderItemsSchema = new mongoose.Schema({
     price: {
         type: Number
     },
-    unitQty:{
-        type:String
+    unitQty: {
+        type: String
     },
     status: {
         type: String,
@@ -26,7 +26,7 @@ const OrderSchema = new mongoose.Schema({
     },
     partyId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "party"
+        ref: "user"
     },
     date: {
         type: Date,
@@ -79,14 +79,14 @@ const OrderSchema = new mongoose.Schema({
         type: String,
         default: "pending"
     },
-    latitude:{
-        type:String
+    latitude: {
+        type: String
     },
-    longitude:{
-        type:String
+    longitude: {
+        type: String
     },
-    currentAddress:{
-        type:String
+    currentAddress: {
+        type: String
     },
     paymentId: {
         type: String

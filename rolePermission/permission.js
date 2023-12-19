@@ -4,6 +4,7 @@ import { CreditNote } from "../model/creditNote.model.js";
 import { Customer } from "../model/customer.model.js";
 import { Product } from "../model/product.model.js";
 import { Promotion } from "../model/promotion.model.js";
+import { StockUpdation } from "../model/stockUpdation.model.js";
 import { TargetCreation } from "../model/targetCreation.model.js";
 import { Unit } from "../model/unit.model.js";
 import { User } from "../model/user.model.js";
@@ -549,7 +550,7 @@ export const getStockHierarchy = async function getUnitHierarchy(parentId, proce
         processedIds.add(parentId);
         const [users, units] = await Promise.all([
             User.find({ created_by: parentId, status: 'Active' }).lean(),
-            Warehouse.find({ created_by: parentId }).lean()
+            StockUpdation.find({ created_by: parentId }).lean()
         ]);
         let results = units;
         const subUserIds = users.map(user => user._id);
