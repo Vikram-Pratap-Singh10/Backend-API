@@ -1,5 +1,5 @@
 import express from "express";
-import { GoodDispathcXml, deleteGoodDispatch, saveGoodDispatch, updateGoodDispatch, viewGoodDispatch, viewGoodDispatchById, viewOrderForDeliveryBoy } from "../controller/goodDispatch.controller.js";
+import { GoodDispathcXml, deleteGoodDispatch, saveGoodDispatch, sendOtp, updateGoodDispatch, updateOrderStatusByDeliveryBoy, viewGoodDispatch, viewGoodDispatchById, viewOrderForDeliveryBoy } from "../controller/goodDispatch.controller.js";
 import multer from "multer";
 
 const router = express.Router();
@@ -13,5 +13,7 @@ router.delete("/delete-good-dispatch/:id", deleteGoodDispatch);
 router.put("/update-good-dispatch/:id", upload.any("files"), updateGoodDispatch)
 
 router.get("/view-order-list/:id", viewOrderForDeliveryBoy)
+router.get("/send-otp/:id", sendOtp)
+router.post("/verify-authentication/:id", updateOrderStatusByDeliveryBoy);
 
 export default router;
